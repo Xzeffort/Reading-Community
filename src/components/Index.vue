@@ -1,19 +1,32 @@
 <template>
-  <div>
+  <el-container>
+    <el-header>
       <nav-component/>
-  </div>
+    </el-header>
+    <el-main>
+      <nav-content class="nav-content"/>
+    </el-main>
+    <el-footer class="footer">关于简书 · 联系我们 · 加入我们 · 简书出版 · 品牌与徽标 · 帮助中心 · 合作伙伴</el-footer>
+  </el-container>
 </template>
 
 <script>
 import NavComponent from './common/Nav'
+import NavContent from './Content'
 export default {
   name: 'Index',
   components: {
-    NavComponent
+    NavComponent,
+    NavContent
   }
 }
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+ .el-header{
+   padding: 0;
+   margin-bottom: 30px;
+ }
+  .footer {
+    text-align: center;
+  }
 </style>
