@@ -6,14 +6,14 @@
     </el-header>
     <el-main style="padding: 0 20px">
       <ul>
-        <li class="authors" v-for="n in 5">
+        <li class="authors" >
           <a href="#" target="_blank" class="avatar">
             <el-avatar :size="58" src="https://upload.jianshu.io/users/upload_avatars/2558050/7761b285-2805-4534-9870-ba7dcc7538ec.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"/>
           </a>
           <el-button class="follow" v-if="isFollow" size="mini" round style="outline: none" @click="follow">取消关注</el-button>
           <el-button class="follow" v-if="!isFollow" size="mini" round style="outline: none" @click="follow">关注</el-button>
           <a href="#" target="_blank" class="name">
-            只有一半影子的人{{n}}
+            只有一半影子的人
             <p>
               写了486.2k字 · 1.5k喜欢
             </p>
@@ -22,7 +22,7 @@
       </ul>
     </el-main>
     <el-footer>
-      <el-button class="more" style="outline: none">查看全部<icon class="el-icon-arrow-right"/></el-button>
+      <el-button class="more" style="outline: none">查看全部<i class="el-icon-arrow-right"/></el-button>
     </el-footer>
   </el-container>
 </template>
