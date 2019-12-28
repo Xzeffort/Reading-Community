@@ -8,6 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import BootstrapVue from 'bootstrap-vue'
+import './assets/iconfont/iconfont.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
