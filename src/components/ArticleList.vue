@@ -15,7 +15,7 @@
         </el-main>
         <el-footer  style="height: 30px">
           <a class="nickname" target="_blank" href="#">你在烦恼什么{{n}}</a>
-          <a class="comment" href="#">
+          <a class="comment" href="#" target="_blank">
             <i class="iconfont el-icon-third-pinglun2"/>999
           </a>
           <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
@@ -23,10 +23,13 @@
       </el-container>
       <!--    无图片隐藏 aside      -->
       <el-aside width="200px;">
-        <img class="img" :src="url"/>
+        <a href="#" target="_blank">
+          <img class="img" :src="url"/>
+        </a>
       </el-aside>
     </el-container>
   </li>
+      <el-button class="more_button" type="info" round>查看更多</el-button>
 </ul>
 </template>
 
@@ -103,5 +106,13 @@ export default {
     font-weight: 400;
     color: #b4b4b4;
     margin-right: 10px;
+  }
+  .more_button {
+    margin-top: 30px;
+    width: 100%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
+    outline: none;
   }
 </style>
