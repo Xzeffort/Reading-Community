@@ -27,8 +27,8 @@
         </b-navbar>
       </b-collapse>
       <b-navbar-nav v-if="!isLogin">
-        <b-button class="login" pill variant="outline-secondary" @click="login">登录</b-button>
-        <b-button class="register" pill variant="outline-danger">注册</b-button>
+        <b-button class="login" pill variant="outline-secondary" href="#/sign_in">登录</b-button>
+        <b-button class="register" pill variant="outline-danger" href="#/sign_up">注册</b-button>
       </b-navbar-nav>
       <b-navbar-nav v-if="isLogin">
         <el-dropdown @command="handleCommand">
