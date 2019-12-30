@@ -16,7 +16,7 @@
         </el-input>
         <el-input
           class="username"
-          placeholder="账号"
+          placeholder="手机号"
           prefix-icon="el-icon-mobile-phone" v-model="username">
         </el-input>
         <el-input

@@ -2,39 +2,45 @@
   <div class="sign">
     <div class="main">
       <h4 class="title">
-        <div class="normal-title">
-          <a class="active" href="#/sign_in">登录</a>
-          <b>·</b>
-          <a id="js-sign-up-btn" class="" href="#/sign_up">注册</a>
-        </div>
+        用手机号重置密码
       </h4>
       <div class="sign_in">
         <el-input
-          class="username"
-          placeholder="账号"
-          prefix-icon="el-icon-user" v-model="username">
+          class="telephone"
+          placeholder="手机号"
+          prefix-icon="el-icon-mobile-phone" v-model="telephone">
+        </el-input>
+        <el-input
+          class="code"
+          placeholder="短信验证码"
+          prefix-icon="el-icon-message" v-model="code">
+          <el-button class="sendCode" slot="suffix" size="mini" round>发送验证码</el-button>
         </el-input>
         <el-input
           class="password"
-          placeholder="密码"
+          placeholder="请输入新密码"
           prefix-icon="el-icon-lock" show-password v-model="password">
         </el-input>
+        <el-input
+          class="password"
+          placeholder="请再一次输入新密码"
+          prefix-icon="el-icon-lock" show-password v-model="repassword">
+        </el-input>
       </div>
-      <div>
-        <el-link class="forget" :underline="false" href="#/users/password/mobile_reset">忘记密码?</el-link>
-      </div>
-      <el-button class="login_button" round>登录</el-button>
+      <el-button class="reset_button" round>重置密码</el-button>
+      <el-link class="return" :underline="false" href="#/sign_in"><i class="el-icon-back"/>返回登录注册</el-link>
     </div>
   </div>
 </template>
-
 <script>
 export default {
-  name: 'login',
+  name: 'ForgetPassword',
   data () {
     return {
-      username: '',
-      password: ''
+      telephone: '',
+      code: '',
+      password: '',
+      repassword: ''
     }
   }
 }
@@ -65,14 +71,13 @@ export default {
     font-size: 22px;
     margin: 0 auto 50px;
     padding: 10px;
-    font-weight: 400;
-    color: #969696;
+    font-weight: bold;
     text-align: center;
   }
   .title a {
-     padding: 10px;
-     color: #969696;
-   }
+    padding: 10px;
+    color: #969696;
+  }
   .title a:hover {
     color: #ea6f5a;
     border-bottom: 3px solid #ea6f5a;
@@ -82,22 +87,34 @@ export default {
     color: #ea6f5a;
     border-bottom: 3px solid #ea6f5a;
   }
-  .username {
+  .telephone {
+    height: 50px;
+  }
+  .code {
     height: 50px;
   }
   .password {
     height: 50px;
   }
-  .forget {
-    float: right;
-    margin-top: 10px;
-  }
-  .login_button {
+  .reset_button {
     margin-top: 20px;
     width: 100%;
     color: #fff;
     background: #3194d0;
     font-size: 18px;
+    outline: none;
+  }
+  .return {
+     margin-top: 20px;
+     color:  #969696;
+   }
+  .return:hover {
+    color:  #333333;
+  }
+  .sendCode {
+    background-color: #3194d0;
+    margin-top: 7px;
+    color: #fff;
     outline: none;
   }
 </style>
