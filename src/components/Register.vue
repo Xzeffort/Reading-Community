@@ -17,7 +17,14 @@
         <el-input
           class="username"
           placeholder="手机号"
-          prefix-icon="el-icon-mobile-phone" v-model="username">
+          prefix-icon="el-icon-mobile-phone" v-model="username" @change="showInput">
+        </el-input>
+        <el-input
+          v-if="show"
+          class="code"
+          placeholder="短信验证码"
+          prefix-icon="el-icon-message" v-model="code">
+          <el-button @click="sendMsg" :disabled="isDisabled" class="sendCode" slot="suffix" size="mini" round>{{buttonName}}</el-button>
         </el-input>
         <el-input
           class="password"
@@ -32,13 +39,48 @@
 </template>
 
 <script>
+const TIME_COUNT = 10 // 倒计时的时间
 export default {
   name: 'Register',
   data () {
     return {
       nickname: '',
       username: '',
-      password: ''
+      password: '',
+      code: '',
+      show: false,
+      isDisabled: false,
+      buttonName: '发送验证码',
+      timer: null
+    }
+  },
+  methods: {
+    showInput () {
+      this.show = true
+    },
+    sendMsg () {
+      // 验证码倒计时
+      if (!(/^1[3456789]\d{9}$/.test(this.username))) {
+        this.$message.error('手机号码有误，请重填')
+        return false
+      }
+      if (!this.timer) {
+        this.count = TIME_COUNT
+        this.isDisabled = false
+        this.$message.success('发送成功，请注意查收')
+        this.timer = setInterval(() => {
+          if (this.count > 0 && this.count <= TIME_COUNT) {
+            this.count--
+            this.buttonName = '重新发送（' + this.count + '秒' + '）'
+            this.isDisabled = true
+          } else {
+            this.isDisabled = false
+            clearInterval(this.timer)
+            this.timer = null
+            this.buttonName = '重新发送'
+          }
+        }, 1000)
+      }
     }
   }
 }
@@ -92,6 +134,9 @@ export default {
   .password {
     height: 50px;
   }
+  .code {
+    height: 50px;
+  }
   .register_button {
     margin-top: 20px;
     width: 100%;
@@ -107,5 +152,11 @@ export default {
     font-size: 12px;
     line-height: 20px;
     color: #969696;
+  }
+  .sendCode {
+    background-color: #3db922;
+    margin-top: 7px;
+    color: #fff;
+    outline: none;
   }
 </style>
