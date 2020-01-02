@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <b-navbar type="light" variant="light">
+  <div class="navTitle">
+    <b-navbar >
       <b-navbar-brand href="#" class="logo">简书</b-navbar-brand>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="nav">
-          <b-nav-item href="#">首页</b-nav-item>
+          <b-nav-item href="#" active><i class="el-icon-s-home"/>首页</b-nav-item>
           <b-nav-item href="#" v-if="isLogin">关注</b-nav-item>
           <b-nav-item href="#" v-if="isLogin">
             <el-dropdown>
@@ -19,16 +19,24 @@
             </el-dropdown>
           </b-nav-item>
         </b-navbar-nav>
-        <b-navbar type="light" variant="light">
-          <b-nav-form>
-            <b-form-input class="mr-sm-2" placeholder="搜索"></b-form-input>
-            <b-button variant="info" class="my-2 my-sm-0" type="submit">搜索</b-button>
-          </b-nav-form>
+        <b-navbar>
+<!--          <b-nav-form>-->
+<!--            <b-form-input class="mr-sm-2" placeholder="搜索"></b-form-input>-->
+<!--            <b-button variant="info" class="my-2 my-sm-0" type="submit">搜索</b-button>-->
+<!--          </b-nav-form>-->
+          <el-input class="search"
+            placeholder="搜索">
+            <el-button slot="suffix" type="text" class="el-icon-search" circle size="mini"></el-button>
+          </el-input>
         </b-navbar>
       </b-collapse>
       <b-navbar-nav v-if="!isLogin">
-        <b-button class="login" pill variant="outline-secondary" href="#/sign_in">登录</b-button>
-        <b-button class="register" pill variant="outline-danger" href="#/sign_up">注册</b-button>
+        <router-link to='/sign_in'>
+          <el-button class="login" type="text">登录</el-button>
+        </router-link>
+        <router-link to='/sign_up'>
+          <el-button class="register" type="danger" round>注册</el-button>
+        </router-link>
       </b-navbar-nav>
       <b-navbar-nav v-if="isLogin">
         <el-dropdown @command="handleCommand">
@@ -76,8 +84,8 @@ export default {
 
 <style scoped>
   * {
-    font-size: 16px;
-    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+    font-size: 17px;
+    font-family: -apple-system,SF UI Text,Arial,PingFang SC,Hiragino Sans GB,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
   }
   .head{
     margin-right: 30px;
@@ -91,9 +99,35 @@ export default {
     font-size: 30px;
   }
   .login {
+    color: #969696;
     margin-right: 30px;
+    outline: none;
   }
   .register {
     margin-right: 30px;
+    outline: none;
+  }
+  .navTitle {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #f0f0f0;
+    background: #ffffff;
+  }
+  nav .nav-link.active {
+    color:  #ea6f5a !important;
+  }
+  .search >>> input{
+    border-radius: 30px !important;
+    background: #eeeeee;
+    border-color: #eeeeee;
+    outline: none;
+  }
+  .search >>> button {
+    margin-top: 3px;
+    outline: none;
+    color: gray;
   }
 </style>
