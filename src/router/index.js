@@ -4,6 +4,8 @@ import Index from '@/components/Index'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
 import ForgetPassword from '@/components/ForgetPassword'
+import Article from '@/components/Article'
+import User from '@/components/User'
 
 Vue.use(Router)
 
@@ -28,6 +30,16 @@ export default new Router({
       path: '/users/password/mobile_reset',
       name: 'ForgetPassword',
       component: ForgetPassword
+    },
+    {
+      path: '/p/:id',
+      name: 'Article',
+      component: Article
+    },
+    {
+      path: '/u/:id',
+      name: 'User',
+      component: User
     }
   ]
 })
