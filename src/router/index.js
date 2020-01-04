@@ -6,6 +6,7 @@ import Register from '@/components/Register'
 import ForgetPassword from '@/components/ForgetPassword'
 import Article from '@/components/Article'
 import User from '@/components/User'
+import RecommendationUsers from '@/components/RecommendationUsers'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/users/password/mobile_reset',
       name: 'ForgetPassword',
       component: ForgetPassword
+    },
+    {
+      path: '/recommendations/users',
+      name: 'RecommendationUsers',
+      component: RecommendationUsers
     },
     {
       path: '/p/:id',
