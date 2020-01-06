@@ -1,23 +1,29 @@
 <template>
   <el-container>
-    <el-header class="header">
+    <el-header class="header" height="50px">
       <span class="banner">推荐作者</span>
       <el-button class="page-change" type="text"><i class="el-icon-refresh"/>换一批</el-button>
     </el-header>
     <el-main style="padding: 0 20px">
       <ul>
-        <li class="authors" >
+        <li class="authors" v-for="n in 5" :key="n">
           <a href="#" target="_blank" class="avatar">
             <el-avatar :size="58" src="https://upload.jianshu.io/users/upload_avatars/2558050/7761b285-2805-4534-9870-ba7dcc7538ec.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"/>
           </a>
-          <el-button class="follow" v-if="isFollow" size="mini" round style="outline: none" @click="follow">取消关注</el-button>
-          <el-button class="follow" v-if="!isFollow" size="mini" round style="outline: none" @click="follow">关注</el-button>
           <a href="#" target="_blank" class="name">
-            只有一半影子的人
+            只有一半影子的人{{n}}
             <p>
               写了486.2k字 · 1.5k喜欢
             </p>
           </a>
+          <el-button class="follow" v-if="isFollow" size="mini" round
+                     style="outline: none"
+                     @click="follow(n)"
+                     :ref="`followBtn${n}`">取消关注</el-button>
+          <el-button class="follow" v-if="!isFollow" size="mini" round
+                     style="outline: none"
+                     @click="follow(n)"
+                     :ref="`followBtn${n}`">关注</el-button>
         </li>
       </ul>
     </el-main>
@@ -36,7 +42,7 @@ export default {
     }
   },
   methods: {
-    follow () {
+    follow (index) {
       this.isFollow = !this.isFollow
     }
   }
@@ -65,12 +71,13 @@ export default {
     outline: none;
   }
   .authors{
-    margin-bottom: 5px;
+    margin-top: 5px;
+    height: 70px;
   }
   .name{
-    float: right;
-    padding-top: 10px;
-    padding-right: 10px;
+    float: left;
+    margin-top: 10px;
+    padding-left: 10px;
     font-size: 14px;
     display: inline-block;
     color: #333333;
@@ -87,5 +94,8 @@ export default {
   }
   .more {
     width: 100%;
+  }
+  .avatar {
+    float: left;
   }
 </style>

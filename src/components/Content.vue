@@ -10,10 +10,6 @@
         <el-menu-item index="1">推荐图文</el-menu-item>
         <el-menu-item index="2">最热图文</el-menu-item>
         <el-menu-item index="3">最新图文</el-menu-item>
-        <el-menu-item index="4">篮球</el-menu-item>
-        <el-menu-item index="5">电竞</el-menu-item>
-        <el-menu-item index="6">娱乐</el-menu-item>
-        <el-menu-item index="7">足球</el-menu-item>
       </el-menu>
     </el-header>
     <el-container>
