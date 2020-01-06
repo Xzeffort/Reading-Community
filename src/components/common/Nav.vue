@@ -4,17 +4,19 @@
       <b-navbar-brand href="#" class="logo">简书</b-navbar-brand>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="nav">
-          <b-nav-item href="#" active><i class="el-icon-s-home"/>首页</b-nav-item>
-          <b-nav-item href="#" v-if="isLogin">关注</b-nav-item>
-          <b-nav-item href="#" v-if="isLogin">
+          <b-nav-item href="#" class="nav-item" active><i class="el-icon-s-home"/>首页</b-nav-item>
+          <b-nav-item href="#" class="nav-item" v-if="isLogin"><i class="el-icon-reading"/>关注</b-nav-item>
+          <b-nav-item href="#" class="nav-item nav-item-msg" v-if="isLogin">
             <el-dropdown>
             <span class="el-dropdown-link">
-              消息
+                  <i class="el-icon-bell"/>消息
             </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-plus">评论</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-plus">喜欢和赞</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-plus">系统信息</el-dropdown-item>
+              <el-dropdown-menu slot="dropdown" class="dropdown">
+                <el-dropdown-item><i class="el-icon-chat-line-square"/>评论</el-dropdown-item>
+                <el-dropdown-item><i class="el-icon-message"/>简信</el-dropdown-item>
+                <el-dropdown-item><i class="iconfont el-icon-third-xihuan"/>喜欢和赞</el-dropdown-item>
+                <el-dropdown-item><i class="el-icon-finished"/>关注</el-dropdown-item>
+                <el-dropdown-item><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </b-nav-item>
@@ -42,17 +44,17 @@
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
              <div class="head">
-                <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 <span class="el-dropdown-link">
-                  <i class="el-icon-arrow-down el-icon--right"></i>
+                  <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+<!--                      <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
                 </span>
              </div>
           </span>
-          <el-dropdown-menu slot="dropdown" >
-            <el-dropdown-item>我的主页</el-dropdown-item>
-            <el-dropdown-item>我收藏的文章</el-dropdown-item>
-            <el-dropdown-item>我喜欢的文章</el-dropdown-item>
-            <el-dropdown-item command="logout">退出</el-dropdown-item>
+          <el-dropdown-menu slot="dropdown" class="user-dropdown">
+            <el-dropdown-item><i class="el-icon-user-solid"/>我的主页</el-dropdown-item>
+            <el-dropdown-item><i class="el-icon-star-on"/>我收藏的文章</el-dropdown-item>
+            <el-dropdown-item><i class="iconfont el-icon-third-aixin"/>我喜欢的文章</el-dropdown-item>
+            <el-dropdown-item command="logout"><i class="el-icon-switch-button"/>退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <b-button pill variant="outline-danger" size="lg"><i class="el-icon-edit"/>写文章</b-button>
@@ -66,7 +68,7 @@ export default {
   name: 'Nav',
   data: function () {
     return {
-      isLogin: false
+      isLogin: true
     }
   },
   methods: {
@@ -129,5 +131,41 @@ export default {
     margin-top: 3px;
     outline: none;
     color: gray;
+  }
+  .nav-item i {
+    font-size: 20px;
+    margin-right: 5px;
+  }
+  .nav-item {
+    margin-right: 20px;
+  }
+  .nav-item a {
+    font-size: 20px;
+  }
+  .nav-item span {
+    font-size: 20px;
+  }
+  .nav-item-msg span:hover {
+    color: rgba(0, 0, 0, 0.7)
+  }
+  .dropdown i {
+    margin-right: 15px;
+    font-size: 20px;
+    color: #ea6f5a;
+    vertical-align: middle;
+  }
+  .dropdown li:hover {
+    color: #333;
+    background: #f0f0f0;
+  }
+  .user-dropdown i {
+    margin-right: 15px;
+    font-size: 20px;
+    color: #ea6f5a;
+    vertical-align: middle;
+  }
+  .user-dropdown li:hover {
+    color: #333;
+    background: #f0f0f0;
   }
 </style>
