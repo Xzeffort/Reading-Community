@@ -6,6 +6,20 @@
   "description": "Travel 项目图标",
   "glyphs": [
     {
+      "icon_id": "886697",
+      "name": "点赞(2)",
+      "font_class": "dianzan2",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "886698",
+      "name": "点赞(3)",
+      "font_class": "dianzan3",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
       "icon_id": "1071082",
       "name": "评论2",
       "font_class": "pinglun2",
@@ -39,20 +53,6 @@
       "font_class": "xihuan",
       "unicode": "e870",
       "unicode_decimal": 59504
-    },
-    {
-      "icon_id": "2076195",
-      "name": "赞2",
-      "font_class": "zan",
-      "unicode": "e871",
-      "unicode_decimal": 59505
-    },
-    {
-      "icon_id": "2076196",
-      "name": "赞",
-      "font_class": "zan1",
-      "unicode": "e872",
-      "unicode_decimal": 59506
     },
     {
       "icon_id": "5651349",
