@@ -285,7 +285,7 @@
               </div>
             </h3>
             <div class="allCommentList">
-              <div class="list" v-for="n in 10" :key="n">
+              <div class="list" v-for="n in 5" :key="n">
                 <div>
                   <el-avatar :size="45"></el-avatar>
                 </div>
@@ -344,8 +344,53 @@
               </div>
             </div>
           </div>
+          <div class="topic">
+            <h3 class="QxT4hD"><span>被以下专题收入，发现更多相似内容</span></h3>
+            <div class="topic-content">
+              <a class="_3s5t0Q _1OhGeD" >
+                <span class="_2-Djqu"><i class="el-icon-plus" style="margin-right: 2px;font-weight: bold"/>收入我的专题</span>
+              </a>
+              <a class="_3s5t0Q _1OhGeD" href="#/c/8a7716311371" target="_blank">
+                <el-avatar class="topicImg" shape="square" size="small"></el-avatar>
+                <span class="_2-Djqu">老玩家经验心得验心得家经验心得验心得验心得</span>
+              </a>
+              <el-button type="text" style="font-size: 14px;color: #999;outline: none">
+                展开更多<i class="el-icon-arrow-down"/>
+              </el-button>
+            </div>
+            <el-divider></el-divider>
+            <h3 class="QxT4hD">
+              <span>推荐阅读</span>
+              <router-link :to="{path: '/'}" target="_blank">
+                <el-button type="text" style="font-size: 14px;color:#000;outline: none">
+                  更多精彩内容<i class="el-icon-arrow-right"/>
+                </el-button>
+              </router-link>
+            </h3>
+            <ul>
+              <li v-for="n in 5" :key="n" style="display: flex;padding: 20px 0;border-bottom: 1px solid #eee;">
+                <div class="recommend">
+                  <div class="recommend-title">
+                    <a class="_2voXH8 _1OhGeD" href="/p/4fe1350953c1" target="_blank" >常用技索技巧</a>
+                  </div>
+                  <div class="recommend-content">
+                    这是在网易云日推里偶然间听到的一首。初见不惊，回首念念不忘。刚听的时候给我带来的触动并不怎么大，但今天脑海里一直单曲循环这首歌，我想我是喜欢上了。就像耐看的女孩，初见不惊，回首念念不忘……
+                  </div>
+                  <div class="recommend-footer">
+                    <a class="_3IWz1q _1OhGeD" href="/u/d2fc38a07204" target="_blank" rel="noopener noreferrer">
+                      <img class="head" src="https://upload.jianshu.io/users/upload_avatars/2835271/361fa5cda59b.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/48/h/48/format/webp" alt="">
+                      <span style="font-size: 13px;color: #969696;">水果茶丁</span>
+                    </a>
+                    <span class="info">阅读 140</span>
+                    <span class="info">评论 0</span>
+                    <span class="info">赞 0</span>
+                  </div>
+                </div>
+                <img class="recommend-img" src="//upload-images.jianshu.io/upload_images/2445675-d63a702890fa4c63.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240/format/webp">
+              </li>
+            </ul>
+          </div>
         </el-main>
-        <el-footer>Footer</el-footer>
       </el-container>
       <el-aside width="270px" class="aside">
         <div class="top">
@@ -714,5 +759,85 @@ export default {
   }
   .block {
     text-align: center;
+  }
+  .topic {
+    padding: 24px 30px;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+  .topic .topic-content {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  ._3s5t0Q {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    padding: 5px 10px 5px 5px;
+    border-radius: 4px;
+  }
+  .topic .topicImg {
+    margin-right: 10px;
+  }
+  ._2-Djqu {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    white-space:nowrap;
+    width:115px;
+    height:24px;
+    display:block;
+  }
+  ._2voXH8 {
+    font-size: 18px;
+    width: 500px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    white-space:nowrap;
+    margin-top: 4px;
+  }
+  ._2voXH8:active, ._2voXH8:hover {
+    text-decoration: underline;
+  }
+  .recommend-content {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+    line-height: 22px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .recommend-footer {
+    margin-top: 4px;
+    line-height: 40px;
+  }
+  .recommend-footer .info {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: #969696;
+    margin-left: 12px;
+  }
+  .recommend-footer .head{
+    width: 28px;
+    height: 28px;
+    margin-right: 4px;
+    border-radius: 50%;
+  }
+  .recommend-img {
+    width: 150px;
+    height: 120px;
+    margin-left: 20px;
+    border-radius: 4px;
+    border: 1px solid hsla(0,0%,50.2%,.1);
   }
 </style>
