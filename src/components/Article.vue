@@ -4,32 +4,33 @@
       <nav-component/>
     </el-header>
     <el-container class="container">
-      <el-container class="content">
-        <el-main>
-          <h1 class="title">高级前端面试题目大全(一)</h1>
-          <div class="userInfo">
-            <el-avatar :size="48"></el-avatar>
-            <div style="margin-left: 8px">
+      <el-container>
+        <el-main style="padding: 0">
+          <div class="content">
+            <h1 class="title">高级前端面试题目大全(一)</h1>
+            <div class="userInfo">
+              <el-avatar :size="48"></el-avatar>
+              <div style="margin-left: 8px">
               <span>
                 <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
               </span>
-              <el-button v-if="!isFollow" type="danger" size="mini" round class="followBtn off"
-                         @click="follow(1)" ref="followBtn1">关注</el-button>
-              <el-button v-if="isFollow" type="danger" size="mini" round class="followBtn on"
-                         @click="follow(1)" ref="followBtn1"
-                         @mouseover.native="overFollow(1)"
-                         @mouseleave.native="leaveFollow(1)">已关注</el-button>
-              <div style="margin-top: 4px;color: #969696;font-size: 14px">
-                <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
-                <span>字数 3,859</span>
-                <span>阅读 6,033</span>
+                <el-button v-if="!isFollow" type="danger" size="mini" round class="followBtn off"
+                           @click="follow(1)" ref="followBtn1">关注</el-button>
+                <el-button v-if="isFollow" type="danger" size="mini" round class="followBtn on"
+                           @click="follow(1)" ref="followBtn1"
+                           @mouseover.native="overFollow(1)"
+                           @mouseleave.native="leaveFollow(1)">已关注</el-button>
+                <div style="margin-top: 4px;color: #969696;font-size: 14px">
+                  <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
+                  <span>字数 3,859</span>
+                  <span>阅读 6,033</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="article">
-            <blockquote>
-              <p>回忆是目前穿梭时空的唯一办法</p>
-            </blockquote>
+            <div class="article">
+              <blockquote>
+                <p>回忆是目前穿梭时空的唯一办法</p>
+              </blockquote>
               <p>大约是在三个月前我离开了有赞，最近也是在准备学校的工程实习答辩，被要求写一份实习总结<br>
                 一如既往，我对于学校的事情都抱有「能不做就不做，能少做就少做」的原则<br>
                 于是我写了一堆快速制作的狗屎文字当作了总结，看着达到了规定的字数要求后，我连一个句号都不想加了，的确是「文不加点」了</p>
@@ -108,66 +109,240 @@
                 但是<br>
                 我所总结也是我在这段时间在有赞学到的，至于其他一些常识性或者是我之前就已经明白的，我也就没写了</p>
               <p>也感谢有赞业务中台 PC 组的大哥们这小半年的包容和照顾，我确实是学习到了很多东西，小半年的实习工资也让我感觉到了有好多钱真好...</p>
-          </div>
-          <div class="footer">
-            <el-row :gutter="20">
-              <el-col :span="7">
-                <el-button class="likeBtn" circle ref="likeBtn" @click="like"><i class="iconfont el-icon-third-dianzan3"/></el-button>
-                <el-button class="likeCount" type="text" @click="dialogTableVisible = true">0人点赞<i class="el-icon-arrow-right"/></el-button>
-                <el-button class="likeBtn" circle ref="unLikeBtn" @click="unLike"><i class="iconfont el-icon-third-dianzan2"/> </el-button>
-              </el-col>
-              <el-col :span="5" :offset="12">
-                <a href="#" target="_blank" class="notebook"><i class="el-icon-s-management"/>笔记本</a>
-                <el-dropdown>
+            </div>
+            <div class="footer">
+              <el-row :gutter="20">
+                <el-col :span="7">
+                  <el-button class="likeBtn" circle ref="likeBtn" @click="like"><i class="iconfont el-icon-third-dianzan3"/></el-button>
+                  <el-button class="likeCount" type="text" @click="dialogTableVisible = true">0人点赞<i class="el-icon-arrow-right"/></el-button>
+                  <el-button class="likeBtn" circle ref="unLikeBtn" @click="unLike"><i class="iconfont el-icon-third-dianzan2"/> </el-button>
+                </el-col>
+                <el-col :span="5" :offset="12">
+                  <a href="#" target="_blank" class="notebook"><i class="el-icon-s-management"/>笔记本</a>
+                  <el-dropdown>
                   <span class="el-dropdown-link">
                        <el-button class="more" icon="el-icon-more" circle></el-button>
                   </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>收入专题</el-dropdown-item>
-                    <el-dropdown-item>收藏文章</el-dropdown-item>
-                    <el-dropdown-item divided>举报文章</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </el-col>
-            </el-row>
-            <el-dialog title="点赞列表" :visible.sync="dialogTableVisible">
-              <ul class="users infinite-list"
-                  v-infinite-scroll="load"
-                  infinite-scroll-disabled="disabled"  style="height: 500px; overflow: auto">
-                <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
-                  <div class="userInfo" style="margin-bottom: 10px;">
-                    <el-avatar :size="48"></el-avatar>
-                    <div style="margin-left: 8px">
+                    <el-dropdown-menu slot="dropdown">
+                      <!--TODO 收入专题-->
+                      <el-dropdown-item>收入专题</el-dropdown-item>
+                      <el-dropdown-item>收藏文章</el-dropdown-item>
+                      <el-dropdown-item icon="el-icon-check">已收藏</el-dropdown-item>
+                      <el-dropdown-item divided @click.native="dialogFormVisible = true">举报文章</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </el-col>
+              </el-row>
+              <el-dialog title="点赞列表" :visible.sync="dialogTableVisible">
+                <ul class="users infinite-list"
+                    v-infinite-scroll="load"
+                    infinite-scroll-disabled="disabled"  style="height: 500px; overflow: auto">
+                  <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+                    <div class="userInfo" style="margin-bottom: 10px;">
+                      <el-avatar :size="48"></el-avatar>
+                      <div style="margin-left: 8px">
                       <span>
                         <a class="nickname" href="#/u/4b9ff86a7af4" target="_blank">你在烦恼什么{{n}}</a>
                       </span>
+                      </div>
                     </div>
-                  </div>
-                </li>
-                <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
-              </ul>
-            </el-dialog>
-          </div>
-          <div class="line" style="margin-top:24px;margin-bottom:24px"></div>
-          <div class="userInfo">
-            <el-avatar :size="50"></el-avatar>
-            <div style="margin-left: 8px">
+                  </li>
+                  <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
+                </ul>
+              </el-dialog>
+              <el-dialog title="举报文章" :visible.sync="dialogFormVisible" width="500px">
+                <el-radio-group v-model="radio">
+                  <el-radio :label="3">广告及垃圾信息</el-radio>
+                  <el-radio :label="6">抄袭或未授权转载</el-radio>
+                  <el-radio :label="9">其它</el-radio>
+                </el-radio-group>
+                <el-input
+                  type="textarea"
+                  :autosize="{ minRows: 4, maxRows: 5}"
+                  placeholder="写下举报的详情情况（选填）"
+                  v-model="textarea">
+                </el-input>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogFormVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="report">确 定</el-button>
+                </div>
+              </el-dialog>
+            </div>
+            <div class="line" style="margin-top:24px;margin-bottom:24px"></div>
+            <div class="userInfo">
+              <el-avatar :size="50"></el-avatar>
+              <div style="margin-left: 8px">
               <span>
                 <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
               </span>
-              <span class="introduce">非典型程序员非典型程序员非典型程序员典型程序</span>
-              <div style="margin-top: 4px;color: #969696;font-size: 14px">
-                <span>共写了2.2W字</span>
-                <span>获得23个赞</span>
-                <span>共8个粉丝</span>
+                <span class="introduce">非典型程序员非典型程序员非典型程序员典型程序</span>
+                <div style="margin-top: 4px;color: #969696;font-size: 14px">
+                  <span>共写了2.2W字</span>
+                  <span>获得23个赞</span>
+                  <span>共8个粉丝</span>
+                </div>
+              </div>
+              <el-button v-if="!isFollow" type="danger" round class="followBtn off"
+                         @click="follow(2)" ref="followBtn2">关注</el-button>
+              <el-button v-if="isFollow" type="danger" round class="followBtn on"
+                         @click="follow(2)" ref="followBtn2"
+                         @mouseover.native="overFollow(2)"
+                         @mouseleave.native="leaveFollow(2)">已关注</el-button>
+            </div>
+          </div>
+          <div class="note-page-comment">
+            <el-row :gutter="20">
+              <el-col :span="2">
+                <div>
+                  <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                </div>
+              </el-col>
+              <el-col :span="22">
+                <div>
+                  <el-input
+                    class="comment"
+                    @focus="showCommentBtn = true"
+                    type="textarea"
+                    placeholder="写下你的评论..."
+                    :autosize="{ minRows: 5, maxRows: 6}"
+                    maxlength="180"
+                    show-word-limit
+                    v-model="comment">
+                  </el-input>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row :gutter="20" style="margin-top: 20px" v-if="showCommentBtn">
+              <el-col :span="5" :offset="19">
+                <div>
+                  <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                  <el-button type="info" round size="small" @click="showCommentBtn = false">取消</el-button>
+                </div>
+              </el-col>
+            </el-row>
+            <h3 class="QxT4hD" style="margin-top: 40px">
+              <div class="_10KzV0">
+                <span>精彩评论</span>
+                <span class="countNum">13</span>
+              </div>
+            </h3>
+            <div class="allCommentList">
+              <div class="list" v-for="n in 5" :key="n">
+                <div>
+                  <el-avatar :size="45"></el-avatar>
+                </div>
+                <div style="margin-left: 8px">
+                  <span>
+                    <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
+                  </span>
+                  <div style="margin-top: 4px;color: #969696;font-size: 14px">
+                    <span>{{n}}楼</span>
+                    <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
+                  </div>
+                  <div class="comment-content" style="width: 700px">
+                    我们都是为了过的更舒服而已何来对错，何来对错何来对错何来对错何来对错何来对错
+                  </div>
+                  <div>
+                    <el-button type="text" class="likeBtn">
+                      <i class="iconfont el-icon-third-dianzan3"></i>33
+                    </el-button>
+                    <el-button type="text" class="replyBtn" @click="replyClassicBody(n)">
+                      <i class="iconfont el-icon-third-pinglun2"></i>回复
+                    </el-button>
+                  </div>
+                  <div :ref="`replyClassicBody${n}`" hidden>
+                    <el-row :gutter="20">
+                      <el-col :span="24">
+                        <div>
+                          <el-input
+                            class="comment"
+                            type="textarea"
+                            placeholder="写下你的评论..."
+                            :autosize="{ minRows: 5, maxRows: 6}"
+                            maxlength="180"
+                            show-word-limit
+                            v-model="reply">
+                          </el-input>
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-row :gutter="20" style="margin-top: 20px">
+                      <el-col :span="5" :offset="19">
+                        <div>
+                          <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                          <el-button type="info" round size="small" @click="cancelReplyClassicBody(n)">取消</el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </div>
+                </div>
               </div>
             </div>
-            <el-button v-if="!isFollow" type="danger" round class="followBtn off"
-                       @click="follow(2)" ref="followBtn2">关注</el-button>
-            <el-button v-if="isFollow" type="danger" round class="followBtn on"
-                       @click="follow(2)" ref="followBtn2"
-                       @mouseover.native="overFollow(2)"
-                       @mouseleave.native="leaveFollow(2)">已关注</el-button>
+            <h3 class="QxT4hD" style="margin-top: 40px">
+              <div class="_10KzV0">
+                <span>全部评论</span>
+                <span class="countNum">200</span>
+              </div>
+            </h3>
+            <div class="allCommentList">
+              <div class="list" v-for="n in 10" :key="n">
+                <div>
+                  <el-avatar :size="45"></el-avatar>
+                </div>
+                <div style="margin-left: 8px">
+                  <span>
+                    <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
+                  </span>
+                  <div style="margin-top: 4px;color: #969696;font-size: 14px">
+                    <span>{{n}}楼</span>
+                    <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
+                  </div>
+                  <div class="comment-content" style="width: 700px">
+                    我们都是为了过的更舒服而已何来对错，何来对错何来对错何来对错何来对错何来对错
+                  </div>
+                  <div>
+                    <el-button type="text" class="likeBtn">
+                      <i class="iconfont el-icon-third-dianzan3"></i>33
+                    </el-button>
+                    <el-button type="text" class="replyBtn" @click="replyBody(n)">
+                      <i class="iconfont el-icon-third-pinglun2"></i>回复
+                    </el-button>
+                  </div>
+                  <div :ref="`replyBody${n}`" hidden>
+                    <el-row :gutter="20">
+                      <el-col :span="24">
+                        <div>
+                          <el-input
+                            class="comment"
+                            type="textarea"
+                            placeholder="写下你的评论..."
+                            :autosize="{ minRows: 5, maxRows: 6}"
+                            maxlength="180"
+                            show-word-limit
+                            v-model="reply">
+                          </el-input>
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-row :gutter="20" style="margin-top: 20px">
+                      <el-col :span="5" :offset="19">
+                        <div>
+                          <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                          <el-button type="info" round size="small" @click="cancelReplyBody(n)">取消</el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                  </div>
+                </div>
+              </div>
+              <div class="block">
+                <el-pagination
+                  :page-size="100"
+                  layout="prev, pager, next, jumper"
+                  :total="1000">
+                </el-pagination>
+              </div>
+            </div>
           </div>
         </el-main>
         <el-footer>Footer</el-footer>
@@ -219,8 +394,14 @@ export default {
       isLike: false,
       isVeto: false,
       dialogTableVisible: false,
+      dialogFormVisible: false,
+      showCommentBtn: false,
       count: 6,
-      loading: false
+      loading: false,
+      radio: '',
+      textarea: '',
+      comment: '',
+      reply: ''
     }
   },
   computed: {
@@ -271,6 +452,30 @@ export default {
         this.$refs.unLikeBtn.$el.style.background = ''
         this.$refs.unLikeBtn.$el.style.color = ''
       }
+    },
+    report () {
+      this.dialogFormVisible = false
+      this.$message({
+        message: '举报成功',
+        type: 'success',
+        center: true
+      })
+    },
+    replyBody (e) {
+      this.$refs[`replyBody${e}`][0].removeAttribute('hidden')
+      // console.log(this.$refs[`replyBody${e}`][0])
+    },
+    cancelReplyBody (e) {
+      this.$refs[`replyBody${e}`][0].setAttribute('hidden', 'hidden')
+      // console.log(this.$refs[`replyBody${e}`][0])
+    },
+    replyClassicBody (e) {
+      this.$refs[`replyClassicBody${e}`][0].removeAttribute('hidden')
+      // console.log(this.$refs[`replyBody${e}`][0])
+    },
+    cancelReplyClassicBody (e) {
+      this.$refs[`replyClassicBody${e}`][0].setAttribute('hidden', 'hidden')
+      // console.log(this.$refs[`replyBody${e}`][0])
     },
     follow (index) {
       this.isFollow = !this.isFollow
@@ -336,12 +541,12 @@ export default {
   .container {
     padding: 24px 16px;
     margin: 0 auto;
-    width: 1100px;
+    width: 1120px;
   }
   .content {
     background: #ffffff;
     border-radius: 5px;
-    padding: 10px;
+    padding: 24px 30px;
   }
   .title{
     font-size: 35px;
@@ -477,5 +682,37 @@ export default {
     font-weight: 500;
     height: 20px;
     line-height: 20px;
+  }
+  .note-page-comment {
+    padding: 24px 30px;
+    background: #ffffff;
+    border-radius: 4px;
+    margin-top: 20px;
+  }
+  .allCommentList .list{
+    display: flex;
+  }
+  .allCommentList .list .comment-content {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .allCommentList .list .likeBtn {
+    color: #b0b0b0;
+    outline: none;
+  }
+  .allCommentList .list .replyBtn {
+    color: #b0b0b0;
+    outline: none;
+  }
+  .allCommentList .list .likeBtn:hover {
+    color: #ec7259;
+  }
+  .allCommentList .list i {
+    margin-right: 5px;
+  }
+  .block {
+    text-align: center;
   }
 </style>
