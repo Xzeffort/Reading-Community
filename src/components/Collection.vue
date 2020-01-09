@@ -88,6 +88,32 @@
               你在烦恼些什么
             </a>
           </div>
+          <div style="margin-bottom: 20px;padding-bottom: 10px;border-bottom: 1px solid #f0f0f0;">
+            <div class="title">关注的人(14751)</div>
+              <ul class="collection-follower">
+                <li v-for="n in 8" :key="n">
+                  <el-tooltip class="item" effect="dark" placement="bottom">
+                    <div slot="content">你在烦恼什么{{n}} · 01.05 19:05 关注</div>
+                    <a href="/u/11ac059c4991" target="_blank" class="avatar">
+                      <img src="https://cdn2.jianshu.io/assets/default_avatar/13-394c31a9cb492fcb39c27422ca7d2815.jpg">
+                    </a>
+                  </el-tooltip>
+                </li>
+                <a class="function-btn" @click="dialogFollowers = true"><i class="el-icon-more"></i></a>
+                <el-dialog
+                  title="关注的人"
+                  :visible.sync="dialogFollowers"
+                  width="30%">
+                  <ul class="followersList">
+                    <li  v-for="n in 100" :key="n">
+                      <a href="/u/11ac059c4991" target="_blank" class="avatar"><img src="https://cdn2.jianshu.io/assets/default_avatar/13-394c31a9cb492fcb39c27422ca7d2815.jpg"></a>
+                      <a href="/u/11ac059c4991" target="_blank" class="name">木小土{{n}}</a>
+                      <span class="follow-time">01.05 19:05 关注</span>
+                    </li>
+                  </ul>
+                </el-dialog>
+              </ul>
+          </div>
           <div class="user-action">
             <!--todo 编辑专题-->
             <el-button type="text" class="edit">编辑专题</el-button>
@@ -125,7 +151,8 @@ export default {
       count: 5,
       loading: false,
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      dialogDelete: false
+      dialogDelete: false,
+      dialogFollowers: false
     }
   },
   computed: {
@@ -173,6 +200,10 @@ export default {
     float: left;
     width: 80px;
     height: 80px;
+  }
+  .title {
+    color: #969696;
+    margin-bottom: 10px;
   }
   .avatar-collection img {
     width: 100%;
@@ -283,6 +314,9 @@ export default {
   .articles .content {
     padding-top: 0;
   }
+  .aside {
+    position: relative;
+  }
   .aside .description {
     margin-bottom: 20px;
     padding: 0 0 16px;
@@ -305,5 +339,52 @@ export default {
   .user-action .edit,.user-action .delete {
     color: #969696;
     outline: none;
+  }
+  .collection-follower li {
+    display: inline-block;
+  }
+  .aside .collection-follower li a {
+    margin-right: -10px;
+  }
+  .aside .collection-follower li img {
+    border: 3px solid #fff;
+    background-color: #fff;
+  }
+  .aside .function-btn {
+    position: absolute;
+    margin-left: 3px;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: #999;
+    text-align: center;
+  }
+  .aside .function-btn i {
+    font-size: 14px;
+  }
+  .followersList {
+    height: 420px;
+    overflow: auto;
+  }
+  .followersList li {
+    width: 100%;
+    height: 60px;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .followersList .name {
+    margin-left: 20px;
+    font-size: 15px;
+    color: #333;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .followersList .follow-time {
+    float: right;
+    margin-top: 7px;
+    font-size: 12px;
+    color: #969696;
   }
 </style>
