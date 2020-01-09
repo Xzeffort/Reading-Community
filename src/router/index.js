@@ -7,6 +7,7 @@ import ForgetPassword from '@/components/ForgetPassword'
 import Article from '@/components/Article'
 import User from '@/components/User'
 import RecommendationUsers from '@/components/RecommendationUsers'
+import NewCollection from '@/components/NewCollection'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/u/:id',
       name: 'User',
       component: User
+    },
+    {
+      path: '/collections/new',
+      name: 'NewCollection',
+      component: NewCollection
     }
   ]
 })
