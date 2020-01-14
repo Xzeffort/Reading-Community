@@ -9,6 +9,7 @@ import User from '@/components/User'
 import RecommendationUsers from '@/components/RecommendationUsers'
 import NewCollection from '@/components/NewCollection'
 import Collection from '@/components/Collection'
+import EditCollection from '@/components/EditCollection'
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
       path: '/collections/new',
       name: 'NewCollection',
       component: NewCollection
+    },
+    {
+      path: '/collections/:id/edit',
+      name: 'EditCollection',
+      component: EditCollection
     }
   ]
 })

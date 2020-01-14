@@ -7,7 +7,7 @@
         <el-row :gutter="20">
           <el-col :span="11" :offset="7">
             <div>
-              <h3 class="title">新建专题</h3>
+              <h3 class="title">编辑专题</h3>
               <table>
                 <tbody class="base">
                   <tr>
@@ -57,7 +57,7 @@
                   </tr>
                 </tbody>
               </table>
-              <el-button class="create" type="success" round>创建专题</el-button>
+              <el-button class="create" type="success" round>保存更改</el-button>
             </div>
           </el-col>
         </el-row>
