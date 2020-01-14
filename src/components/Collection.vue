@@ -115,8 +115,7 @@
               </ul>
           </div>
           <div class="user-action">
-            <!--todo 编辑专题-->
-            <el-button type="text" class="edit">编辑专题</el-button>
+            <router-link  to="/collections/123/edit"><el-button type="text" class="edit">编辑专题</el-button></router-link >
             <span class="delete-collection-button">·
             <el-button type="text" class="delete" @click="dialogDelete = true">删除专题</el-button>
             </span>

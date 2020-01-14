@@ -124,8 +124,7 @@
                        <el-button class="more" icon="el-icon-more" circle></el-button>
                   </span>
                     <el-dropdown-menu slot="dropdown">
-                      <!--TODO 收入专题-->
-                      <el-dropdown-item>收入专题</el-dropdown-item>
+                      <el-dropdown-item @click.native="dialogCollectionVisible = true">收入专题</el-dropdown-item>
                       <el-dropdown-item>收藏文章</el-dropdown-item>
                       <el-dropdown-item icon="el-icon-check">已收藏</el-dropdown-item>
                       <el-dropdown-item divided @click.native="dialogFormVisible = true">举报文章</el-dropdown-item>
@@ -133,6 +132,40 @@
                   </el-dropdown>
                 </el-col>
               </el-row>
+              <el-dialog title="收入到我的专题" :visible.sync="dialogCollectionVisible" width="40%">
+                <el-row :gutter="30" style="margin-bottom: 40px">
+                  <el-col :span="19">
+                    <el-input placeholder="请输入内容">
+                      <el-button slot="append" icon="el-icon-search" style="outline: none"></el-button>
+                    </el-input>
+                  </el-col>
+                  <el-col :span="2">
+                    <div><router-link to="/collections/new"><el-button type="text" icon="el-icon-plus" style="outline: none">新建专题</el-button></router-link></div>
+                  </el-col>
+                </el-row>
+                <div style="height: 400px;overflow: auto">
+                  <el-row v-for="n in 20" :key="n" style="margin-bottom: 20px">
+                    <el-col :span="2">
+                      <div>
+                        <a class="_1OhGeD" href="/c/565a0de16ee1" target="_blank" rel="noopener noreferrer">
+                          <img class="_1MTfTm" src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR)VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/100/h/100/format/webp" alt="">
+                        </a>
+                      </div>
+                    </el-col>
+                    <el-col :span="18">
+                      <div class="_1gXCcE">
+                        <a class="_3puJ3K _1OhGeD" href="/c/565a0de16ee1" target="_blank" rel="noopener noreferrer">LPL</a>
+                      </div>
+                    </el-col>
+                    <el-col :span="4">
+                      <div>
+                        <el-button size="medium" type="danger" round v-if="true" class="add">收入</el-button>
+                        <el-button size="medium" type="success" round v-if="false" class="remove">移出</el-button>
+                      </div>
+                    </el-col>
+                  </el-row>
+                </div>
+              </el-dialog>
               <el-dialog title="点赞列表" :visible.sync="dialogTableVisible">
                 <ul class="users infinite-list"
                     v-infinite-scroll="load"
@@ -440,6 +473,7 @@ export default {
       isVeto: false,
       dialogTableVisible: false,
       dialogFormVisible: false,
+      dialogCollectionVisible: false,
       showCommentBtn: false,
       count: 6,
       loading: false,
@@ -839,5 +873,37 @@ export default {
     margin-left: 20px;
     border-radius: 4px;
     border: 1px solid hsla(0,0%,50.2%,.1);
+  }
+  ._1MTfTm {
+    min-width: 50px;
+    min-height: 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+  }
+  ._3puJ3K {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 50px;
+    margin-left: 10px;
+  }
+  .remove {
+    color: #ec7259;
+    background-color: #ffebeb;
+    border-color: #ffebeb;
+    outline: none;
+  }
+  .add {
+    color: #ec7259;
+    background-color: #fff;
+    border-color: #ec7259;
+    outline: none;
+  }
+  .add:hover{
+    color: #ec7259;
+    background-color: #fef8f7;
+    border-color: #ec7259;
   }
 </style>
