@@ -10,6 +10,7 @@ import RecommendationUsers from '@/components/RecommendationUsers'
 import NewCollection from '@/components/NewCollection'
 import Collection from '@/components/Collection'
 import EditCollection from '@/components/EditCollection'
+import NoteBook from '@/components/NoteBook'
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
       path: '/collections/:id/edit',
       name: 'EditCollection',
       component: EditCollection
+    },
+    {
+      path: '/nb/:id',
+      name: 'NoteBook',
+      component: NoteBook
     }
   ]
 })
