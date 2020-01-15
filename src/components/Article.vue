@@ -381,7 +381,7 @@
             <h3 class="QxT4hD"><span>被以下专题收入，发现更多相似内容</span></h3>
             <div class="topic-content">
               <a class="_3s5t0Q _1OhGeD" >
-                <span class="_2-Djqu"><i class="el-icon-plus" style="margin-right: 2px;font-weight: bold"/>收入我的专题</span>
+                <span class="_2-Djqu" @click="dialogCollectionVisible = true"><i class="el-icon-plus" style="margin-right: 2px;font-weight: bold"/>收入我的专题</span>
               </a>
               <a class="_3s5t0Q _1OhGeD" href="#/c/8a7716311371" target="_blank">
                 <el-avatar class="topicImg" shape="square" size="small"></el-avatar>
