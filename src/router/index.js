@@ -16,6 +16,7 @@ import UserSubscription from '@/components/subscription/UserSubscription'
 import IndexSubscription from '@/components/subscription/Index'
 import CollectionSubscription from '@/components/subscription/CollectionSubscription'
 import NoteBookSubscription from '@/components/subscription/NoteBookSubscription'
+import Bookmarks from '@/components/Bookmarks'
 
 Vue.use(Router)
 
@@ -78,7 +79,6 @@ export default new Router({
     },
     {
       path: '/subscription',
-      name: 'Subscription',
       component: Subscription,
       children: [
         {
@@ -102,6 +102,11 @@ export default new Router({
           component: NoteBookSubscription
         }
       ]
+    },
+    {
+      path: '/bookmarks',
+      name: 'Bookmarks',
+      component: Bookmarks
     }
   ]
 })

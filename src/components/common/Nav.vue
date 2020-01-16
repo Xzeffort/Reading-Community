@@ -136,17 +136,17 @@ export default {
     color: gray;
   }
   .nav-item i {
-    font-size: 20px;
+    font-size: 18px;
     margin-right: 5px;
   }
   .nav-item {
     margin-right: 20px;
   }
   .nav-item a {
-    font-size: 20px;
+    font-size: 18px;
   }
   .nav-item span {
-    font-size: 20px;
+    font-size: 18px;
   }
   .nav-item-msg span:hover {
     color: rgba(0, 0, 0, 0.7)
