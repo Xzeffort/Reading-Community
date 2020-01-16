@@ -11,6 +11,11 @@ import NewCollection from '@/components/NewCollection'
 import Collection from '@/components/Collection'
 import EditCollection from '@/components/EditCollection'
 import NoteBook from '@/components/NoteBook'
+import Subscription from '@/components/Subscription'
+import UserSubscription from '@/components/subscription/UserSubscription'
+import IndexSubscription from '@/components/subscription/Index'
+import CollectionSubscription from '@/components/subscription/CollectionSubscription'
+import NoteBookSubscription from '@/components/subscription/NoteBookSubscription'
 
 Vue.use(Router)
 
@@ -70,6 +75,33 @@ export default new Router({
       path: '/nb/:id',
       name: 'NoteBook',
       component: NoteBook
+    },
+    {
+      path: '/subscription',
+      name: 'Subscription',
+      component: Subscription,
+      children: [
+        {
+          path: '',
+          name: 'IndexSubscription',
+          component: IndexSubscription
+        },
+        {
+          path: ':id/user',
+          name: 'UserSubscription',
+          component: UserSubscription
+        },
+        {
+          path: ':id/collection',
+          name: 'CollectionSubscription',
+          component: CollectionSubscription
+        },
+        {
+          path: ':id/notebook',
+          name: 'NoteBookSubscription',
+          component: NoteBookSubscription
+        }
+      ]
     }
   ]
 })

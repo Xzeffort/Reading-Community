@@ -4,9 +4,9 @@
       <b-navbar-brand href="#" class="logo">简书</b-navbar-brand>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="nav">
-          <b-nav-item href="#" class="nav-item" active><i class="el-icon-s-home"/>首页</b-nav-item>
-          <b-nav-item href="#" class="nav-item" v-if="isLogin"><i class="el-icon-reading"/>关注</b-nav-item>
-          <b-nav-item href="#" class="nav-item nav-item-msg" v-if="isLogin">
+          <b-nav-item class="nav-item" :to="{name: 'Index'}" exact exact-active-class="active"><i class="el-icon-s-home"/>首页</b-nav-item>
+          <b-nav-item class="nav-item" :to="{name: 'IndexSubscription'}" v-if="isLogin" exact exact-active-class="active" :active="active"><i class="el-icon-reading" />关注</b-nav-item>
+          <b-nav-item class="nav-item nav-item-msg" v-if="isLogin" exact exact-active-class="active">
             <el-dropdown>
             <span class="el-dropdown-link">
                   <i class="el-icon-bell"/>消息
@@ -70,6 +70,9 @@ export default {
     return {
       isLogin: true
     }
+  },
+  props: {
+    'active': Boolean
   },
   methods: {
     login () {
