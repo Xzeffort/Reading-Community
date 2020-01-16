@@ -5,10 +5,33 @@
       <el-button round class="sendMsgBtn" type="success">
         专题主页
       </el-button>
-      <!--todo 投稿-->
-      <el-button round class="sendMsgBtn">
+      <el-button round class="sendMsgBtn" @click="dialogCollectionVisible = true">
         投稿
       </el-button>
+      <el-dialog :visible.sync="dialogCollectionVisible" width="40%" top="8vh">
+        <div slot="title" class="dialog-footer">
+          <span>给该专题投稿</span>
+          <el-button type="text" class="newArticleBtn">写篇新文章</el-button>
+          <p class="notice">请珍惜每次投稿机会</p>
+          <div style="margin-top: 30px;position: relative;">
+            <input type="text" placeholder="搜索我的文章" class="search-input">
+            <a class="el-icon-search search-btn"/>
+          </div>
+        </div>
+        <div class="modal-body">
+          <!--todo 加载-->
+          <ul>
+            <li v-for="n in 10" :key="n">
+              <div>
+                <div class="note-name">java上传照片于七牛云，解决使用非静态图片{{n}}</div>
+                <a class="action-btn push" @click="sendArticle(n)" :ref="`push${n}`">投稿</a>
+                <a class="action-btn back hidden" @click="backArticle(n)" :ref="`back${n}`">撤回</a>
+                <a class="action-btn collect" v-if="false">已收录</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </el-dialog>
       <el-container>
         <el-header style="height: 30px; padding-left:0px">
           <div class="title">
@@ -77,7 +100,8 @@ export default {
       count: 5,
       loading: false,
       description: '',
-      showDescription: true
+      showDescription: true,
+      dialogCollectionVisible: false
     }
   },
   computed: {
@@ -98,6 +122,22 @@ export default {
         this.count += 2
         this.loading = false
       }, 2000)
+    },
+    sendArticle (id) {
+      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push hidden')
+      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back')
+      this.$message({
+        message: '投稿成功,id' + id,
+        type: 'success'
+      })
+    },
+    backArticle (id) {
+      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back hidden')
+      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push')
+      this.$message({
+        message: '撤回成功,id' + id,
+        type: 'success'
+      })
     }
   }
 }
@@ -114,6 +154,7 @@ export default {
   a {
     text-decoration: none;
     color: #333333;
+    cursor: pointer;
   }
   p {
     margin: 0 ;
@@ -236,5 +277,77 @@ export default {
     margin: 23px 0 23px 16px;
     font-size: 15px;
     outline: none;
+  }
+  .dialog-footer span {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .dialog-footer .newArticleBtn {
+    color: #42c02e;
+    outline: none;
+    padding-left: 10px;
+  }
+  .dialog-footer .notice {
+    font-size: 13px;
+    vertical-align: middle;
+    color: #969696;
+  }
+  .search-input {
+    padding: 0 40px 0 20px;
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+    background-color: hsla(0,0%,71%,.2);
+    border: none;
+    border-radius: 40px;
+    outline: none;
+  }
+  .search-btn:hover {
+    color: #969696;
+  }
+  .search-btn {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    color: #969696;
+    text-align: center;
+  }
+  .modal-body {
+    padding-top: 0;
+    height: 450px;
+    overflow: auto;
+  }
+  .modal-body li {
+    display: block!important;
+    position: relative;
+    padding: 20px 100px 20px 25px;
+    font-size: 15px;
+    border-bottom: 1px solid #e6e6e6;
+  }
+  .modal-body .push{
+    color: #42c02e;
+    border: 1px solid #42c02e;
+  }
+  .modal-body .back {
+    color: #8c8c8c;
+    border: 1px solid #8c8c8c;
+  }
+  .modal-body .hidden {
+    display: none;
+  }
+  .modal-body .collect {
+    cursor: default;
+  }
+  .modal-body .action-btn {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    margin-top: -12px;
+    padding: 2px 8px;
+    font-size: 13px;
+    border-radius: 20px;
+    line-height: normal;
   }
 </style>
