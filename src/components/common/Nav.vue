@@ -5,15 +5,18 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="nav">
           <b-nav-item class="nav-item" :to="{name: 'Index'}" exact exact-active-class="active"><i class="el-icon-s-home"/>首页</b-nav-item>
-          <b-nav-item class="nav-item" :to="{name: 'IndexSubscription'}" v-if="isLogin" exact exact-active-class="active" :active="active"><i class="el-icon-reading" />关注</b-nav-item>
-          <b-nav-item class="nav-item nav-item-msg" v-if="isLogin" exact exact-active-class="active">
+          <b-nav-item class="nav-item" :to="{name: 'IndexSubscription'}" v-if="isLogin" exact exact-active-class="active" :active="activeFollow"><i class="el-icon-reading" />关注</b-nav-item>
+          <b-nav-item class="nav-item nav-item-msg" v-if="isLogin" exact exact-active-class="active"  :active="activeNotification">
             <el-dropdown>
             <span class="el-dropdown-link">
+              <el-badge :is-dot="isDot" :class="activeNotification ? 'active':''">
                   <i class="el-icon-bell"/>消息
+              </el-badge>
             </span>
               <el-dropdown-menu slot="dropdown" class="dropdown">
                 <el-dropdown-item><i class="el-icon-chat-line-square"/>评论</el-dropdown-item>
                 <el-dropdown-item><i class="el-icon-message"/>简信</el-dropdown-item>
+                <el-dropdown-item><i class="el-icon-upload2"/>投稿请求</el-dropdown-item>
                 <el-dropdown-item><i class="iconfont el-icon-third-xihuan"/>喜欢和赞</el-dropdown-item>
                 <el-dropdown-item><i class="el-icon-finished"/>关注</el-dropdown-item>
                 <el-dropdown-item><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>
@@ -68,11 +71,13 @@ export default {
   name: 'Nav',
   data: function () {
     return {
-      isLogin: true
+      isLogin: true,
+      isDot: true
     }
   },
   props: {
-    'active': Boolean
+    'activeFollow': Boolean,
+    'activeNotification': Boolean
   },
   methods: {
     login () {
@@ -170,5 +175,8 @@ export default {
   .user-dropdown li:hover {
     color: #333;
     background: #f0f0f0;
+  }
+  .el-dropdown-link .active {
+    color: #ea6f5a;
   }
 </style>

@@ -1,11 +1,11 @@
 <template>
   <el-container>
     <el-header>
-      <nav-component :active="true"/>
+      <nav-component :activeFollow="true"/>
     </el-header>
     <el-container style="margin:50px auto">
       <el-aside width="280px" style="overflow: auto;height: 690px;">
-        <el-dropdown trigger="click" @command="handleCommand">
+        <el-dropdown trigger="click" @command="handleCommand" size="medium">
           <span class="el-dropdown-link">
             {{dropName}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>

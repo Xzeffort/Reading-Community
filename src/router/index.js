@@ -17,6 +17,11 @@ import IndexSubscription from '@/components/subscription/Index'
 import CollectionSubscription from '@/components/subscription/CollectionSubscription'
 import NoteBookSubscription from '@/components/subscription/NoteBookSubscription'
 import Bookmarks from '@/components/Bookmarks'
+import Notification from '@/components/Notification'
+import LikeNotification from '@/components/notification/Like'
+import FollowNotification from '@/components/notification/Follow'
+import CommentNotification from '@/components/notification/Comment'
+import OthersNotification from '@/components/notification/Others'
 
 Vue.use(Router)
 
@@ -107,6 +112,32 @@ export default new Router({
       path: '/bookmarks',
       name: 'Bookmarks',
       component: Bookmarks
+    },
+    {
+      path: '/notifications',
+      component: Notification,
+      children: [
+        {
+          path: 'comments',
+          name: 'CommentNotification',
+          component: CommentNotification
+        },
+        {
+          path: 'likes',
+          name: 'LikeNotification',
+          component: LikeNotification
+        },
+        {
+          path: 'follows',
+          name: 'FollowNotification',
+          component: FollowNotification
+        },
+        {
+          path: 'others',
+          name: 'OthersNotification',
+          component: OthersNotification
+        }
+      ]
     }
   ]
 })
