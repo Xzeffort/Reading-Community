@@ -14,12 +14,12 @@
               </el-badge>
             </span>
               <el-dropdown-menu slot="dropdown" class="dropdown">
-                <el-dropdown-item><i class="el-icon-chat-line-square"/>评论</el-dropdown-item>
-                <el-dropdown-item><i class="el-icon-message"/>简信</el-dropdown-item>
-                <el-dropdown-item><i class="el-icon-upload2"/>投稿请求</el-dropdown-item>
-                <el-dropdown-item><i class="iconfont el-icon-third-xihuan"/>喜欢和赞</el-dropdown-item>
-                <el-dropdown-item><i class="el-icon-finished"/>关注</el-dropdown-item>
-                <el-dropdown-item><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/comments')"><i class="el-icon-chat-line-square"/>评论</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/chats')"><i class="el-icon-message"/>简信</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/likes')"><i class="el-icon-upload2"/>投稿请求</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/likes')"><i class="iconfont el-icon-third-xihuan"/>喜欢和赞</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/follows')"><i class="el-icon-finished"/>关注</el-dropdown-item>
+                <el-dropdown-item @click.native="$router.push('/notifications/others')"><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </b-nav-item>

@@ -10,7 +10,7 @@
             <a href="#/notifications/comments"><i class="el-icon-chat-line-square"></i> <span>评论</span></a>
           </li>
           <li :class="activeClass === 2 ? 'active':''" @click="change(2)">
-            <a href="#/notifications/comments"><i class="el-icon-message"></i> <span>简信</span></a>
+            <a href="#/notifications/chats"><i class="el-icon-message"></i> <span>简信</span></a>
           </li>
           <li :class="activeClass === 3 ? 'active':''" @click="change(3)">
             <a href="#/notifications/comments"><i class="el-icon-upload2"></i> <span>投稿请求</span></a>

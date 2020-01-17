@@ -22,6 +22,8 @@ import LikeNotification from '@/components/notification/Like'
 import FollowNotification from '@/components/notification/Follow'
 import CommentNotification from '@/components/notification/Comment'
 import OthersNotification from '@/components/notification/Others'
+import ChatsNotification from '@/components/notification/Chat'
+import ChatContent from '@/components/notification/ChatContent'
 
 Vue.use(Router)
 
@@ -116,6 +118,7 @@ export default new Router({
     {
       path: '/notifications',
       component: Notification,
+      redirect: '/notifications/comments',
       children: [
         {
           path: 'comments',
@@ -136,6 +139,16 @@ export default new Router({
           path: 'others',
           name: 'OthersNotification',
           component: OthersNotification
+        },
+        {
+          path: 'chats',
+          name: 'ChatsNotification',
+          component: ChatsNotification
+        },
+        {
+          path: 'chats/:id',
+          name: 'ChatContent',
+          component: ChatContent
         }
       ]
     }
