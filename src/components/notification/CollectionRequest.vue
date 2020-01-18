@@ -1,0 +1,236 @@
+<template>
+  <el-row>
+    <el-col :span="24" style="min-width: 630px">
+      <div>
+        <div class="push-top">
+          <a href="#/notifications/requests" class="back-to-list">
+            <i class="el-icon-back"></i> 返回投稿请求列表
+          </a>
+          <b><a href="#/c/565a0de16ee1" target="_blank">LPL</a></b>
+          <div class="more-option">
+            <el-checkbox v-model="checked">只看未处理投稿</el-checkbox>
+          </div>
+        </div>
+        <ul class="note-list">
+          <li>
+            <div class="content">
+              <div class="author">
+                <a href="#/u/c794c9aee939" class="avatar">
+                  <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp">
+                </a>
+                <div class="info">
+                  <a href="#/u/c794c9aee939" class="nickname">奇怪的团子</a>
+                  <span class="time">13 分钟前</span>
+                </div>
+              </div>
+              <a href="#/p/cc962d260650" target="_blank" class="title">2020-01-18 dasd</a>
+              <p class="abstract">的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间</p>
+              <div class="meta">
+                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
+                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
+                <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+              </div>
+            </div>
+            <div class="push-action">
+              <span class="push-status">已拒绝/已收入</span>
+              <el-button type="text" style="outline: none;font-weight: 400;color: #ea6f5a;margin-right: 10px">移除</el-button>
+              <span class="push-time">2020.01.18 12:05 投稿</span>
+            </div>
+          </li>
+          <li>
+            <div class="content">
+              <div class="author">
+                <a href="#/u/c794c9aee939" class="avatar">
+                  <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp">
+                </a>
+                <div class="info">
+                  <a href="#/u/c794c9aee939" class="nickname">奇怪的团子</a>
+                  <span class="time">13 分钟前</span>
+                </div>
+              </div>
+              <a href="#/p/cc962d260650" target="_blank" class="title">2020-01-18 dasd</a>
+              <p class="abstract">的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间</p>
+              <div class="meta">
+                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
+                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
+                <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+              </div>
+            </div>
+            <div class="push-action">
+              <el-button round type="success" size="mini" style="outline: none">接受</el-button>
+              <el-button round type="info" size="mini" style="outline: none;margin-right: 10px" @click="dialogDenyVisible = true">拒绝</el-button>
+              <span class="push-time">2020.01.18 12:05 投稿</span>
+            </div>
+          </li>
+        </ul>
+        <el-dialog title="拒绝投稿" :visible.sync="dialogDenyVisible" width="30%">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 4, maxRows: 5}"
+            placeholder="（选填）回个简信给投稿者，告知您的拒绝理由，或继续加油什么的..."
+            v-model="reason">
+          </el-input>
+          <div slot="footer" class="dialog-footer">
+            <el-button type="success" @click="dialogDenyVisible = false">确 定</el-button>
+          </div>
+        </el-dialog>
+      </div>
+    </el-col>
+  </el-row>
+</template>
+
+<script>
+export default {
+  name: 'CollectionRequest',
+  data () {
+    return {
+      dialogDenyVisible: false,
+      checked: true,
+      reason: ''
+    }
+  }
+}
+</script>
+
+<style scoped>
+  a {
+    text-decoration: none;
+    color: #333333;
+  }
+  ul {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  ul {
+    list-style: none;
+  }
+  ul {
+    padding-left: 0;
+  }
+  img {
+    vertical-align: middle;
+  }
+  .push-top {
+    position: fixed;
+    width: 625px;
+    z-index: 1;
+    min-height: 35px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    text-align: center;
+    background-color: #fff;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .push-top .back-to-list {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    font-size: 14px;
+    color: #969696;
+  }
+  .push-top b {
+    display: inline-block;
+    padding: 0 140px 0 160px;
+    font-size: 14px;
+  }
+  .push-top .more-option {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 14px;
+    color: #969696;
+  }
+  .note-list {
+    padding-top: 50px;
+  }
+  .note-list li {
+    position: relative;
+    width: 100%;
+    margin: 0 0 15px;
+    padding: 15px 2px 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    word-wrap: break-word;
+  }
+  .note-list .author {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .note-list .author .avatar, .note-list .author .info {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .note-list .author .avatar {
+    margin: 0 5px 0 0;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+  }
+  .avatar {
+    width: 30px;
+    height: 30px;
+    display: block;
+    cursor: pointer;
+  }
+  .note-list .author .info span {
+    display: inline-block;
+    padding-left: 3px;
+    color: #969696;
+    vertical-align: middle;
+  }
+  .note-list .title {
+    margin: -7px 0 4px;
+    display: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .note-list .title:hover {
+    text-decoration: underline;
+  }
+  .note-list .title:visited {
+    color: #969696;
+  }
+  .note-list .abstract {
+    margin: 0 0 8px;
+    font-size: 13px;
+    line-height: 24px;
+    color: #999;
+    width: 600px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .note-list .meta {
+    padding-right: 0!important;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+  .note-list .push-action {
+    margin-top: 10px;
+  }
+  .note-list .push-status {
+    margin-right: 5px;
+    font-weight: 700;
+  }
+  .note-list .push-status,
+  .note-list .push-time {
+    font-size: 12px;
+    color: #969696;
+  }
+  .note-list .meta a {
+    margin-right: 10px;
+    color: #b4b4b4;
+  }
+  .note-list .meta span {
+    margin-right: 10px;
+    color: #b4b4b4;
+  }
+  .note-list .meta a:hover {
+    color: #787878;
+  }
+</style>

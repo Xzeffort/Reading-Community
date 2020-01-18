@@ -7,22 +7,34 @@
       <el-aside width="280px">
         <ul>
           <li :class="activeClass === 1 ? 'active':''" @click="change(1)">
-            <a href="#/notifications/comments"><i class="el-icon-chat-line-square"></i> <span>评论</span></a>
+            <a href="#/notifications/comments"><i class="el-icon-chat-line-square"></i>
+              <span>评论<el-badge style="margin-top: 7px;margin-left: 12px;" :value="4" /></span>
+            </a>
           </li>
           <li :class="activeClass === 2 ? 'active':''" @click="change(2)">
-            <a href="#/notifications/chats"><i class="el-icon-message"></i> <span>简信</span></a>
+            <a href="#/notifications/chats"><i class="el-icon-message"></i>
+              <span>简信<el-badge style="margin-top: 7px;margin-left: 12px;" :value="6" /></span>
+            </a>
           </li>
           <li :class="activeClass === 3 ? 'active':''" @click="change(3)">
-            <a href="#/notifications/comments"><i class="el-icon-upload2"></i> <span>投稿请求</span></a>
+            <a href="#/notifications/requests"><i class="el-icon-upload2"></i>
+              <span>投稿请求<el-badge style="margin-top: 7px;margin-left: 12px;" :value="12" /></span>
+            </a>
           </li>
           <li :class="activeClass === 4 ? 'active':''" @click="change(4)">
-            <a href="#/notifications/likes"><i class="iconfont el-icon-third-xihuan"></i> <span>喜欢和赞</span></a>
+            <a href="#/notifications/likes"><i class="iconfont el-icon-third-xihuan"></i>
+              <span>喜欢和赞<el-badge style="margin-top: 7px;margin-left: 12px;" :value="3" /></span>
+            </a>
           </li>
           <li :class="activeClass === 5 ? 'active':''" @click="change(5)">
-            <a href="#/notifications/follows"><i class="el-icon-finished"></i> <span>关注</span></a>
+            <a href="#/notifications/follows"><i class="el-icon-finished"></i>
+              <span>关注<el-badge style="margin-top: 7px;margin-left: 12px;" :value="5" /></span>
+            </a>
           </li>
           <li :class="activeClass === 6 ? 'active':''" @click="change(6)">
-            <a href="#/notifications/others"><i class="el-icon-more-outline"></i> <span>其他提醒</span></a>
+            <a href="#/notifications/others"><i class="el-icon-more-outline"></i>
+              <span>其他提醒<el-badge style="margin-top: 7px;margin-left: 12px;" :value="1" /></span>
+            </a>
           </li>
         </ul>
       </el-aside>

@@ -24,6 +24,9 @@ import CommentNotification from '@/components/notification/Comment'
 import OthersNotification from '@/components/notification/Others'
 import ChatsNotification from '@/components/notification/Chat'
 import ChatContent from '@/components/notification/ChatContent'
+import RequestNotification from '@/components/notification/Request'
+import AllRequestsNotification from '@/components/notification/AllRequests'
+import CollectionRequestNotification from '@/components/notification/CollectionRequest'
 
 Vue.use(Router)
 
@@ -149,6 +152,21 @@ export default new Router({
           path: 'chats/:id',
           name: 'ChatContent',
           component: ChatContent
+        },
+        {
+          path: 'requests',
+          name: 'RequestNotification',
+          component: RequestNotification
+        },
+        {
+          path: 'allRequests',
+          name: 'AllRequestsNotification',
+          component: AllRequestsNotification
+        },
+        {
+          path: 'collections/:id/submissions',
+          name: 'CollectionRequestNotification',
+          component: CollectionRequestNotification
         }
       ]
     }
