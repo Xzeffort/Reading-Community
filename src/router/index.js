@@ -27,6 +27,7 @@ import ChatContent from '@/components/notification/ChatContent'
 import RequestNotification from '@/components/notification/Request'
 import AllRequestsNotification from '@/components/notification/AllRequests'
 import CollectionRequestNotification from '@/components/notification/CollectionRequest'
+import Search from '@/components/Search'
 
 Vue.use(Router)
 
@@ -169,6 +170,11 @@ export default new Router({
           component: CollectionRequestNotification
         }
       ]
+    },
+    {
+      path: '/search',
+      name: 'Search',
+      component: Search
     }
   ]
 })
