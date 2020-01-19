@@ -28,6 +28,7 @@ import RequestNotification from '@/components/notification/Request'
 import AllRequestsNotification from '@/components/notification/AllRequests'
 import CollectionRequestNotification from '@/components/notification/CollectionRequest'
 import Search from '@/components/Search'
+import NoteBookCenter from '@/components/NoteBookCenter'
 
 Vue.use(Router)
 
@@ -175,6 +176,11 @@ export default new Router({
       path: '/search',
       name: 'Search',
       component: Search
+    },
+    {
+      path: '/writer/notebooks/:id',
+      name: 'NoteBookCenter',
+      component: NoteBookCenter
     }
   ]
 })
