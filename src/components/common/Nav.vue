@@ -30,7 +30,7 @@
 <!--            <b-button variant="info" class="my-2 my-sm-0" type="submit">搜索</b-button>-->
 <!--          </b-nav-form>-->
           <el-input class="search"
-            placeholder="搜索">
+            placeholder="搜索" v-model="search">
             <el-button slot="suffix" type="text" class="el-icon-search" circle size="mini"></el-button>
           </el-input>
         </b-navbar>
@@ -72,14 +72,26 @@ export default {
   data: function () {
     return {
       isLogin: true,
-      isDot: true
+      isDot: true,
+      search: ''
     }
   },
   props: {
     'activeFollow': Boolean,
     'activeNotification': Boolean
   },
+  created () {
+    this.getSearchUrlContent()
+  },
+  watch: {
+    $route () {
+      this.search = this.$route.query.q
+    }
+  },
   methods: {
+    getSearchUrlContent () {
+      this.search = this.$route.query.q
+    },
     login () {
       this.isLogin = true
     },

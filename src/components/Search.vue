@@ -34,12 +34,12 @@
           </ul>
         </div>
         <div class="search-recent">
-          <div class="search-recent-header clearfix"><span>最近搜索</span> <a>清空</a></div>
-          <ul class="search-recent-item-wrap">
-            <li>
-              <a @click="$router.push('/search?q=你在烦恼些什么')">
-                <i class="ic-search-history el-icon-time"></i> <span>你在烦恼些什么</span>
-                <i class="ic-unfollow el-icon-close" @click.stop="removeItem"></i>
+          <div class="search-recent-header clearfix"><span>最近搜索</span> <a @click="removeAll">清空</a></div>
+          <ul class="search-recent-item-wrap" ref="recentItemList">
+            <li v-for="n in 5" :key="n" :ref="`recentItem${n}`">
+              <a @click="$router.push('/search?q='+n)">
+                <i class="ic-search-history el-icon-time"></i> <span>你在烦恼些什么{{n}}</span>
+                <i class="ic-unfollow el-icon-close" @click.stop="removeItem(n)"></i>
               </a>
             </li>
           </ul>
@@ -242,78 +242,27 @@
             </el-dropdown>
           </div>
           <div class="result">503259 个结果</div>
-          <ul class="note-list">
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
+          <ul class="user-list">
+            <li v-for="n in 5" :key="n">
+              <a href="/u/b90070931f39" target="_blank" class="avatar-collection"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
+              <div class="info">
+                <a href="/c/5AUzod" target="_blank" class="name">
+                  旅行·在路上
+                </a>
                 <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+                  <span>
+                    收录了 210959 篇文章，3323258 人关注
+                  </span>
                 </div>
               </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
+              <el-button type="success" round class="follow" :ref="`followCollectionBtn${n}`"
+                         @click="followCollection(n)">
+                <i class="el-icon-plus"/><span>关注</span></el-button>
+              <el-button type="info" round class="follow" hidden :ref="`unfollowCollectionBtn${n}`"
+                         @click="unfollowCollection(n)"
+                         @mouseover.native="overFollowCollection(n)"
+                         @mouseleave.native="leaveFollowCollection(n)">
+                <i class="el-icon-check"/><span>已关注</span></el-button>
             </li>
           </ul>
           <el-pagination
@@ -343,78 +292,27 @@
             </el-dropdown>
           </div>
           <div class="result">503259 个结果</div>
-          <ul class="note-list">
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
+          <ul class="user-list">
+            <li v-for="n in 5" :key="n">
+              <a href="/u/b90070931f39" target="_blank" class="avatar-collection"><img src="../assets/avatar-notebook-default.png"></a>
+              <div class="info">
+                <a href="/c/5AUzod" target="_blank" class="name">
+                  旅行·在路上
+                </a>
                 <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+                  <span>
+                    0 篇文章，0 人关注
+                  </span>
                 </div>
               </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
+              <el-button type="success" round class="follow" :ref="`followNotebookBtn${n}`"
+                         @click="followNotebook(n)">
+                <i class="el-icon-plus"/><span>关注</span></el-button>
+              <el-button type="info" round class="follow" hidden :ref="`unfollowNotebookBtn${n}`"
+                         @click="unfollowNotebook(n)"
+                         @mouseover.native="overFollowNotebook(n)"
+                         @mouseleave.native="leaveFollowNotebook(n)">
+                <i class="el-icon-check"/><span>已关注</span></el-button>
             </li>
           </ul>
           <el-pagination
@@ -473,8 +371,11 @@ export default {
         this.activeClass = 4
       }
     },
-    removeItem (event) {
-      // todo
+    removeAll () {
+      this.$refs.recentItemList.innerHTML = ''
+    },
+    removeItem (index) {
+      this.$refs[`recentItem${index}`][0].remove()
     },
     followUser (index) {
       this.$refs[`followBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
@@ -491,6 +392,38 @@ export default {
     leaveFollow (e) {
       this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
       this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+    },
+    followCollection (index) {
+      this.$refs[`followCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`unfollowCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    unfollowCollection (index) {
+      this.$refs[`unfollowCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`followCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    overFollowCollection (e) {
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
+    },
+    leaveFollowCollection (e) {
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+    },
+    followNotebook (index) {
+      this.$refs[`followNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`unfollowNotebookBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    unfollowNotebook (index) {
+      this.$refs[`unfollowNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`followNotebookBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    overFollowNotebook (e) {
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
+    },
+    leaveFollowNotebook (e) {
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
     }
   }
 }
@@ -701,6 +634,12 @@ export default {
   .note-list .meta a:hover {
     color: #787878;
   }
+  .user-list li {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: normal;
+  }
   .user-list .avatar {
     width: 52px;
     height: 52px;
@@ -736,5 +675,18 @@ export default {
     float: right;
     margin-top: 7px;
     outline: none;
+  }
+  .avatar-collection {
+    width: 52px;
+    height: 52px;
+    margin-right: 8px;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .avatar-collection img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10%;
   }
 </style>
