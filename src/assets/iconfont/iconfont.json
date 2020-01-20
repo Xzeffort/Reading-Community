@@ -27,6 +27,13 @@
       "unicode_decimal": 58944
     },
     {
+      "icon_id": "999253",
+      "name": "黑名单",
+      "font_class": "heimingdan",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
       "icon_id": "1071082",
       "name": "评论2",
       "font_class": "pinglun2",
@@ -67,6 +74,13 @@
       "font_class": "aixin",
       "unicode": "e65c",
       "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "12717491",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
     }
   ]
 }

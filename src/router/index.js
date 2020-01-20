@@ -29,6 +29,9 @@ import AllRequestsNotification from '@/components/notification/AllRequests'
 import CollectionRequestNotification from '@/components/notification/CollectionRequest'
 import Search from '@/components/Search'
 import NoteBookCenter from '@/components/NoteBookCenter'
+import Settings from '@/components/Settings'
+import BasicSetting from '@/components/setting/Basic'
+import Blacklist from '@/components/setting/Blacklist'
 
 Vue.use(Router)
 
@@ -181,6 +184,23 @@ export default new Router({
       path: '/writer/notebooks/:id',
       name: 'NoteBookCenter',
       component: NoteBookCenter
+    },
+    {
+      path: '/settings',
+      component: Settings,
+      redirect: '/settings/basic',
+      children: [
+        {
+          path: 'basic',
+          name: 'BasicSetting',
+          component: BasicSetting
+        },
+        {
+          path: 'blacklist',
+          name: 'Blacklist',
+          component: Blacklist
+        }
+      ]
     }
   ]
 })
