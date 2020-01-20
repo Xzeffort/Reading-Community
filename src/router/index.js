@@ -32,6 +32,8 @@ import NoteBookCenter from '@/components/NoteBookCenter'
 import Settings from '@/components/Settings'
 import BasicSetting from '@/components/setting/Basic'
 import Blacklist from '@/components/setting/Blacklist'
+import Recycle from '@/components/Recycle'
+import RecycleBody from '@/components/recycle/RecycleBody'
 
 Vue.use(Router)
 
@@ -184,6 +186,17 @@ export default new Router({
       path: '/writer/notebooks/:id',
       name: 'NoteBookCenter',
       component: NoteBookCenter
+    },
+    {
+      path: '/writer/recycle',
+      component: Recycle,
+      children: [
+        {
+          path: ':id',
+          name: 'RecycleBody',
+          component: RecycleBody
+        }
+      ]
     },
     {
       path: '/settings',
