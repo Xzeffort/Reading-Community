@@ -72,12 +72,12 @@
             </el-container>
           </el-header>
           <el-main>
-            <el-menu :default-active="$route.path" router  mode="horizontal" class="menu">
-              <el-menu-item :index=url1>关注的专题/文集 93</el-menu-item>
-              <el-menu-item :index=url2>喜欢的文章 6473</el-menu-item>
+            <el-menu :default-active="$route.path" router mode="horizontal" class="menu">
+              <el-menu-item :index= url1>关注用户 93</el-menu-item>
+              <el-menu-item :index= url2>粉丝 6473</el-menu-item>
             </el-menu>
+            <router-view/>
           </el-main>
-          <router-view/>
         </el-container>
       </el-main>
       <el-aside style="padding-top: 20px">
@@ -104,7 +104,7 @@
               <i class="el-icon-notebook-1"></i> <span>我关注的专题/文集/连载</span>
             </a>
           <li>
-            <a href="#/users/123/subscriptions/liked_notes">
+            <a href="#/users/123/subscriptions">
               <i class="el-icon-present"></i> <span>我喜欢的文章</span>
             </a>
           </li>
@@ -145,7 +145,7 @@
 <script>
 import NavComponent from './common/Nav'
 export default {
-  name: 'UserCenterSubscription',
+  name: 'UserFollowCenter',
   components: {
     NavComponent
   },
@@ -154,16 +154,19 @@ export default {
       iconName: 'el-icon-check',
       buttonName: '已关注',
       isFollowed: true,
+      fit: 'contain',
+      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       description: '',
       showDescription: true,
-      url1: '/users/123/subscriptions',
-      url2: '/users/123/subscriptions/liked_notes'
+      url1: '/users/123/following',
+      url2: '/users/123/following/fans'
     }
   },
   methods: {
     overFollow () {
       this.iconName = 'el-icon-close'
       this.buttonName = '取消关注'
+      console.log(this.$route.path)
     },
     leaveFollow () {
       this.iconName = 'el-icon-check'
@@ -224,8 +227,8 @@ export default {
     clear: both;
   }
   .articles .list {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
   .list li {
     margin-bottom: 12px;
@@ -374,5 +377,4 @@ export default {
     border: 1px solid #ddd;
     border-radius: 10%;
   }
-
 </style>

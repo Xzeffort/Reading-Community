@@ -35,6 +35,11 @@ import Blacklist from '@/components/setting/Blacklist'
 import Recycle from '@/components/Recycle'
 import RecycleBody from '@/components/recycle/RecycleBody'
 import UserCenterSubscription from '@/components/UserCenterSubscription'
+import UserFollowCenter from '@/components/UserFollowCenter'
+import Followers from '@/components/follow/Followers'
+import Fans from '@/components/follow/Fans'
+import FollowCollection from '@/components/subscription/FollowCollection'
+import LikeNoteBook from '@/components/subscription/LikeNoteBook'
 
 Vue.use(Router)
 
@@ -97,8 +102,35 @@ export default new Router({
     },
     {
       path: '/users/:id/subscriptions',
-      name: 'UserCenterSubscription',
-      component: UserCenterSubscription
+      component: UserCenterSubscription,
+      children: [
+        {
+          path: '',
+          name: 'FollowCollection',
+          component: FollowCollection
+        },
+        {
+          path: 'liked_notes',
+          name: 'LikeNoteBook',
+          component: LikeNoteBook
+        }
+      ]
+    },
+    {
+      path: '/users/:id/following',
+      component: UserFollowCenter,
+      children: [
+        {
+          path: '',
+          name: 'Followers',
+          component: Followers
+        },
+        {
+          path: 'fans',
+          name: 'Fans',
+          component: Fans
+        }
+      ]
     },
     {
       path: '/subscription',
