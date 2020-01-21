@@ -71,14 +71,36 @@
             </el-container>
           </el-header>
           <el-main>
-            <el-menu default-active="1"  mode="horizontal" class="menu" @select="handleSelect">
-              <el-menu-item index="1"><i class="el-icon-tickets"></i>文章</el-menu-item>
-              <el-menu-item index="2"><i class="el-icon-bell"></i>动态</el-menu-item>
-              <el-menu-item index="3"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
-              <el-menu-item index="4"><i class="el-icon-star-off"></i>热门</el-menu-item>
+            <el-menu default-active="2"  mode="horizontal" class="menu" @select="handleSelect">
+              <el-menu-item index="1"><i class="el-icon-tickets"></i>关注的专题/文集 93</el-menu-item>
+              <el-menu-item index="2"><i class="el-icon-bell"></i>喜欢的文章 6473</el-menu-item>
             </el-menu>
           </el-main>
+          <ul class="user-list" ref="collectionList" hidden>
+            <li v-for="n in 5" :key="n">
+              <a href="#/u/b90070931f39" target="_blank" class="avatar-collection"><img src="../assets/avatar-notebook-default.png"></a>
+              <div class="info">
+                <a href="#/c/5AUzod" target="_blank" class="name">
+                  旅行·在路上
+                </a>
+                <div class="meta">
+                  <span>
+                    0 篇文章，0 人关注
+                  </span>
+                </div>
+              </div>
+              <el-button type="success" round class="follow" :ref="`followNotebookBtn${n}`"
+                         @click="followNotebook(n)" hidden>
+                <i class="el-icon-plus"/><span>关注</span></el-button>
+              <el-button type="info" round class="follow"  :ref="`unfollowNotebookBtn${n}`"
+                         @click="unfollowNotebook(n)"
+                         @mouseover.native="overFollowNotebook(n)"
+                         @mouseleave.native="leaveFollowNotebook(n)">
+                <i class="el-icon-check"/><span>已关注</span></el-button>
+            </li>
+          </ul>
           <ul class="articles infinite-list"
+              ref="articleList"
               v-infinite-scroll="load"
               infinite-scroll-disabled="disabled">
             <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
@@ -133,35 +155,44 @@
           </el-input>
           <el-button v-if="!showDescription" type="success" plain round style="outline: none">保存</el-button>
           <el-button v-if="!showDescription" type="text" round style="outline: none" @click="cancleUpdatedDescription">取消</el-button>
-            <div v-if="showDescription">你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么</div>
+          <div v-if="showDescription">你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么</div>
         </div>
         <ul class="list user-dynamic">
           <li>
-            <a href="#/u/2">
+            <a href="#/users/123/subscriptions">
               <i class="el-icon-notebook-1"></i> <span>我关注的专题/文集/连载</span>
             </a>
           <li>
-          <a href="#/u/1">
-            <i class="el-icon-present"></i> <span>我喜欢的文章</span>
-          </a>
+            <a href="#/users/123/subscriptions">
+              <i class="el-icon-present"></i> <span>我喜欢的文章</span>
+            </a>
           </li>
         </ul>
         <div>
           <div class="title">我创建的专题</div>
-          <div class="new-collection-block">
+          <!--     如果有专题 下面隐藏     -->
+          <div class="new-collection-block" hidden>
             <el-button class="create" icon="el-icon-plus" type="text" style="color: #42c02e">创建一个新专题</el-button>
           </div>
+          <el-button class="create" icon="el-icon-plus" type="text" style="color: #42c02e">新建专题</el-button>
+          <ul class="list">
+            <li>
+              <a href="/c/565a0de16ee1" target="_blank" class="avatar-collection">
+                <img src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR%29VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
+              <a href="/c/565a0de16ee1" target="_blank" class="name">LPL</a>
+            </li>
+          </ul>
         </div>
         <div><div class="title">
           我的文集
         </div>
           <ul class="list">
             <li>
-            <a href="/nb/10792727" target="_blank"><i class="el-icon-notebook-2"></i>
-            </a>
-            <a href="/nb/10792727" target="_blank" class="name">
-              日记本
-            </a>
+              <a href="/nb/10792727" target="_blank"><i class="el-icon-notebook-2"></i>
+              </a>
+              <a href="/nb/10792727" target="_blank" class="name">
+                日记本
+              </a>
             </li>
           </ul>
         </div>
@@ -173,7 +204,7 @@
 <script>
 import NavComponent from './common/Nav'
 export default {
-  name: 'User',
+  name: 'UserCenterSubscription',
   components: {
     NavComponent
   },
@@ -200,7 +231,13 @@ export default {
   },
   methods: {
     handleSelect (key, keyPath) {
-      console.log(key, keyPath)
+      if (key === '1') {
+        this.$refs.articleList.setAttribute('hidden', 'hidden')
+        this.$refs.collectionList.removeAttribute('hidden')
+      } else {
+        this.$refs.articleList.removeAttribute('hidden')
+        this.$refs.collectionList.setAttribute('hidden', 'hidden')
+      }
     },
     load () {
       this.loading = true
@@ -223,6 +260,38 @@ export default {
     },
     cancleUpdatedDescription () {
       this.showDescription = true
+    },
+    followCollection (index) {
+      this.$refs[`followCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`unfollowCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    unfollowCollection (index) {
+      this.$refs[`unfollowCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`followCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    overFollowCollection (e) {
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
+    },
+    leaveFollowCollection (e) {
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
+      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+    },
+    followNotebook (index) {
+      this.$refs[`followNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`unfollowNotebookBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    unfollowNotebook (index) {
+      this.$refs[`unfollowNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
+      this.$refs[`followNotebookBtn${index}`][0].$el.removeAttribute('hidden')
+    },
+    overFollowNotebook (e) {
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
+    },
+    leaveFollowNotebook (e) {
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
+      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
     }
   }
 }
@@ -294,7 +363,9 @@ export default {
     clear: both;
   }
   .create {
+    float: right;
     outline: none;
+    padding-top: 5px;
   }
   .header {
     float: left;
@@ -404,6 +475,64 @@ export default {
     width: 120px;
     margin: 23px 0 23px 16px;
     font-size: 15px;
+    outline: none;
+  }
+  .list li a {
+    display: inline-block;
+  }
+  .avatar-collection {
+    margin-right: 5px;
+    width: 32px;
+    height: 32px;
+  }
+  .avatar-collection img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10%;
+  }
+  .user-list li {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: normal;
+  }
+  .user-list .avatar-collection {
+    width: 52px;
+    height: 52px;
+    margin-right: 8px;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .user-list .info {
+    vertical-align: middle;
+    display: inline-block;
+    max-width: 450px;
+  }
+  .user-list .name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+  }
+  .user-list .meta {
+    padding-top: 2px;
+    font-size: 0;
+    color: #969696;
+  }
+  .user-list .meta span {
+    margin-right: 10px;
+    padding-right: 10px;
+    font-size: 12px;
+    border-right: 1px solid #969696;
+  }
+  .user-list .meta span:last-child {
+    border: none;
+  }
+  .user-list .follow {
+    float: right;
+    margin-top: 7px;
     outline: none;
   }
 </style>

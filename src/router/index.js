@@ -34,6 +34,7 @@ import BasicSetting from '@/components/setting/Basic'
 import Blacklist from '@/components/setting/Blacklist'
 import Recycle from '@/components/Recycle'
 import RecycleBody from '@/components/recycle/RecycleBody'
+import UserCenterSubscription from '@/components/UserCenterSubscription'
 
 Vue.use(Router)
 
@@ -93,6 +94,11 @@ export default new Router({
       path: '/nb/:id',
       name: 'NoteBook',
       component: NoteBook
+    },
+    {
+      path: '/users/:id/subscriptions',
+      name: 'UserCenterSubscription',
+      component: UserCenterSubscription
     },
     {
       path: '/subscription',
