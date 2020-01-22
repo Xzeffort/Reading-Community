@@ -41,6 +41,7 @@ import Fans from '@/components/follow/Fans'
 import FollowCollection from '@/components/subscription/FollowCollection'
 import LikeNoteBook from '@/components/subscription/LikeNoteBook'
 import Notebooks from '@/components/write/Notebooks'
+import Note from '@/components/write/Note'
 
 Vue.use(Router)
 
@@ -227,8 +228,14 @@ export default new Router({
       children: [
         {
           path: ':id',
-          name: 'Notebooks',
-          component: Notebooks
+          component: Notebooks,
+          children: [
+            {
+              path: 'notes/:id',
+              name: 'Note',
+              component: Note
+            }
+          ]
         }
       ]
     },

@@ -15,6 +15,15 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>
+                  发布文章
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  更新文章
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  置顶文章
+                </el-dropdown-item>
+                <el-dropdown-item>
                   <i class="iconfont el-icon-third-wenjianjia" style="font-size: 10px;"></i>
                   <!--       todo 弹窗           -->
                   移动文章
@@ -35,7 +44,11 @@
 <!--        </div>-->
       </div>
     </el-col>
-    <el-col :span="17"><div class="grid-content bg-purple"></div></el-col>
+    <el-col :span="17" style="height: 100%">
+      <div style="height: 100%;">
+        <router-view/>
+      </div>
+    </el-col>
   </el-row>
 </template>
 
