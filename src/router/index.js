@@ -40,6 +40,7 @@ import Followers from '@/components/follow/Followers'
 import Fans from '@/components/follow/Fans'
 import FollowCollection from '@/components/subscription/FollowCollection'
 import LikeNoteBook from '@/components/subscription/LikeNoteBook'
+import Notebooks from '@/components/write/Notebooks'
 
 Vue.use(Router)
 
@@ -221,9 +222,15 @@ export default new Router({
       component: Search
     },
     {
-      path: '/writer/notebooks/:id',
-      name: 'NoteBookCenter',
-      component: NoteBookCenter
+      path: '/writer/notebooks',
+      component: NoteBookCenter,
+      children: [
+        {
+          path: ':id',
+          name: 'Notebooks',
+          component: Notebooks
+        }
+      ]
     },
     {
       path: '/writer/recycle',

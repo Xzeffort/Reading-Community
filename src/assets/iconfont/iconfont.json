@@ -76,6 +76,13 @@
       "unicode_decimal": 58972
     },
     {
+      "icon_id": "7001541",
+      "name": "文件夹",
+      "font_class": "wenjianjia",
+      "unicode": "e688",
+      "unicode_decimal": 59016
+    },
+    {
       "icon_id": "12717491",
       "name": "退出",
       "font_class": "tuichu",

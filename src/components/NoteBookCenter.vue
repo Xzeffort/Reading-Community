@@ -20,19 +20,21 @@
           </div>
         </div>
         <ul class="clist">
-          <li title="日记本" v-for="n in 4" :key="n"
-              :class="activeClass === n ? 'active':''" @click="selectItem(n)">
-            <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
-              <span class="el-dropdown-link" style="outline: none">
-                <i class="el-icon-s-tools"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
-                <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(id)">删除文集</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <span>日记本{{n}}</span>
-          </li>
+          <router-link :to="url">
+              <li title="日记本" v-for="n in 4" :key="n"
+                :class="activeClass === n ? 'active':''" @click="selectItem(n)">
+              <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
+                <span class="el-dropdown-link" style="outline: none">
+                  <i class="el-icon-s-tools"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
+                  <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(id)">删除文集</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <span>日记本{{n}}</span>
+            </li>
+          </router-link>
         </ul>
         <div class="h-5Am">
           <div style="float: left"> <i class="el-icon-delete"></i><span>回收站</span></div>
@@ -57,12 +59,9 @@
         </div>
       </el-dialog>
     </el-col>
-    <el-col :span="20">
-      <div class="grid-content bg-purple-light">
-        <el-row>
-          <el-col :span="8"><div class="grid-content bg-purple"></div></el-col>
-          <el-col :span="16"><div class="grid-content bg-purple-light"></div></el-col>
-        </el-row>
+    <el-col :span="20" style="height: 100%;">
+      <div style="height: 100%;">
+        <router-view/>
       </div>
     </el-col>
   </el-row>
@@ -76,7 +75,8 @@ export default {
     dialogInfoVisible: false,
     dialogEditVisible: false,
     notebookName: '',
-    activeClass: 1
+    activeClass: 1,
+    url: '/writer/notebooks/23'
   }),
   methods: {
     selectItem (index) {
@@ -112,6 +112,9 @@ export default {
   }
   ul {
     padding: 0;
+  }
+  .router-link-active {
+    text-decoration: none;
   }
   .aside {
     position: relative;
@@ -224,25 +227,5 @@ export default {
   }
   .Yv5Zx i {
     margin-left: 2px;
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
   }
 </style>
