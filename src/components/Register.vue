@@ -32,7 +32,7 @@
           prefix-icon="el-icon-lock" show-password v-model="password">
         </el-input>
       </div>
-      <el-button class="register_button" round>注册</el-button>
+      <el-button class="register_button" round @click="register">注册</el-button>
       <p class="sign-up-msg">点击 “注册” 即表示您同意并愿意遵守简书<br> <a target="_blank" href="http://www.jianshu.com/p/c44d171298ce">用户协议</a> 和 <a target="_blank" href="http://www.jianshu.com/p/2ov8x3">隐私政策</a> 。</p>
     </div>
   </div>
@@ -59,6 +59,7 @@ export default {
       this.show = true
     },
     sendMsg () {
+      var _this = this
       // 验证码倒计时
       if (!(/^1[3456789]\d{9}$/.test(this.username))) {
         this.$message.error('手机号码有误，请重填')
@@ -67,7 +68,18 @@ export default {
       if (!this.timer) {
         this.count = TIME_COUNT
         this.isDisabled = false
-        this.$message.success('发送成功，请注意查收')
+        this.axios.get('/api/user/code', {
+          params: {
+            telephone: _this.username
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.$message.success('发送成功，请注意查收')
+            localStorage.setItem('code', res.data.data)
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
         this.timer = setInterval(() => {
           if (this.count > 0 && this.count <= TIME_COUNT) {
             this.count--
@@ -81,6 +93,27 @@ export default {
           }
         }, 1000)
       }
+    },
+    register () {
+      let _this = this
+      if (_this.code !== localStorage.getItem('code')) {
+        _this.$message.error('验证码错误')
+        return
+      }
+      _this.axios.post('/api/user/register', {
+        'nickname': _this.nickname,
+        'telephone': _this.username,
+        'password': _this.password
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message.success('注册成功')
+          _this.$router.push({name: 'signIn'})
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

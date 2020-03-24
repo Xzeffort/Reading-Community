@@ -106,12 +106,26 @@ export default {
   },
   methods: {
     submitForm (formName) {
+      let _this = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
-          console.log(this.userForm)
+          if (_this.userForm.code !== localStorage.getItem('code')) {
+            _this.$message.error('验证码错误')
+            return
+          }
+          this.axios.put('/api/user/resetPassword', {
+            'telephone': _this.userForm.telephone,
+            'password': _this.userForm.password
+          }).then(function (res) {
+            if (res.data.code) {
+              _this.$message.success('修改成功')
+              _this.$router.push({name: 'signIn'})
+            }
+          }).catch(function (error) {
+            console.log(error)
+          })
         } else {
-          console.log('error submit!!')
+          _this.$message.error('您输入的信息有误')
           return false
         }
       })
@@ -119,8 +133,21 @@ export default {
     sendMsg () {
       // 验证码倒计时
       if (!this.timer) {
+        let _this = this
         this.count = TIME_COUNT
         this.isDisabled = false
+        this.axios.get('/api/user/code', {
+          params: {
+            telephone: _this.userForm.telephone
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.$message.success('发送成功，请注意查收')
+            localStorage.setItem('code', res.data.data)
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
         this.timer = setInterval(() => {
           if (this.count > 0 && this.count <= TIME_COUNT) {
             this.count--

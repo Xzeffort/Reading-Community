@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../stores/store'
 import Index from '@/components/Index'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
@@ -44,6 +45,10 @@ import Notebooks from '@/components/write/Notebooks'
 import Note from '@/components/write/Note'
 
 Vue.use(Router)
+
+if (localStorage.getItem('token')) {
+  store.commit('set_token', localStorage.getItem('token'))
+}
 
 export default new Router({
   routes: [

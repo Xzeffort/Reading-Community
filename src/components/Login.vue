@@ -12,18 +12,18 @@
         <el-input
           class="username"
           placeholder="账号"
-          prefix-icon="el-icon-user" v-model="username">
+          prefix-icon="el-icon-user" v-model="form.username">
         </el-input>
         <el-input
           class="password"
           placeholder="密码"
-          prefix-icon="el-icon-lock" show-password v-model="password">
+          prefix-icon="el-icon-lock" show-password v-model="form.password">
         </el-input>
       </div>
       <div>
         <el-link class="forget" :underline="false" href="#/users/password/mobile_reset">忘记密码?</el-link>
       </div>
-      <el-button class="login_button" round>登录</el-button>
+      <el-button class="login_button" round @click="login">登录</el-button>
     </div>
   </div>
 </template>
@@ -33,8 +33,33 @@ export default {
   name: 'login',
   data () {
     return {
-      username: '',
-      password: ''
+      form: {
+        'username': '',
+        'password': ''
+      }
+    }
+  },
+  methods: {
+    login () {
+      var _this = this
+      let data = {
+        username: _this.form.username,
+        password: _this.form.password
+      }
+      this.axios.post('/api/user/login',
+        _this.$qs.stringify(data)
+      ).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '登录成功',
+            type: 'success'
+          })
+          _this.$store.commit('set_token', 'Bearer ' + res.data.data.token)
+          localStorage.setItem('token', 'Bearer ' + res.data.data.token)
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      })
     }
   }
 }
