@@ -48,7 +48,7 @@
           <span class="el-dropdown-link">
              <div class="head">
                 <span class="el-dropdown-link">
-                  <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  <el-avatar :size="40" :src="headUrl"></el-avatar>
 <!--                      <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
                 </span>
              </div>
@@ -57,7 +57,7 @@
             <el-dropdown-item><i class="el-icon-user-solid"/>我的主页</el-dropdown-item>
             <el-dropdown-item><i class="el-icon-star-on"/>我收藏的文章</el-dropdown-item>
             <el-dropdown-item><i class="iconfont el-icon-third-aixin"/>我喜欢的文章</el-dropdown-item>
-            <el-dropdown-item><i class="el-icon-s-tools"/>设置</el-dropdown-item>
+            <el-dropdown-item @click.native="$router.push({name: 'BasicSetting'})"><i class="el-icon-s-tools"/>设置</el-dropdown-item>
             <el-dropdown-item command="logout"><i class="iconfont el-icon-third-tuichu" style="margin-left: 2px"/>退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -70,11 +70,12 @@
 <script>
 export default {
   name: 'Nav',
-  data: function () {
+  data () {
     return {
-      isLogin: true,
+      isLogin: false,
       isDot: true,
-      search: ''
+      search: '',
+      headUrl: ''
     }
   },
   props: {
@@ -83,6 +84,7 @@ export default {
   },
   created () {
     this.getSearchUrlContent()
+    this.login()
   },
   watch: {
     $route () {
@@ -94,11 +96,36 @@ export default {
       this.search = this.$route.query.q
     },
     login () {
-      this.isLogin = true
+      let _this = this
+      if (localStorage.getItem('token')) {
+        this.isLogin = true
+      } else {
+        this.isLogin = false
+      }
+      this.axios.get('/api/user/info').then((res) => {
+        if (res.data.code) {
+          _this.headUrl = res.data.data.headUrl
+        }
+      }).catch((res) => {
+        console.log(res)
+      })
     },
     handleCommand (command) {
       if (command === 'logout') {
-        this.isLogin = false
+        this.axios.get('/api/user/logout').then((res) => {
+          if (res.data.code) {
+            this.$message({
+              message: '注销成功',
+              type: 'success'
+            })
+            this.isLogin = false
+            this.$store.commit('del_token')
+          } else {
+            this.$message.error(res.data.msg)
+          }
+        }).catch((res) => {
+          console.log(res)
+        })
       }
     }
   }

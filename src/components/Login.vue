@@ -56,6 +56,7 @@ export default {
           })
           _this.$store.commit('set_token', 'Bearer ' + res.data.data.token)
           localStorage.setItem('token', 'Bearer ' + res.data.data.token)
+          _this.$router.push({name: 'Index'})
         } else {
           _this.$message.error(res.data.msg)
         }
