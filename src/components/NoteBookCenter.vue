@@ -11,8 +11,10 @@
             <el-collapse-transition>
               <div v-show="showCreate">
                 <div class="transition-box" style="margin-top: 10px">
-                  <input type="text" placeholder="请输入文集名..." name="name" class="_1CtV4">
-                  <el-button type="success" size="small" round style="outline: none;background-color: unset;color: #42c02e;">提交</el-button>
+                  <input type="text" placeholder="请输入文集名..." name="name" class="_1CtV4" v-model="notebookName">
+                  <el-button type="success"
+                             size="small" round
+                             style="outline: none;background-color: unset;color: #42c02e;" @click="createNotebook">提交</el-button>
                   <el-button type="text" style="outline: none;color: #999;" @click="showCreate=false">取消</el-button>
                 </div>
               </div>
@@ -20,24 +22,28 @@
           </div>
         </div>
         <ul class="clist">
-          <router-link :to="url">
-              <li title="日记本" v-for="n in 4" :key="n"
+              <li :title="notebooks[n].name" v-for="(notebook,n) in notebooks" :key="n"
                 :class="activeClass === n ? 'active':''" @click="selectItem(n)">
-              <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
-                <span class="el-dropdown-link" style="outline: none">
-                  <i class="el-icon-s-tools"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
-                  <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(id)">删除文集</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-              <span>日记本{{n}}</span>
+                <router-link :to="url" style="text-decoration: none; color: #f2f2f2">
+                  <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
+                    <span class="el-dropdown-link" style="outline: none">
+                      <i class="el-icon-s-tools"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
+                      <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(n)">删除文集</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                  <span>{{notebook.name}}</span>
+                </router-link>
             </li>
-          </router-link>
         </ul>
         <div class="h-5Am">
-          <div style="float: left"> <i class="el-icon-delete"></i><span>回收站</span></div>
+          <div style="float: left"> <i class="el-icon-delete"></i>
+            <span>
+              <router-link to="/writer/recycle/" style="text-decoration: none; color: #999999">回收站</router-link>
+            </span>
+          </div>
           <span class="Yv5Zx" @click="dialogInfoVisible = true">遇到问题<i class="el-icon-question"></i></span>
         </div>
       </div>
@@ -45,7 +51,7 @@
         <el-input v-model="notebookName" placeholder="请输入内容"></el-input>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogEditVisible = false">取 消</el-button>
-          <el-button type="success" @click="dialogEditVisible = false">确 定</el-button>
+          <el-button type="success" @click="updateNoteBook">确 定</el-button>
         </div>
       </el-dialog>
       <el-dialog title="常见问题" :visible.sync="dialogInfoVisible" width="320px" center>
@@ -61,7 +67,7 @@
     </el-col>
     <el-col :span="20" style="height: 100%;">
       <div style="height: 100%;">
-        <router-view/>
+        <router-view :notebookId="notebookId" :initArticles="initArticles"/>
       </div>
     </el-col>
   </el-row>
@@ -75,22 +81,121 @@ export default {
     dialogInfoVisible: false,
     dialogEditVisible: false,
     notebookName: '',
-    activeClass: 1,
-    url: '/writer/notebooks/23'
+    activeClass: 0,
+    url: '/writer/notebooks/23',
+    notebooks: [],
+    updateIndex: '',
+    notebookId: '',
+    initArticles: []
   }),
+  created () {
+    this.getInfo()
+  },
   methods: {
     selectItem (index) {
       this.activeClass = index
+      this.url = '/writer/notebooks/' + this.notebooks[index].id
+      this.notebookId = this.notebooks[index].id
+      this.updateIndex = index
     },
-    deleteNoteBook (id) {
-      this.$confirm('确认删除文集《22》，文章将被移动到回收站。', '提示', {
+    getInfo () {
+      let _this = this
+      this.axios.get('/api/notebooks').then(function (res) {
+        if (res.data.code) {
+          _this.notebooks = res.data.data
+          _this.notebookId = _this.notebooks[0].id
+          _this.axios.get('/api/articles', {
+            params: { 'noteId': _this.notebooks[0].id }
+          }).then(function (res) {
+            if (res.data.code) {
+              _this.initArticles = res.data.data
+            } else {
+              _this.$message.error(res.data.msg)
+            }
+          }).catch(function (error) {
+            console.log(error)
+          })
+        } else {
+          _this.$message.error(res.data.msg)
+          _this.$router.push({name: 'signIn'})
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    createNotebook () {
+      let _this = this
+      if (_this.notebookName === '') {
+        _this.$message.error('文集名称不能为空')
+        return
+      }
+      this.axios.post('/api/notebooks',
+        {
+          'name': _this.notebookName
+        }).then(function (res) {
+        if (res.data.code) {
+          let notebook = {
+            'name': res.data.data.name,
+            'id': res.data.data.id,
+            'userId': res.data.data.userId
+          }
+          _this.notebooks.push(notebook)
+          _this.$message.success('添加成功')
+          _this.showCreate = false
+          _this.notebookName = ''
+        } else {
+          _this.$message.error(res.data.msg)
+          _this.notebookName = ''
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    updateNoteBook () {
+      let _this = this
+      if (_this.notebookName === '') {
+        _this.$message.error('文集名称不能为空')
+        return
+      }
+      this.axios.put('/api/notebooks',
+        {
+          'id': _this.notebooks[_this.updateIndex].id,
+          'name': _this.notebookName
+        }).then(function (res) {
+        if (res.data.code) {
+          _this.notebooks[_this.updateIndex].name = _this.notebookName
+          _this.$message.success('更新成功')
+          _this.dialogEditVisible = false
+          _this.notebookName = ''
+        } else {
+          _this.$message.error(res.data.msg)
+          _this.notebookName = ''
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    deleteNoteBook (n) {
+      this.$confirm('确认删除文集《' + this.notebooks[n].name + '》，文章将被移动到回收站。', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        let _this = this
+        this.axios.delete('/api/notebooks',
+          {
+            'data': {
+              'id': this.notebooks[n].id
+            }
+          }).then(function (res) {
+          if (res.data.code) {
+            _this.$message.success('删除成功')
+            _this.notebooks.splice(n, 1)
+          } else {
+            _this.$message.error(res.data.msg)
+          }
+        }).catch(function (error) {
+          console.log(error)
         })
       }).catch(() => {
         this.$message({
@@ -179,6 +284,9 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+  }
+  .clist a:hover {
+    text-decoration: none;
   }
   .clist .hidden {
     display: none;

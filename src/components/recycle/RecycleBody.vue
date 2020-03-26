@@ -1,51 +1,80 @@
 <template>
   <div style="height: 100%">
     <div class="title">
-      <h3>2019-12-26</h3>
+      <h3>{{article.title}}</h3>
       <router-link to="/writer/notebooks/123"><a class="_1i-No">×</a></router-link>
     </div>
     <div class="noteBody">
       <div class="note-view">
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
-        <h2>测试撒打算测试撒打算测试撒打算<br></h2><p>测试撒打算测试撒打算测试撒打算测试撒打算测试撒打算</p>
+        {{article.content}}
       </div>
     </div>
-    <div class="footer">
-      <el-button type="success" class="footer_btn">恢复文章</el-button>
-      <el-button type="danger" class="footer_btn">彻底删除</el-button>
+    <div class="footer" v-if="article.id">
+      <el-button type="success" class="footer_btn" @click="recycleArticle">恢复文章</el-button>
+      <el-button type="danger" class="footer_btn" @click="deleteArticle">彻底删除</el-button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'RecycleBody'
+  name: 'RecycleBody',
+  props: ['article', 'articleIndex'],
+  watch: {
+    article (val) {
+      console.log('子组件接收' + val)
+    },
+    articleIndex (val) {
+      console.log('子组件接收' + val)
+    }
+  },
+  methods: {
+    recycleArticle () {
+      let _this = this
+      this.axios.put('/api/articles/recycle',
+        {
+          'id': this.article.id
+        }).then(function (res) {
+        if (res.data.code) {
+          _this.$message.success('恢复成功')
+          _this.$router.push('/writer/notebooks/' + _this.article.notebookId + '/notes/' + _this.article.id)
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    deleteArticle () {
+      this.$confirm('确认删除文章《' + this.article.title + '》，文章将被彻底删除，无法恢复', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let _this = this
+        this.axios.delete('/api/articles/recycle',
+          {
+            'data': {
+              'id': _this.article.id
+            }
+          }).then(function (res) {
+          if (res.data.code) {
+            _this.$message.success('删除成功')
+            _this.$emit('getMessage', _this.articleIndex)
+          } else {
+            _this.$message.error(res.data.msg)
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    }
+  }
 }
 </script>
 

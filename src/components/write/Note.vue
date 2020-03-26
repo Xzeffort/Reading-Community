@@ -4,7 +4,7 @@
       <input type="text" class="title" value="java上传照片于七牛云，解决使用非静态图片"/>
       <p class="status">已保存</p>
     </div>
-    <editor/>
+<!--    <editor/>-->
   </div>
 </template>
 

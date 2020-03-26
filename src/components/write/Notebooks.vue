@@ -6,46 +6,51 @@
           <el-button type="text" class="createBtn" @click="createNoteBook"><i class="el-icon-circle-plus"/>新建文章</el-button>
         </div>
         <ul class="list" ref="list">
-          <li v-for="n in count" :key="n"
-              :class="[activeClass === n ? 'active':'',list[n-1].isPublish ? 'publish':'noPublish']" @click="selectItem(n)">
-            <i class="tag"/>
-            <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
+          <router-link :to="url">
+            <li v-for="(article,n) in articles" :key="n"
+                :class="[activeClass === n ? 'active':'',article.isPublished ? 'publish':'noPublish']" @click="selectItem(n)">
+              <i class="tag"/>
+              <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
               <span class="el-dropdown-link" style="outline: none">
                 <i class="el-icon-s-tools"/>
               </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>
-                  发布文章
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  更新文章
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  置顶文章
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  <i class="iconfont el-icon-third-wenjianjia" style="font-size: 10px;"></i>
-                  <!--       todo 弹窗           -->
-                  移动文章
-                </el-dropdown-item>
-                <el-dropdown-item @click.native="deleteNoteBook(n)">
-                  <i class="el-icon-delete" style="font-size: 14px;"></i>
-                  删除文章
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <span class="title">{{list[n-1].title}}</span>
-            <span class="content">{{list[n-1].content}}</span>
-            <span class="fontCount">字数:{{list[n-1].fontCount}}</span>
-          </li>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="publishNoteBook" v-if="!article.isPublished">
+                    发布文章
+                  </el-dropdown-item>
+                  <el-dropdown-item v-else>
+                    已发布
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    更新文章
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="setTop" v-if="article.isPublished">
+                    置顶文章
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <i class="iconfont el-icon-third-wenjianjia" style="font-size: 10px;"></i>
+                    <!--       todo 弹窗           -->
+                    移动文章
+                  </el-dropdown-item>
+                  <el-dropdown-item @click.native="deleteNoteBook(n)">
+                    <i class="el-icon-delete" style="font-size: 14px;"></i>
+                    删除文章
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              <span class="title">
+                <span :class="article.isTop ? 'topIcon':'noTopIcon'">置顶</span>
+                {{article.title}}
+              </span>
+              <span class="content">{{article.content}}</span>
+              <span class="fontCount">字数:{{article.words}}</span>
+            </li>
+          </router-link>
         </ul>
-<!--        <div class="footer">-->
-<!--          <el-button type="text" class="createBtn"><i class="el-icon-plus"/>在下方新建文章</el-button>-->
-<!--        </div>-->
       </div>
     </el-col>
     <el-col :span="17" style="height: 100%">
-      <div style="height: 100%;">
+      <div>
         <router-view/>
       </div>
     </el-col>
@@ -55,48 +60,129 @@
 <script>
 export default {
   name: 'Notebooks',
+  props: ['notebookId', 'initArticles'],
   data: () => ({
-    activeClass: 1,
-    count: 2,
-    list: [
-      {
-        'title': 'java上传照片于七牛云，解决使用非静态图片',
-        'content': '开发语言：Java编辑器：IntelliJ IDEA操作系统：win10基于spring-boot',
-        'fontCount': 456,
-        'isPublish': true
-      },
-      {
-        'title': 'java上传照片于七牛云，解决使用非静态图片',
-        'content': '开发语言：Java编辑器：IntelliJ IDEA操作系统：win10基于spring-boot',
-        'fontCount': 456,
-        'isPublish': false
-      }
-    ]
+    activeClass: -1,
+    url: '',
+    articles: [],
+    updateIndex: '',
+    topIndex: ''
   }),
+  watch: {
+    notebookId (val) {
+      // this.notebookId = val
+      console.log('子组件接收' + this.notebookId)
+      this.getInfo()
+      this.activeClass = -1
+    },
+    initArticles (val) {
+      this.articles = val
+    }
+  },
   methods: {
     selectItem (index) {
       this.activeClass = index
+      this.url = '/writer/notebooks/' + this.notebookId + '/notes/' + this.articles[index].id
+      this.updateIndex = index
+    },
+    getInfo () {
+      let _this = this
+      this.axios.get('/api/articles', {
+        params: { 'noteId': this.notebookId }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = res.data.data
+          for (let i = 0; i < _this.articles.length; i++) {
+            if (_this.articles[i].isTop) {
+              _this.topIndex = i
+              break
+            }
+          }
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     createNoteBook () {
-      this.list.push({
-        'title': this.getDate(),
-        'content': '',
-        'fontCount': 0,
-        'isPublish': false
+      let _this = this
+      this.axios.post('/api/articles', {
+        'notebookId': this.notebookId
+      }).then(function (res) {
+        if (res.data.code) {
+          let article = {
+            'id': res.data.data.id,
+            'title': _this.getDate(),
+            'content': '',
+            'words': 0,
+            'isPublished': false
+          }
+          _this.articles.push(article)
+          _this.activeClass = _this.articles.length - 1
+          _this.$message.success('创建成功')
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
-      this.count++
-      this.activeClass = this.count
     },
-    deleteNoteBook (id) {
-      this.$confirm('确认删除文章《2020-01-22》，文章将被移动到回收站，您可以在那里恢复它。60天后将被彻底删除。', '提示', {
+    publishNoteBook () {
+      let _this = this
+      this.axios.put('/api/articles/publish', {
+        'id': this.articles[_this.updateIndex].id
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles[_this.updateIndex].isPublished = true
+          _this.$message.success('发布成功')
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    setTop () {
+      let _this = this
+      this.axios.put('/api/articles/top', {
+        'id': this.articles[_this.updateIndex].id
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles[_this.updateIndex].isTop = true
+          _this.articles[_this.topIndex].isTop = false
+          _this.topIndex = _this.updateIndex
+          _this.$message.success('置顶成功')
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    deleteNoteBook (n) {
+      this.$confirm('确认删除文章《' + this.articles[n].title + '》，文章将被移动到回收站，您可以在那里恢复它。60天后将被彻底删除。', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        let _this = this
+        this.axios.delete('/api/articles',
+          {
+            'data': {
+              'id': this.articles[n].id
+            }
+          }).then(function (res) {
+          if (res.data.code) {
+            _this.$message.success('删除成功')
+          } else {
+            _this.$message.error(res.data.msg)
+          }
+        }).catch(function (error) {
+          console.log(error)
         })
+        this.articles.splice(n, 1)
+        this.activeClass = -1
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -198,6 +284,9 @@ export default {
   .list li.active, .list li:hover {
     background-color: #e6e6e6;
   }
+  .list a:hover {
+    text-decoration: none;
+  }
   .publish .tag {
     position: absolute;
     top: 30px;
@@ -229,6 +318,23 @@ export default {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .title .topIcon {
+    float: left;
+    margin-top: 4px;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    line-height: 22px;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #ec7259;
+    text-align: center;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+  .title .noTopIcon {
+    display: none;
   }
   .setting {
     float: right;

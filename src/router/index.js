@@ -236,7 +236,7 @@ export default new Router({
           component: Notebooks,
           children: [
             {
-              path: 'notes/:id',
+              path: 'notes/:nbId',
               name: 'Note',
               component: Note
             }

@@ -2,23 +2,24 @@
   <el-row style="height: 100%;">
     <el-col :span="5" style="height: 100%;">
       <div class="aside">
-        <div class="_1T8aX"><i class="el-icon-delete-solid"/>回收站(8)</div>
+        <div class="_1T8aX"><i class="el-icon-delete-solid"/>回收站({{articles.length}})</div>
         <ul>
-          <li v-for="n in 30" :key="n"  :class="activeClass === n ? 'active':''"
+
+          <li v-for="(article,n) in articles" :key="n"  :class="activeClass === n ? 'active':''"
               @mouseover="overDate(n)"
               @mouseleave="leaveDate(n)"
               @click="index(n)">
-            <a href="#/writer/recycle/2123">
-              <h5><i class="el-icon-s-order"/>无标题文章</h5>
-              <span data-destroy-days-left="35" data-destroy-date="2020-02-24" :ref="`date${n}`">35天后清除</span>
-            </a>
+            <router-link :to="url">
+              <h5><i class="el-icon-s-order"/>{{article.title}}</h5>
+              <span data-destroy-days-left="35" data-destroy-date="2020-06-24" :ref="`date${n}`">60天后清除</span>
+            </router-link>
           </li>
         </ul>
       </div>
     </el-col>
     <el-col :span="19" style="height: 100%;">
       <div style="height: 100%;">
-        <router-view/>
+        <router-view :article="article" :articleIndex="articleIndex" @getMessage="getVal"/>
       </div>
     </el-col>
   </el-row>
@@ -29,12 +30,39 @@ export default {
   name: 'Recycle',
   data () {
     return {
-      activeClass: 1
+      activeClass: -1,
+      articles: [],
+      url: '',
+      article: '',
+      articleIndex: ''
     }
+  },
+  created () {
+    this.getInfo()
   },
   methods: {
     index (index) {
       this.activeClass = index
+      this.url = '/writer/recycle/' + this.articles[index].id
+      this.article = this.articles[index]
+      this.articleIndex = index
+    },
+    getInfo () {
+      let _this = this
+      this.axios.get('/api/articles/recycle').then(function (res) {
+        if (res.data.code) {
+          _this.articles = res.data.data
+        } else {
+          _this.$message.error(res.data.msg)
+          _this.$router.push({name: 'signIn'})
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getVal (val) {
+      console.log('删除的ID' + val)
+      this.articles.splice(val, 1)
     },
     overDate (index) {
       this.$refs[`date${index}`][0].innerHTML = '将于' + this.$refs[`date${index}`][0].dataset.destroyDate + '后清除'
