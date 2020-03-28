@@ -51,6 +51,7 @@ if (localStorage.getItem('token')) {
 }
 
 export default new Router({
+  linkActiveClass: 'active',
   routes: [
     {
       path: '/',

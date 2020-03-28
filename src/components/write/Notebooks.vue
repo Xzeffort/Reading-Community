@@ -1,16 +1,15 @@
 <template>
-  <el-row style="height: 100%;">
+  <el-row style="height: 100%;overflow:hidden; ">
     <el-col :span="7" style="height: 100%;">
       <div class="body">
         <div class="top">
           <el-button type="text" class="createBtn" @click="createNoteBook"><i class="el-icon-circle-plus"/>新建文章</el-button>
         </div>
         <ul class="list" ref="list">
-          <router-link :to="url">
-            <li v-for="(article,n) in articles" :key="n"
-                :class="[activeClass === n ? 'active':'',article.isPublished ? 'publish':'noPublish']" @click="selectItem(n)">
+            <router-link :to="{path:'/writer/notebooks/' + article.notebookId + '/notes/'+article.id}" tag="li" v-for="(article,n) in articles" :key="n"
+                :class="[article.isPublished ? 'publish':'noPublish']" @click.native="selectItem(n)">
               <i class="tag"/>
-              <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
+              <el-dropdown class="setting hidden" trigger="click" >
               <span class="el-dropdown-link" style="outline: none">
                 <i class="el-icon-s-tools"/>
               </span>
@@ -21,7 +20,7 @@
                   <el-dropdown-item v-else>
                     已发布
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item @click.native="updateNoteBook">
                     更新文章
                   </el-dropdown-item>
                   <el-dropdown-item @click.native="setTop" v-if="article.isPublished">
@@ -42,16 +41,16 @@
                 <span :class="article.isTop ? 'topIcon':'noTopIcon'">置顶</span>
                 {{article.title}}
               </span>
-              <span class="content">{{article.content}}</span>
+              <!--    过滤html          -->
+              <span class="content"> {{article.content}}</span>
               <span class="fontCount">字数:{{article.words}}</span>
-            </li>
-          </router-link>
+            </router-link>
         </ul>
       </div>
     </el-col>
     <el-col :span="17" style="height: 100%">
       <div>
-        <router-view/>
+        <router-view :isUpdated="isUpdated" @getUpdateContent="getUpdateContent"/>
       </div>
     </el-col>
   </el-row>
@@ -60,35 +59,21 @@
 <script>
 export default {
   name: 'Notebooks',
-  props: ['notebookId', 'initArticles'],
   data: () => ({
-    activeClass: -1,
-    url: '',
     articles: [],
     updateIndex: '',
-    topIndex: ''
+    topIndex: '',
+    updateArticle: {},
+    isUpdated: false
   }),
-  watch: {
-    notebookId (val) {
-      // this.notebookId = val
-      console.log('子组件接收' + this.notebookId)
-      this.getInfo()
-      this.activeClass = -1
-    },
-    initArticles (val) {
-      this.articles = val
-    }
-  },
   methods: {
     selectItem (index) {
-      this.activeClass = index
-      this.url = '/writer/notebooks/' + this.notebookId + '/notes/' + this.articles[index].id
       this.updateIndex = index
     },
-    getInfo () {
+    getInfo (id) {
       let _this = this
       this.axios.get('/api/articles', {
-        params: { 'noteId': this.notebookId }
+        params: { 'noteId': id }
       }).then(function (res) {
         if (res.data.code) {
           _this.articles = res.data.data
@@ -96,6 +81,9 @@ export default {
             if (_this.articles[i].isTop) {
               _this.topIndex = i
               break
+            }
+            if (_this.articles[i].id === _this.$route.params.nbId) {
+              _this.updateIndex = i
             }
           }
         } else {
@@ -108,7 +96,7 @@ export default {
     createNoteBook () {
       let _this = this
       this.axios.post('/api/articles', {
-        'notebookId': this.notebookId
+        'notebookId': this.$route.params.id
       }).then(function (res) {
         if (res.data.code) {
           let article = {
@@ -116,10 +104,10 @@ export default {
             'title': _this.getDate(),
             'content': '',
             'words': 0,
-            'isPublished': false
+            'isPublished': false,
+            'notebookId': _this.$route.params.id
           }
           _this.articles.push(article)
-          _this.activeClass = _this.articles.length - 1
           _this.$message.success('创建成功')
         } else {
           _this.$message.error(res.data.msg)
@@ -131,11 +119,40 @@ export default {
     publishNoteBook () {
       let _this = this
       this.axios.put('/api/articles/publish', {
-        'id': this.articles[_this.updateIndex].id
+        'id': this.articles[_this.updateIndex].id,
+        'title': this.updateArticle.title,
+        'content': this.updateArticle.content,
+        'words': this.updateArticle.words
       }).then(function (res) {
         if (res.data.code) {
           _this.articles[_this.updateIndex].isPublished = true
+          _this.articles[_this.updateIndex].title = res.data.data.title
+          _this.articles[_this.updateIndex].content = res.data.data.content
+          _this.articles[_this.updateIndex].words = res.data.data.words
+          _this.isUpdated = true
           _this.$message.success('发布成功')
+        } else {
+          _this.$message.error(res.data.msg)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    updateNoteBook () {
+      let _this = this
+      this.axios.put('/api/articles', {
+        'id': this.articles[_this.updateIndex].id,
+        'title': this.updateArticle.title,
+        'content': this.updateArticle.content,
+        'words': this.updateArticle.words
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles[_this.updateIndex].isPublished = true
+          _this.articles[_this.updateIndex].title = res.data.data.title
+          _this.articles[_this.updateIndex].content = res.data.data.content
+          _this.articles[_this.updateIndex].words = res.data.data.words
+          _this.isUpdated = true
+          _this.$message.success('更新成功')
         } else {
           _this.$message.error(res.data.msg)
         }
@@ -182,13 +199,19 @@ export default {
           console.log(error)
         })
         this.articles.splice(n, 1)
-        this.activeClass = -1
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
         })
       })
+    },
+    // 父组件接受更新的文章数据
+    getUpdateContent (val) {
+      this.updateArticle = val
+      this.isUpdated = false
+      // this.articles[val.index].title = val.title
+      // this.articles[val.index].content = val.content
     },
     getDate () {
       var date = new Date()
@@ -204,6 +227,17 @@ export default {
       }
       return year + seperator1 + month + seperator1 + strDate
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.getInfo(to.params.id)
+    })
+  },
+  beforeRouteUpdate (to, from, next) {
+    if (from.params.id !== to.params.id) {
+      this.getInfo(to.params.id)
+    }
+    next()
   }
 }
 </script>
@@ -280,6 +314,9 @@ export default {
   }
   .list li.active {
     border-left-color: #ec7259;
+  }
+  .list li.active .hidden{
+    display: block;
   }
   .list li.active, .list li:hover {
     background-color: #e6e6e6;

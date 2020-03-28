@@ -22,21 +22,19 @@
           </div>
         </div>
         <ul class="clist">
-              <li :title="notebooks[n].name" v-for="(notebook,n) in notebooks" :key="n"
-                :class="activeClass === n ? 'active':''" @click="selectItem(n)">
-                <router-link :to="url" style="text-decoration: none; color: #f2f2f2">
-                  <el-dropdown class="setting" trigger="click" :class="activeClass === n ? '':'hidden'">
-                    <span class="el-dropdown-link" style="outline: none">
-                      <i class="el-icon-s-tools"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
-                      <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(n)">删除文集</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                  <span>{{notebook.name}}</span>
-                </router-link>
-            </li>
+            <router-link :to="{path:'/writer/notebooks/'+notebook.id}" tag="li" :title="notebook.name" v-for="(notebook,n) in notebooks" :key="n"
+                         @click.native="selectItem(n)">
+                <el-dropdown class="setting hidden" trigger="click">
+                  <span class="el-dropdown-link" style="outline: none">
+                    <i class="el-icon-s-tools"></i>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item icon="el-icon-edit" @click.native="dialogEditVisible = true">修改文集</el-dropdown-item>
+                    <el-dropdown-item icon="el-icon-delete" @click.native="deleteNoteBook(n)">删除文集</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+                <span>{{notebook.name}}</span>
+            </router-link>
         </ul>
         <div class="h-5Am">
           <div style="float: left"> <i class="el-icon-delete"></i>
@@ -67,7 +65,7 @@
     </el-col>
     <el-col :span="20" style="height: 100%;">
       <div style="height: 100%;">
-        <router-view :notebookId="notebookId" :initArticles="initArticles"/>
+        <router-view/>
       </div>
     </el-col>
   </el-row>
@@ -81,21 +79,14 @@ export default {
     dialogInfoVisible: false,
     dialogEditVisible: false,
     notebookName: '',
-    activeClass: 0,
-    url: '/writer/notebooks/23',
     notebooks: [],
-    updateIndex: '',
-    notebookId: '',
-    initArticles: []
+    updateIndex: ''
   }),
   created () {
     this.getInfo()
   },
   methods: {
     selectItem (index) {
-      this.activeClass = index
-      this.url = '/writer/notebooks/' + this.notebooks[index].id
-      this.notebookId = this.notebooks[index].id
       this.updateIndex = index
     },
     getInfo () {
@@ -103,18 +94,6 @@ export default {
       this.axios.get('/api/notebooks').then(function (res) {
         if (res.data.code) {
           _this.notebooks = res.data.data
-          _this.notebookId = _this.notebooks[0].id
-          _this.axios.get('/api/articles', {
-            params: { 'noteId': _this.notebooks[0].id }
-          }).then(function (res) {
-            if (res.data.code) {
-              _this.initArticles = res.data.data
-            } else {
-              _this.$message.error(res.data.msg)
-            }
-          }).catch(function (error) {
-            console.log(error)
-          })
         } else {
           _this.$message.error(res.data.msg)
           _this.$router.push({name: 'signIn'})
@@ -298,6 +277,9 @@ export default {
     background-color: #666;
     border-left: 3px solid #ec7259;
     padding-left: 12px;
+  }
+  .clist .active .hidden{
+    display: block;
   }
   .clist span {
     display: block;

@@ -61,7 +61,7 @@
             <el-dropdown-item command="logout"><i class="iconfont el-icon-third-tuichu" style="margin-left: 2px"/>退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <b-button pill variant="outline-danger" size="lg" @click="$router.push('/writer/notebooks/123')"><i class="el-icon-edit"/>写文章</b-button>
+        <b-button pill variant="outline-danger" size="lg" @click="$router.push('/writer/notebooks/')"><i class="el-icon-edit"/>写文章</b-button>
       </b-navbar-nav>
     </b-navbar>
   </div>
