@@ -84,7 +84,7 @@ export default {
   },
   created () {
     this.getSearchUrlContent()
-    this.login()
+    this.info()
   },
   watch: {
     $route () {
@@ -95,16 +95,12 @@ export default {
     getSearchUrlContent () {
       this.search = this.$route.query.q
     },
-    login () {
+    info () {
       let _this = this
-      if (localStorage.getItem('token')) {
-        this.isLogin = true
-      } else {
-        this.isLogin = false
-      }
       this.axios.get('/api/user/info').then((res) => {
         if (res.data.code) {
           _this.headUrl = res.data.data.headUrl
+          _this.isLogin = true
         }
       }).catch((res) => {
         console.log(res)
@@ -120,6 +116,8 @@ export default {
             })
             this.isLogin = false
             this.$store.commit('del_token')
+            localStorage.removeItem('userId')
+            localStorage.removeItem('token')
           } else {
             this.$message.error(res.data.msg)
           }
