@@ -1,7 +1,7 @@
 <template>
   <div class="navTitle">
     <b-navbar >
-      <b-navbar-brand href="#" class="logo">简书</b-navbar-brand>
+      <b-navbar-brand href="#" class="logo">知书</b-navbar-brand>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="nav">
           <b-nav-item class="nav-item" :to="{name: 'Index'}" exact exact-active-class="active"><i class="el-icon-s-home"/>首页</b-nav-item>
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import Bus from '../bus.js'
 export default {
   name: 'Nav',
   data () {
@@ -101,6 +102,7 @@ export default {
         if (res.data.code) {
           _this.headUrl = res.data.data.headUrl
           _this.isLogin = true
+          Bus.$emit('headUrl', _this.headUrl)
         }
       }).catch((res) => {
         console.log(res)
@@ -115,6 +117,7 @@ export default {
               type: 'success'
             })
             this.isLogin = false
+            this.$router.go(0)
             this.$store.commit('del_token')
             localStorage.removeItem('userId')
             localStorage.removeItem('token')

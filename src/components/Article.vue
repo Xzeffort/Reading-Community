@@ -151,7 +151,7 @@
             <el-row :gutter="20">
               <el-col :span="2">
                 <div>
-                  <el-avatar :size="40" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                  <el-avatar :size="40" :src="headUrl"></el-avatar>
                 </div>
               </el-col>
               <el-col :span="22">
@@ -172,100 +172,105 @@
             <el-row :gutter="20" style="margin-top: 20px" v-if="showCommentBtn">
               <el-col :span="5" :offset="19">
                 <div>
-                  <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                  <el-button type="danger" :disabled="headUrl === ''"
+                             @click="postComment"
+                             round size="small" style="outline: none">发布</el-button>
                   <el-button type="info" round size="small" @click="showCommentBtn = false">取消</el-button>
                 </div>
               </el-col>
             </el-row>
-            <h3 class="QxT4hD" style="margin-top: 40px">
-              <div class="_10KzV0">
-                <span>精彩评论</span>
-                <span class="countNum">13</span>
-              </div>
-            </h3>
-            <div class="allCommentList">
-              <div class="list" v-for="n in 5" :key="n">
-                <div>
-                  <el-avatar :size="45"></el-avatar>
-                </div>
-                <div style="margin-left: 8px">
-                  <span>
-                    <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
-                  </span>
-                  <div style="margin-top: 4px;color: #969696;font-size: 14px">
-                    <span>{{n}}楼</span>
-                    <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
-                  </div>
-                  <div class="comment-content" style="width: 700px">
-                    我们都是为了过的更舒服而已何来对错，何来对错何来对错何来对错何来对错何来对错
-                  </div>
-                  <div>
-                    <el-button type="text" class="likeBtn">
-                      <i class="iconfont el-icon-third-dianzan3"></i>33
-                    </el-button>
-                    <el-button type="text" class="replyBtn" @click="replyClassicBody(n)">
-                      <i class="iconfont el-icon-third-pinglun2"></i>回复
-                    </el-button>
-                  </div>
-                  <div :ref="`replyClassicBody${n}`" hidden>
-                    <el-row :gutter="20">
-                      <el-col :span="24">
-                        <div>
-                          <el-input
-                            class="comment"
-                            type="textarea"
-                            placeholder="写下你的评论..."
-                            :autosize="{ minRows: 5, maxRows: 6}"
-                            maxlength="180"
-                            show-word-limit
-                            v-model="reply">
-                          </el-input>
-                        </div>
-                      </el-col>
-                    </el-row>
-                    <el-row :gutter="20" style="margin-top: 20px">
-                      <el-col :span="5" :offset="19">
-                        <div>
-                          <el-button type="danger" round size="small" style="outline: none">发布</el-button>
-                          <el-button type="info" round size="small" @click="cancelReplyClassicBody(n)">取消</el-button>
-                        </div>
-                      </el-col>
-                    </el-row>
-                  </div>
-                </div>
-              </div>
-            </div>
+<!--            <h3 class="QxT4hD" style="margin-top: 40px">-->
+<!--              <div class="_10KzV0">-->
+<!--                <span>精彩评论</span>-->
+<!--                <span class="countNum">13</span>-->
+<!--              </div>-->
+<!--            </h3>-->
+<!--            <div class="allCommentList">-->
+<!--              <div class="list" v-for="n in 5" :key="n">-->
+<!--                <div>-->
+<!--                  <el-avatar :size="45"></el-avatar>-->
+<!--                </div>-->
+<!--                <div style="margin-left: 8px">-->
+<!--                  <span>-->
+<!--                    <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>-->
+<!--                  </span>-->
+<!--                  <div style="margin-top: 4px;color: #969696;font-size: 14px">-->
+<!--                    <span>{{n}}楼</span>-->
+<!--                    <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>-->
+<!--                  </div>-->
+<!--                  <div class="comment-content" style="width: 700px">-->
+<!--                    我们都是为了过的更舒服而已何来对错，何来对错何来对错何来对错何来对错何来对错-->
+<!--                  </div>-->
+<!--                  <div>-->
+<!--                    <el-button type="text" class="likeBtn">-->
+<!--                      <i class="iconfont el-icon-third-dianzan3"></i>33-->
+<!--                    </el-button>-->
+<!--                    <el-button type="text" class="replyBtn" @click="replyClassicBody(n)">-->
+<!--                      <i class="iconfont el-icon-third-pinglun2"></i>回复-->
+<!--                    </el-button>-->
+<!--                  </div>-->
+<!--                  <div :ref="`replyClassicBody${n}`" hidden>-->
+<!--                    <el-row :gutter="20">-->
+<!--                      <el-col :span="24">-->
+<!--                        <div>-->
+<!--                          <el-input-->
+<!--                            class="comment"-->
+<!--                            type="textarea"-->
+<!--                            placeholder="写下你的评论..."-->
+<!--                            :autosize="{ minRows: 5, maxRows: 6}"-->
+<!--                            maxlength="180"-->
+<!--                            show-word-limit-->
+<!--                            v-model="reply">-->
+<!--                          </el-input>-->
+<!--                        </div>-->
+<!--                      </el-col>-->
+<!--                    </el-row>-->
+<!--                    <el-row :gutter="20" style="margin-top: 20px">-->
+<!--                      <el-col :span="5" :offset="19">-->
+<!--                        <div>-->
+<!--                          <el-button type="danger" :disabled="headUrl === ''" round size="small" style="outline: none">发布</el-button>-->
+<!--                          <el-button type="info" round size="small" @click="cancelReplyClassicBody(n)">取消</el-button>-->
+<!--                        </div>-->
+<!--                      </el-col>-->
+<!--                    </el-row>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
             <h3 class="QxT4hD" style="margin-top: 40px">
               <div class="_10KzV0">
                 <span>全部评论</span>
-                <span class="countNum">200</span>
+                <span class="countNum">{{comments.totalElements}}</span>
               </div>
             </h3>
             <div class="allCommentList">
-              <div class="list" v-for="n in 5" :key="n">
+              <div class="list" v-for="(data, n) in comments.list" :key="n">
                 <div>
-                  <el-avatar :size="45"></el-avatar>
+                  <el-avatar :size="45" :src="data.comment.headUrl"></el-avatar>
                 </div>
                 <div style="margin-left: 8px">
                   <span>
-                    <a class="nickname" href="/u/4b9ff86a7af4" target="_blank">你在烦恼什么</a>
+                    <router-link tag="a" class="nickname"
+                                 :to="/u/+data.comment.userId" target="_blank">{{data.comment.nickname}}</router-link>
                   </span>
                   <div style="margin-top: 4px;color: #969696;font-size: 14px">
-                    <span>{{n}}楼</span>
-                    <time datetime="2019-04-15T03:39:10.000Z">2019.04.15 11:39:10</time>
+                    <span>{{n+1}}楼</span>
+                    <time>{{data.comment.createDate}}</time>
                   </div>
                   <div class="comment-content" style="width: 700px">
-                    我们都是为了过的更舒服而已何来对错，何来对错何来对错何来对错何来对错何来对错
+                    {{data.comment.content}}
                   </div>
                   <div>
-                    <el-button type="text" class="likeBtn">
-                      <i class="iconfont el-icon-third-dianzan3"></i>33
+                    <el-button type="text" class="likeBtn"
+                               :class="data.comment.isLike ? 'active' : '' "
+                               @click="likeComment(data.comment)">
+                      <i class="iconfont el-icon-third-dianzan3"></i>{{data.comment.likes}}
                     </el-button>
                     <el-button type="text" class="replyBtn" @click="replyBody(n)">
                       <i class="iconfont el-icon-third-pinglun2"></i>回复
                     </el-button>
                   </div>
-                  <div :ref="`replyBody${n}`" hidden>
+                  <div :ref="`replyBody${n}`" hidden style="margin-bottom: 20px">
                     <el-row :gutter="20">
                       <el-col :span="24">
                         <div>
@@ -284,19 +289,77 @@
                     <el-row :gutter="20" style="margin-top: 20px">
                       <el-col :span="5" :offset="19">
                         <div>
-                          <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                          <el-button :disabled="headUrl === ''"
+                                     @click="postReply(n,data.comment.userId,data.comment.commentId)"
+                                     type="danger" round size="small" style="outline: none">发布</el-button>
                           <el-button type="info" round size="small" @click="cancelReplyBody(n)">取消</el-button>
                         </div>
                       </el-col>
                     </el-row>
                   </div>
+                  <div style="width: 700px;">
+                    <div v-for="(r) in data.replies" :key="r.id">
+                      <div style="display: flex;padding-top: 15px;border-top: 1px solid #eee;">
+                        <div>
+                          <el-avatar :size="45" :src="r.headUrl"></el-avatar>
+                        </div>
+                        <div style="margin-left: 8px">
+                        <span>
+                          <router-link tag="a" class="nickname"
+                                       :to="/u/+r.userId" target="_blank">{{r.nickname}}</router-link>
+                        </span>
+                          <div style="margin-top: 4px;color: #969696;font-size: 14px">
+                            <time>{{r.createDate}}</time>
+                          </div>
+                          <div class="comment-content" style="width: 700px">
+                            <router-link tag="a" style="color: #0681d0"
+                                         :to="/u/+r.toUserId">@{{r.toNickname}}</router-link>
+                            {{r.content}}
+                          </div>
+                          <div>
+                            <el-button type="text" class="replyBtn" @click="replyClassicBody(r.id)">
+                              <i class="iconfont el-icon-third-pinglun2"></i>回复
+                            </el-button>
+                          </div>
+                        </div>
+                      </div>
+                      <div :ref="`replyClassicBody${r.id}`" hidden style="margin-bottom: 20px">
+                        <el-row :gutter="20">
+                          <el-col :span="24">
+                            <div>
+                              <el-input
+                                class="comment"
+                                type="textarea"
+                                placeholder="写下你的评论..."
+                                :autosize="{ minRows: 5, maxRows: 6}"
+                                maxlength="180"
+                                v-model="reply"
+                                show-word-limit>
+                              </el-input>
+                            </div>
+                          </el-col>
+                        </el-row>
+                        <el-row :gutter="20" style="margin-top: 20px">
+                          <el-col :span="5" :offset="19">
+                            <div>
+                              <el-button :disabled="headUrl === ''"
+                                         @click="postReply(n,r.userId,data.comment.commentId)"
+                                         type="danger" round size="small" style="outline: none">发布</el-button>
+                              <el-button type="info" round size="small" @click="cancelReplyClassicBody(r.id)">取消</el-button>
+                            </div>
+                          </el-col>
+                        </el-row>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="block">
                 <el-pagination
-                  :page-size="100"
+                  :page-size="5"
                   layout="prev, pager, next, jumper"
-                  :total="1000">
+                  @current-change="handleCurrentChange"
+                  :total="comments.totalElements">
                 </el-pagination>
               </div>
             </div>
@@ -393,6 +456,7 @@
 
 <script>
 import NavComponent from './common/Nav'
+import Bus from './bus.js'
 export default {
   name: 'Article',
   components: {
@@ -413,11 +477,21 @@ export default {
       articleInfo: {},
       otherArticles: [],
       likeUsers: [],
-      isMyself: false
+      isMyself: false,
+      headUrl: '',
+      comments: [],
+      replyContent: '',
+      showCommentBody: false
     }
   },
   created () {
     this.getArticle(this.$route.params.id)
+    this.getComments(1)
+  },
+  mounted () {
+    Bus.$on('headUrl', (data) => {
+      this.headUrl = data
+    })
   },
   computed: {
     disabled () {
@@ -472,7 +546,7 @@ export default {
       this.articleInfo.isLiked = !this.articleInfo.isLiked
       this.axios.put('/api/p/like', {
         'userId': localStorage.getItem('userId'),
-        'articleId': _this.$route.params.id
+        'typeId': _this.$route.params.id
       }).then(function (res) {
         if (res.data.code === '403') {
           this.$message({
@@ -547,6 +621,93 @@ export default {
         message: '举报成功',
         type: 'success',
         center: true
+      })
+    },
+    postComment () {
+      let _this = this
+      this.axios.post('/api/comment', {
+        'userId': localStorage.getItem('userId'),
+        'articleId': _this.$route.params.id,
+        'content': _this.comment
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '评论成功',
+            type: 'success',
+            center: true
+          })
+          let data = {
+            'comment': res.data.data,
+            'replies': []
+          }
+          _this.comments.list.splice(0, 0, data)
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    postReply (index, toUserId, commentId) {
+      let _this = this
+      this.axios.post('/api/reply', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': toUserId,
+        'articleId': _this.$route.params.id,
+        'content': _this.reply,
+        'commentId': commentId
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '回复成功',
+            type: 'success',
+            center: true
+          })
+          _this.comments.list[index].replies.push(res.data.data)
+          _this.$refs[`replyBody${index}`][0].setAttribute('hidden', 'hidden')
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    handleCurrentChange (val) {
+      this.getComments(val)
+    },
+    getComments (page) {
+      let _this = this
+      this.axios.get('/api/comment', {
+        params: {
+          'articleId': _this.$route.params.id,
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.comments = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    likeComment (data) {
+      let _this = this
+      this.axios.put('/api/comment/like', {
+        'userId': localStorage.getItem('userId'),
+        'typeId': data.commentId
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          _this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        data.isLike = !data.isLike
+        if (data.isLike) {
+          data.likes++
+        } else {
+          data.likes--
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     },
     replyBody (e) {
@@ -821,6 +982,9 @@ export default {
     outline: none;
   }
   .allCommentList .list .likeBtn:hover {
+    color: #ec7259;
+  }
+  .allCommentList .list .active {
     color: #ec7259;
   }
   .allCommentList .list i {
