@@ -640,6 +640,8 @@ export default {
             'comment': res.data.data,
             'replies': []
           }
+          _this.comment = ''
+          _this.showCommentBtn = false
           _this.comments.list.splice(0, 0, data)
         }
       }).catch(function (error) {

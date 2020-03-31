@@ -7,16 +7,15 @@
     </el-carousel>
     <el-header style="margin: 0 320px">
       <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
-        <el-menu-item index="1">推荐图文</el-menu-item>
-        <el-menu-item index="2">最热图文</el-menu-item>
-        <el-menu-item index="3">最新图文</el-menu-item>
+        <el-menu-item @click="type=1" index="1" style="font-size: 16px;">推荐</el-menu-item>
+        <el-menu-item @click="type=2" index="2" style="font-size: 16px;">热榜</el-menu-item>
       </el-menu>
     </el-header>
     <el-container>
       <el-main>
         <el-container style="margin: 0 300px">
           <el-main class="articleList">
-            <article-list/>
+            <article-list :type="type"/>
           </el-main>
           <el-aside width="340px">
             <recommend-author/>
@@ -35,6 +34,11 @@ export default {
   components: {
     RecommendAuthor,
     ArticleList
+  },
+  data () {
+    return {
+      type: 1
+    }
   }
 }
 </script>
