@@ -9,36 +9,36 @@
             <div>
               <img class="tag-banner" src="../assets/collect-note.png" alt="Collect note">
               <ul class="note-list">
-                <li v-for="n in 3" :key="n" :ref="`list${n}`">
+                <li v-for="(bookmark) in bookmarks" :key="bookmark.articleId" :ref="`list${bookmark.articleId}`">
                   <el-container>
                     <el-container>
                       <el-header style="padding-left: 0">
-                        <a class="title" target="_blank" href="#">
-                          Vuex 原理{{n}}
-                        </a>
+                        <router-link tag="a" :to="/p/+bookmark.articleId" class="title" target="_blank">
+                          {{bookmark.title}}
+                        </router-link>
                       </el-header>
                       <el-main class="content" style="padding: 0">
                         <p class="abstract">
-                          1、Vue.use(Vuex)：将Vuex 应用到Vue中 use是一个自定义插件，这个插件里有一个固定方法install()，这句话的意思是调...
+                          {{bookmark.content}}
                         </p>
                       </el-main>
                       <el-footer  style="height: 20px; padding-left: 0">
                         <div class="meta">
-                          <a class="nickname" target="_blank" href="/u/13e61986defe">Do_Du</a>
-                          <a target="_blank" href="/p/6a92cb882e12#comments">
-                            <i class="iconfont el-icon-third-pinglun2"/> 0
-                          </a>
-                          <span><i class="iconfont el-icon-third-aixin"/>0</span>
-                          <a class="cancel" @click="deleteBookmarks(n)">取消收藏</a>
+                          <router-link tag="a" class="nickname" target="_blank" :to="/u/+bookmark.userId">{{bookmark.nickname}}</router-link>
+                          <router-link :to="/p/+bookmark.articleId" target="_blank">
+                            <i class="iconfont el-icon-third-pinglun2"/> {{bookmark.likes}}
+                          </router-link>
+                          <span><i class="iconfont el-icon-third-aixin"/>{{bookmark.comments}}</span>
+                          <a class="cancel" @click="deleteBookmarks(bookmark.articleId)">取消收藏</a>
                         </div>
                       </el-footer>
                     </el-container>
                     <!--    无图片隐藏 aside      -->
-                    <el-aside width="125px;">
-                      <a href="#" target="_blank" class="wrap-img">
-                        <img class="img" src="../assets/collection-test.png"/>
-                      </a>
-                    </el-aside>
+<!--                    <el-aside width="125px;">-->
+<!--                      <a href="#" target="_blank" class="wrap-img">-->
+<!--                        <img class="img" src="../assets/collection-test.png"/>-->
+<!--                      </a>-->
+<!--                    </el-aside>-->
                   </el-container>
                 </li>
               </ul>
@@ -57,12 +57,42 @@ export default {
   components: {
     NavComponent
   },
+  data () {
+    return {
+      bookmarks: []
+    }
+  },
+  created () {
+    this.getBookmarks()
+  },
   methods: {
+    getBookmarks () {
+      let _this = this
+      this.axios.get('/api/p/collection').then(function (res) {
+        if (res.data.code) {
+          _this.bookmarks = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     deleteBookmarks (id) {
-      this.$refs[`list${id}`][0].remove()
-      this.$message({
-        message: '取消收藏成功,id' + id,
-        type: 'success'
+      let _this = this
+      this.axios.delete('/api/p/collection', {
+        data: {
+          'userId': localStorage.getItem('userId'),
+          'articleId': id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '取消收藏成功',
+            type: 'success'
+          })
+          _this.$refs[`list${id}`][0].remove()
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     }
   }
@@ -131,7 +161,7 @@ export default {
     font-size: 14px;
     line-height: 24px;
     color: #999;
-    width: 600px;
+    width: 700px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
