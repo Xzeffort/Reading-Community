@@ -10,36 +10,42 @@
         </el-header>
         <el-main>
           <el-row :gutter="30">
-            <el-col :span="8" v-for="n in 10" :key="n">
+            <el-col :span="8" v-for="(user,index) in users" :key="index">
               <div class="wrap">
-                <a class="top" target="_blank" href="#/u/ef4f2422125f">
-                  <el-avatar  class="avatar" :size="80" src="https://upload.jianshu.io/users/upload_avatars/14715425/e0668349-8c75-43db-8a9d-c388e5f00d0d.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180" alt="180"></el-avatar>
+                <router-link tag="a" class="top" target="_blank" :to="/u/+user.id">
+                  <el-avatar  class="avatar" :size="80"
+                              :src="user.headUrl" alt="180"></el-avatar>
                   <h4 class="name">
-                    你在烦恼什么{{n}}
+                    {{user.nickname}}
                   </h4>
-                  <p class="description">愿意为你解答关于简书钻的一切疑问~书钻的问~书书钻的一的一切疑</p>
-                </a>
-                <el-button v-if="!isFollowed" round type="success" class="off follow user-follow-button">
-                  <i class="el-icon-plus"/>关注
-                </el-button>
-                <el-button v-if="isFollowed" round type="info" class="on followed user-follow-button"
-                           @mouseover.native="overFollow(n)"
-                           @mouseleave.native="leaveFollow(n)"
-                           :ref="`followBtn${n}`">
-                  <i class="el-icon-check"/><span>已关注</span>
-                </el-button>
+                  <p class="description">{{user.introduce}}</p>
+                </router-link>
+                <div v-show="userId != user.id">
+                  <el-button v-if="!user.isFollowed" round type="success" class="off follow user-follow-button"
+                             @click="follow(user.id, user.isFollowed,index)">
+                    <i class="el-icon-plus"/>关注
+                  </el-button>
+                  <el-button v-else round type="info" class="on followed user-follow-button"
+                             @click="follow(user.id, user.isFollowed,index)"
+                             @mouseover.native="overFollow(index)"
+                             @mouseleave.native="leaveFollow(index)"
+                             :ref="`followBtn${index}`">
+                    <i class="el-icon-check"/><span>已关注</span>
+                  </el-button>
+                </div>
                 <hr>
                 <div class="meta">最近更新</div>
                 <div class="recent-update">
-                  <a class="new" target="_blank" href="/p/73b0b68f86aa">卢子觅，再不听话，我就给你关家里！| 卢家小妞成长日记（三）</a>
-                  <a class="new" target="_blank" href="/p/d8baebb36027">2020，我终于接受这些痛彻心扉的快乐</a>
-                  <a class="new" target="_blank" href="/p/b3ee931afca3">发誓不靠父母的顶级富二代，为什么还是打脸了？</a>
+                  <router-link v-for="article in user.simpleArticleDTOS" :key="article.id" tag="a" class="new" target="_blank"
+                              :to="/p/+article.articleId">{{article.title}}</router-link>
                 </div>
               </div>
             </el-col>
           </el-row>
           <el-row :gutter="20">
-            <el-col :span="10" :offset="7"> <el-button class="more_button" type="info" round>加载更多</el-button></el-col>
+            <el-col :span="10" :offset="7">
+              <el-button  @click="getUser(++currentPage)" class="more_button" type="info" round>加载更多</el-button>
+            </el-col>
           </el-row>
         </el-main>
       </el-container>
@@ -56,10 +62,70 @@ export default {
   },
   data () {
     return {
-      isFollowed: false
+      isFollowed: false,
+      users: [],
+      userId: '',
+      currentPage: 1,
+      totalPages: 1
     }
   },
+  created () {
+    this.getUser(1)
+    this.userId = localStorage.getItem('userId')
+  },
   methods: {
+    follow (id, isFollowed, index) {
+      let _this = this
+      isFollowed = !isFollowed
+      _this.users[index].isFollowed = isFollowed
+      this.axios.put('/api/follow', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': id
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          _this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (isFollowed) {
+          _this.$message({
+            message: '关注成功',
+            type: 'success',
+            center: true
+          })
+        } else {
+          _this.$message({
+            message: '取消关注成功',
+            type: 'success',
+            center: true
+          })
+        }
+      })
+    },
+    getUser (page) {
+      if (page > this.totalPages) {
+        this.$message({
+          message: '到底了',
+          type: 'success',
+          center: true
+        })
+        return
+      }
+      let _this = this
+      this.axios.get('/api/recommendUsers', {
+        params: {
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.users = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
+    },
     overFollow (e) {
       this.$refs[`followBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
       this.$refs[`followBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
@@ -129,8 +195,7 @@ export default {
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
-  .follow {
-    font-size: 18px;
+  .user-follow-button {
     outline: none;
   }
   .meta {
