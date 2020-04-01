@@ -48,7 +48,7 @@
                        <el-button class="more" icon="el-icon-more" circle></el-button>
                   </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="dialogCollectionVisible = true">收入专题</el-dropdown-item>
+                      <el-dropdown-item @click.native="getTopics">收入专题</el-dropdown-item>
                       <el-dropdown-item @click.native="collect" v-if="!articleInfo.isCollected">收藏文章</el-dropdown-item>
                       <el-dropdown-item @click.native="cancelCollect" v-else icon="el-icon-check">已收藏</el-dropdown-item>
                       <el-dropdown-item divided @click.native="dialogFormVisible = true">举报文章</el-dropdown-item>
@@ -59,8 +59,8 @@
               <el-dialog title="收入到我的专题" :visible.sync="dialogCollectionVisible" width="40%">
                 <el-row :gutter="30" style="margin-bottom: 40px">
                   <el-col :span="19">
-                    <el-input placeholder="请输入内容">
-                      <el-button slot="append" icon="el-icon-search" style="outline: none"></el-button>
+                    <el-input placeholder="请输入内容" v-model="searchContent">
+                      <el-button @click="searchTopics" slot="append" icon="el-icon-search" style="outline: none"></el-button>
                     </el-input>
                   </el-col>
                   <el-col :span="2">
@@ -68,23 +68,23 @@
                   </el-col>
                 </el-row>
                 <div style="height: 400px;overflow: auto">
-                  <el-row v-for="n in 20" :key="n" style="margin-bottom: 20px">
+                  <el-row v-for="(topic,index) in topics" :key="topic.id" style="margin-bottom: 20px">
                     <el-col :span="2">
                       <div>
-                        <a class="_1OhGeD" href="/c/565a0de16ee1" target="_blank" rel="noopener noreferrer">
-                          <img class="_1MTfTm" src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR)VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/100/h/100/format/webp" alt="">
-                        </a>
+                        <router-link tag="a" class="_1OhGeD" :to="/c/+topic.id" target="_blank">
+                          <img class="_1MTfTm" :src="topic.headUrl" alt="">
+                        </router-link>
                       </div>
                     </el-col>
                     <el-col :span="18">
                       <div class="_1gXCcE">
-                        <a class="_3puJ3K _1OhGeD" href="/c/565a0de16ee1" target="_blank" rel="noopener noreferrer">LPL</a>
+                        <router-link tag="a" class="_3puJ3K _1OhGeD" :to="/c/+topic.id" target="_blank">{{topic.name}}</router-link>
                       </div>
                     </el-col>
                     <el-col :span="4">
                       <div>
-                        <el-button size="medium" type="danger" round v-if="true" class="add">收入</el-button>
-                        <el-button size="medium" type="success" round v-if="false" class="remove">移出</el-button>
+                        <el-button size="medium" type="danger" round v-if="!topic.isCollected" class="add" @click="intoTopic(topic.id,index)">收入</el-button>
+                        <el-button size="medium" type="success" round v-else class="remove" @click="removeTopic(topic.id,index)">移出</el-button>
                       </div>
                     </el-col>
                   </el-row>
@@ -481,7 +481,9 @@ export default {
       headUrl: '',
       comments: [],
       replyContent: '',
-      showCommentBody: false
+      showCommentBody: false,
+      topics: [],
+      searchContent: ''
     }
   },
   created () {
@@ -565,6 +567,108 @@ export default {
         console.log(error)
       })
     },
+    getTopics () {
+      let _this = this
+      _this.dialogCollectionVisible = true
+      this.axios.get('/api/topic/search', {
+        params: {
+          'name': '',
+          'articleId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (res.data.code) {
+          _this.topics = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    searchTopics () {
+      let _this = this
+      _this.dialogCollectionVisible = true
+      this.axios.get('/api/topic/search', {
+        params: {
+          'name': _this.searchContent,
+          'articleId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (res.data.code) {
+          _this.topics = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    intoTopic (topicId, index) {
+      let _this = this
+      _this.topics[index].isCollected = true
+      this.axios.post('/api/topic/collect', {
+        'topicId': topicId,
+        'articleId': _this.$route.params.id
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          _this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (res.data.code) {
+          _this.$message({
+            message: '收入成功',
+            type: 'success',
+            center: true
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    removeTopic (topicId, index) {
+      let _this = this
+      _this.topics[index].isCollected = false
+      this.axios.delete('/api/topic/collect', {
+        data: {
+          'topicId': topicId,
+          'articleId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          _this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (res.data.code) {
+          _this.$message({
+            message: '移除成功',
+            type: 'success',
+            center: true
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     collect () {
       let _this = this
       this.articleInfo.isCollected = !this.articleInfo.isCollected
@@ -573,7 +677,7 @@ export default {
         'articleId': _this.$route.params.id
       }).then(function (res) {
         if (res.data.code === '403') {
-          this.$message({
+          _this.$message({
             message: '您还未登录',
             type: 'error',
             center: true
