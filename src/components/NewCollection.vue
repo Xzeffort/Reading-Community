@@ -15,7 +15,7 @@
                       <div class="avatar-collection">
                         <el-upload
                           class="avatar-uploader"
-                          action="https://jsonplaceholder.typicode.com/posts/"
+                          action="/api/topic/uploadImg"
                           :show-file-list="false"
                           :on-success="handleAvatarSuccess">
                           <img v-if="imageUrl" :src="imageUrl" class="avatar">
@@ -44,20 +44,20 @@
                   <tr>
                     <td class="setting-title setting-other">是否允许投稿</td>
                     <td class="setting-content">
-                      <el-radio v-model="isPermit" label="1">允许</el-radio>
-                      <el-radio v-model="isPermit" label="2">不允许</el-radio>
+                      <el-radio v-model="isSubmit" :label="true">允许</el-radio>
+                      <el-radio v-model="isSubmit" :label="false">不允许</el-radio>
                     </td>
                   </tr>
                   <tr>
                     <td class="setting-title setting-other">投稿是否需要审核</td>
                     <td class="setting-content">
-                      <el-radio v-model="isNeed" label="1">需要</el-radio>
-                      <el-radio v-model="isNeed" label="2">不需要</el-radio>
+                      <el-radio v-model="isVerify" :label="true">需要</el-radio>
+                      <el-radio v-model="isVerify" :label="false">不需要</el-radio>
                     </td>
                   </tr>
                 </tbody>
               </table>
-              <el-button class="create" type="success" round>创建专题</el-button>
+              <el-button class="create" type="success" round @click="create">创建专题</el-button>
             </div>
           </el-col>
         </el-row>
@@ -77,13 +77,43 @@ export default {
       imageUrl: '',
       title: '',
       description: '',
-      isPermit: '1',
-      isNeed: '1'
+      isSubmit: true,
+      isVerify: true
     }
   },
   methods: {
     handleAvatarSuccess (res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
+      this.imageUrl = res.data
+    },
+    create () {
+      let _this = this
+      this.axios.post('/api/topic', {
+        'headUrl': _this.imageUrl,
+        'name': _this.title,
+        'introduce': _this.description,
+        'isSubmit': _this.isSubmit,
+        'isVerify': _this.isVerify,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          _this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (res.data.code) {
+          _this.$message({
+            message: '创建成功',
+            type: 'success',
+            center: true
+          })
+          _this.$router.push({name: 'Collection', params: {id: res.data.data}})
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

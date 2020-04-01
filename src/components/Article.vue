@@ -503,11 +503,6 @@ export default {
   methods: {
     getArticle (id) {
       let _this = this
-      this.axios.put('/api/p/click', {
-        'id': id
-      }).catch(function (error) {
-        console.log(error)
-      })
       this.axios.get('/api/p/' + id).then(function (res) {
         if (res.data.code) {
           _this.articleInfo = res.data.data
