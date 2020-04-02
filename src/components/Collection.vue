@@ -8,25 +8,28 @@
           <el-container style="min-width: 760px">
             <el-header>
               <div class="main-top">
-                <a class="avatar-collection" href="/c/V2CqjW">
-                  <img src="../assets/collection.jpg" alt="240">
-                </a>
-                <el-button v-if="!isFollowed" round type="success" class="off follow user-follow-button">
+                <router-link tag="a" class="avatar-collection" :to="/c/ + info.id">
+                  <img :src="info.topicHeadUrl" alt="240">
+                </router-link>
+                <el-button v-if="!info.isFollowed" @click="followTopic" round type="success" class="off follow user-follow-button">
                   <i class="el-icon-plus"/>关注
                 </el-button>
-                <el-button v-if="isFollowed" round type="primary" class="on followed user-follow-button"
+                <el-button v-else round type="primary"
+                           @click="followTopic"
+                           class="on followed user-follow-button"
                            @mouseover.native="overFollow"
                            @mouseleave.native="leaveFollow">
                   <i :class="iconName"/>{{buttonName}}
                 </el-button>
-                <el-button round class="sendArticleBtn" @click="dialogCollectionVisible = true">
+                <el-button v-show="info.isSubmit" round class="sendArticleBtn"
+                           @click="searchArticle('')">
                   投稿
                 </el-button>
                 <div class="title">
-                  <a class="name" href="/c/V2CqjW">@IT·互联网</a>
+                  <router-link tag="a" class="name" :to="/c/ + info.id">{{info.name}}</router-link>
                 </div>
                 <div class="info">
-                  收录了51795篇文章 · 2207975人关注
+                  收录了{{info.articles}}篇文章 · {{info.followers}}人关注
                 </div>
               </div>
               <el-dialog :visible.sync="dialogCollectionVisible" width="40%" top="8vh">
@@ -35,19 +38,19 @@
                       <el-button type="text" class="newArticleBtn">写篇新文章</el-button>
                       <p class="notice">请珍惜每次投稿机会</p>
                   <div style="margin-top: 30px;position: relative;">
-                    <input type="text" placeholder="搜索我的文章" class="search-input">
-                    <a class="el-icon-search search-btn"/>
+                    <input type="text" placeholder="搜索我的文章" v-model="searchName" class="search-input">
+                    <a class="el-icon-search search-btn" @click="searchArticle(searchName)"/>
                   </div>
                 </div>
                 <div class="modal-body">
-                  <!--todo 加载-->
                   <ul>
-                    <li v-for="n in 10" :key="n">
+                    <li v-for="(article,n) in searchArticles" :key="n">
                       <div>
-                        <div class="note-name">java上传照片于七牛云，解决使用非静态图片{{n}}</div>
-                        <a class="action-btn push" @click="sendArticle(n)" :ref="`push${n}`">投稿</a>
-                        <a class="action-btn back hidden" @click="backArticle(n)" :ref="`back${n}`">撤回</a>
-                        <a class="action-btn collect" v-if="false">已收录</a>
+                        <div class="note-name">{{article.title}}</div>
+                        <a class="action-btn collect" v-if="article.isCollected">已收录</a>
+                        <div v-else>
+                          <a class="action-btn push"  @click="sendArticle(article.articleId)">投稿</a>
+                        </div>
                       </div>
                     </li>
                   </ul>
@@ -56,46 +59,41 @@
             </el-header>
             <el-main>
               <el-menu default-active="1"  mode="horizontal" class="menu">
-                <el-menu-item index="1"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
-                <el-menu-item index="2"><i class="el-icon-tickets"></i>最新收录</el-menu-item>
-                <el-menu-item index="4"><i class="el-icon-star-off"></i>热门</el-menu-item>
+                <el-menu-item index="1"><i class="el-icon-chat-square"></i>目录</el-menu-item>
               </el-menu>
-              <ul class="articles infinite-list"
-                  infinite-scroll-distance="30px"
-                  v-infinite-scroll="load"
-                  infinite-scroll-disabled="disabled">
-                <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+              <ul class="articles">
+                <li class="list infinite-list-item" v-for="(article,n) in articles" v-bind:key="n">
                   <el-container>
                     <el-container>
                       <el-header>
-                        <a class="title" target="_blank" href="#">
-                          《诛仙》口碑遭遇滑铁卢，虽不是经典，但绝不是烂片{{n}}
-                        </a>
+                        <router-link tag="a" class="title" target="_blank" :to="/p/+article.articleId">
+                            {{article.title}}
+                        </router-link>
                       </el-header>
                       <el-main class="content">
                         <p class="abstract">
-                          《诛仙》是我高中时代就很喜欢的小说，记得那时候废寝忘食地追书。书中陆雪琪和碧瑶留给我留下了深刻的印象，男主在两个女子之间辗转反侧，情难独钟。 武...
+                          {{article.content}}
                         </p>
                       </el-main>
                       <el-footer  style="height: 30px">
-                        <a class="nickname" href="#" target="_blank">
-                          <span class="nickname">你在烦恼什么</span>
-                        </a>
-                        <a class="comment" href="#" target="_blank">
-                          <i class="iconfont el-icon-third-pinglun2"/>999
-                        </a>
-                        <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
+                        <router-link tag="a" class="nickname" :to="/p/+article.userId" target="_blank">
+                          <span class="nickname">{{article.nickname}}</span>
+                        </router-link>
+                        <router-link tag="a" class="comment" :to="/p/+article.articleId" target="_blank">
+                          <i class="iconfont el-icon-third-pinglun2"/>{{article.comments}}
+                        </router-link>
+                        <span class="like"><i class="iconfont el-icon-third-aixin"/>{{article.likes}}</span>
                       </el-footer>
                     </el-container>
                     <!--    无图片隐藏 aside      -->
-                    <el-aside width="200px;">
-                      <a href="#" target="_blank">
-                        <img class="img" :src="url"/>
-                      </a>
-                    </el-aside>
+<!--                    <el-aside width="200px;">-->
+<!--                      <a href="#" target="_blank">-->
+<!--                        <img class="img" :src="url"/>-->
+<!--                      </a>-->
+<!--                    </el-aside>-->
                   </el-container>
                 </li>
-                <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
+                <el-button class="more_button" @click="getArticles(curentPage+1)" type="info" round>查看更多</el-button>
               </ul>
             </el-main>
           </el-container>
@@ -103,24 +101,26 @@
         <el-aside style="padding-top: 20px;" class="aside">
           <p class="title">专题公告</p>
           <div class="description">
-            <p>冲冲冲</p>
+            <p>{{info.introduce}}</p>
           </div>
           <div style="margin-bottom: 20px;padding-bottom: 10px;border-bottom: 1px solid #f0f0f0;">
             <p class="title">管理员</p>
-            <a href="#/u/6d71c8ef87ab" target="_blank" class="avatar">
-              <img src="https://upload.jianshu.io/users/upload_avatars/5197898/418540bf-dbe8-4c86-82e7-638774a9d9c5?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a> <a href="/u/6d71c8ef87ab" target="_blank" class="name">
-              你在烦恼些什么
-            </a>
+            <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="avatar">
+              <img :src="info.userHeadUrl">
+            </router-link>
+            <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="name">
+              {{info.nickname}}
+            </router-link>
           </div>
           <div style="margin-bottom: 20px;padding-bottom: 10px;border-bottom: 1px solid #f0f0f0;">
-            <div class="title">关注的人(14751)</div>
+            <div class="title">关注的人({{info.followers}})</div>
               <ul class="collection-follower">
-                <li v-for="n in 8" :key="n">
+                <li v-for="(follower,n) in followers" :key="n">
                   <el-tooltip class="item" effect="dark" placement="bottom">
-                    <div slot="content">你在烦恼什么{{n}} · 01.05 19:05 关注</div>
-                    <a href="/u/11ac059c4991" target="_blank" class="avatar">
-                      <img src="https://cdn2.jianshu.io/assets/default_avatar/13-394c31a9cb492fcb39c27422ca7d2815.jpg">
-                    </a>
+                    <div slot="content">{{follower.nickname}} · {{follower.createdDate}} 关注</div>
+                    <router-link tag="a" :to="/u/ + follower.userId" target="_blank" class="avatar">
+                      <img :src="follower.headUrl">
+                    </router-link>
                   </el-tooltip>
                 </li>
                 <a class="function-btn" @click="dialogFollowers = true"><i class="el-icon-more"></i></a>
@@ -129,17 +129,21 @@
                   :visible.sync="dialogFollowers"
                   width="30%">
                   <ul class="followersList">
-                    <li  v-for="n in 100" :key="n">
-                      <a href="/u/11ac059c4991" target="_blank" class="avatar"><img src="https://cdn2.jianshu.io/assets/default_avatar/13-394c31a9cb492fcb39c27422ca7d2815.jpg"></a>
-                      <a href="/u/11ac059c4991" target="_blank" class="name">木小土{{n}}</a>
-                      <span class="follow-time">01.05 19:05 关注</span>
+                    <li  v-for="(follower,n) in followers" :key="n">
+                      <router-link tag="a" :to="/u/ + follower.userId" target="_blank" class="avatar">
+                        <img :src="follower.headUrl">
+                      </router-link>
+                      <router-link tag="a" :to="/u/ + follower.userId" target="_blank" class="name">{{follower.nickname}}</router-link>
+                      <span class="follow-time">{{follower.createdDate}} 关注</span>
                     </li>
                   </ul>
                 </el-dialog>
               </ul>
           </div>
-          <div class="user-action">
-            <router-link  to="/collections/123/edit"><el-button type="text" class="edit">编辑专题</el-button></router-link >
+          <div class="user-action" v-show="userId == info.userId">
+            <router-link :to="{name:'EditCollection',params:{id:$route.params.id}}">
+              <el-button type="text" class="edit">编辑专题</el-button>
+            </router-link >
             <span class="delete-collection-button">·
             <el-button type="text" class="delete" @click="dialogDelete = true">删除专题</el-button>
             </span>
@@ -147,7 +151,7 @@
               title="删除专题"
               :visible.sync="dialogDelete"
               width="30%">
-              <span>该专题目前收录了11篇文章，删除专题操作不可逆，请慎重！</span>
+              <span>该专题目前收录了{{info.articles}}篇文章，删除专题操作不可逆，请慎重！</span>
               <span slot="footer" class="dialog-footer">
                 <el-button @click="dialogDelete = false">取 消</el-button>
                 <el-button type="danger" @click="dialogDelete = false">确 定</el-button>
@@ -170,28 +174,115 @@ export default {
     return {
       iconName: 'el-icon-check',
       buttonName: '已关注',
-      isFollowed: true,
-      count: 5,
-      loading: false,
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       dialogDelete: false,
       dialogFollowers: false,
-      dialogCollectionVisible: false
+      dialogCollectionVisible: false,
+      info: {},
+      followers: [],
+      userId: '',
+      articles: [],
+      loading: false,
+      curentPage: 1,
+      totalPages: 1,
+      searchArticles: [],
+      searchName: ''
     }
   },
-  computed: {
-    noMore () {
-      return this.count >= 20
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
+  created () {
+    this.getInfo(this.$route.params.id)
+    this.getArticles(1)
+    this.userId = localStorage.getItem('userId')
   },
   methods: {
-    load () {
-      this.loading = true
-      this.count += 2
-      this.loading = false
+    getInfo (id) {
+      let _this = this
+      this.axios.get('/api/topic/' + id).then(function (res) {
+        if (res.data.code) {
+          _this.info = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+      this.axios.get('/api/follow/topic/followers', {
+        params: {
+          'page': 1,
+          'size': 8,
+          'typeId': id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.followers = res.data.data.list
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    deleteTopic (id) {
+      let _this = this
+      this.axios.delete('/api/follow/topic/followers', {
+        data: {
+          'id': id
+        }
+      }).then(function (res) {
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+        _this.$route.push('/index')
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getArticles (page) {
+      let _this = this
+      _this.curentPage = page
+      if (page > _this.totalPages) {
+        this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/topic/collect', {
+        params: {
+          'page': _this.curentPage,
+          'topicId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = _this.articles.concat(res.data.data.list)
+          _this.totalPages = res.data.data.totalPages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    followTopic () {
+      let _this = this
+      _this.info.isFollowed = !_this.info.isFollowed
+      this.axios.put('/api/follow/topic', {
+        'typeId': _this.$route.params.id,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.info.isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     overFollow () {
       this.iconName = 'el-icon-close'
@@ -201,20 +292,41 @@ export default {
       this.iconName = 'el-icon-check'
       this.buttonName = '已关注'
     },
-    sendArticle (id) {
-      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push hidden')
-      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back')
-      this.$message({
-        message: '投稿成功,id' + id,
-        type: 'success'
+    searchArticle (name) {
+      let _this = this
+      _this.dialogCollectionVisible = true
+      this.axios.get('/api/topic/submit/search', {
+        params: {
+          'name': name,
+          'topicId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.searchArticles = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     },
-    backArticle (id) {
-      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back hidden')
-      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push')
-      this.$message({
-        message: '撤回成功,id' + id,
-        type: 'success'
+    sendArticle (id) {
+      let _this = this
+      this.axios.post('/api/topic/submit', {
+        'articleId': id,
+        'topicId': _this.$route.params.id
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '投稿成功',
+            type: 'success'
+          })
+        } else {
+          _this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     }
   }
@@ -376,6 +488,15 @@ export default {
     height: 100%;
     border: 1px solid #ddd;
     border-radius: 50%;
+  }
+  .more_button {
+    display:block;
+    margin:0 auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
+    outline: none;
   }
   .user-action .edit,.user-action .delete {
     color: #969696;
