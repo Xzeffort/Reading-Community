@@ -8,67 +8,69 @@
         <el-container style="min-width: 760px">
           <el-header>
             <div class="main-top">
-              <a class="avatar-collection" href="/nb/41299804">
-                <img src="../assets/collection.jpg" alt="240">
-              </a>
-              <el-button v-if="!isFollowed" round type="success" class="off follow user-follow-button">
-                <i class="el-icon-plus"/>关注
-              </el-button>
-              <el-button v-if="isFollowed" round type="primary" class="on followed user-follow-button"
-                         @mouseover.native="overFollow"
-                         @mouseleave.native="leaveFollow">
-                <i :class="iconName"/>{{buttonName}}
-              </el-button>
+              <router-link tag="a" class="avatar-collection" :to="/nb/ + info.id">
+                <img src="../assets/avatar-notebook-default.png" alt="240">
+              </router-link>
+              <div v-show=" userId != info.userId">
+                <el-button v-if="!info.isFollowed"
+                           @click="followNoteBook"
+                           round type="success" class="off follow user-follow-button">
+                  <i class="el-icon-plus"/>关注
+                </el-button>
+                <el-button v-else
+                           @click="followNoteBook"
+                           round type="primary" class="on followed user-follow-button"
+                           @mouseover.native="overFollow"
+                           @mouseleave.native="leaveFollow">
+                  <i :class="iconName"/>{{buttonName}}
+                </el-button>
+              </div>
               <div class="title">
-                <a class="name" href="/nb/41299804">出版记</a>
+                <router-link  tag="a" class="name" :to="/nb/ + info.id">{{info.name}}</router-link>
               </div>
               <div class="info">
-                6篇文章 · 5784字 · 0人关注
+                {{info.articles}}篇文章 · {{info.words}}字 · {{info.followers}}人关注
               </div>
             </div>
           </el-header>
           <el-main>
             <el-menu default-active="1"  mode="horizontal" class="menu">
-              <el-menu-item index="1"><i class="el-icon-tickets"></i>最新发布</el-menu-item>
-              <el-menu-item index="2"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
-              <el-menu-item index="3"><i class="el-icon-document-copy"></i>目录</el-menu-item>
+              <el-menu-item index="1"><i class="el-icon-tickets"></i>目录</el-menu-item>
             </el-menu>
-            <ul class="articles infinite-list"
-                infinite-scroll-distance="30px"
-                v-infinite-scroll="load"
-                infinite-scroll-disabled="disabled">
-              <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+            <ul class="articles">
+              <li class="list" v-for="(article, n) in articles" v-bind:key="n">
                 <el-container>
                   <el-container>
                     <el-header>
-                      <a class="title" target="_blank" href="#">
-                        《诛仙》口碑遭遇滑铁卢，虽不是经典，但绝不是烂片{{n}}
-                      </a>
+                      <router-link tag="a" :to="/p/ + article.articleId"
+                                   class="title" :class="article.isTop ? 'isTop' : ''"
+                                   target="_blank" >
+                        {{article.title}}
+                      </router-link>
                     </el-header>
                     <el-main class="content">
                       <p class="abstract">
-                        《诛仙》是我高中时代就很喜欢的小说，记得那时候废寝忘食地追书。书中陆雪琪和碧瑶留给我留下了深刻的印象，男主在两个女子之间辗转反侧，情难独钟。 武...
+                        {{article.content}}
                       </p>
                     </el-main>
                     <el-footer  style="height: 30px">
-                      <a class="nickname" href="#" target="_blank">
-                        <span class="nickname">你在烦恼什么</span>
-                      </a>
+                      <span class="like"><i style="margin-right: 5px" class="iconfont el-icon-third-aixin"/>{{article.clicks}}</span>
                       <a class="comment" href="#" target="_blank">
-                        <i class="iconfont el-icon-third-pinglun2"/>999
+                        <i style="margin-right: 5px" class="iconfont el-icon-third-pinglun2"/>{{article.comments}}
                       </a>
-                      <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
+                      <span class="like"><i style="margin-right: 5px" class="iconfont el-icon-third-aixin"/>{{article.likes}}</span>
+                      <span class="data">{{article.createdDate}}</span>
                     </el-footer>
                   </el-container>
                   <!--    无图片隐藏 aside      -->
-                  <el-aside width="200px;">
-                    <a href="#" target="_blank">
-                      <img class="img" :src="url"/>
-                    </a>
-                  </el-aside>
+<!--                  <el-aside width="200px;">-->
+<!--                    <a href="#" target="_blank">-->
+<!--                      <img class="img" :src="url"/>-->
+<!--                    </a>-->
+<!--                  </el-aside>-->
                 </el-container>
               </li>
-              <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
+              <el-button class="more_button" @click="getArticles(curentPage + 1)" type="info" round>查看更多</el-button>
             </ul>
           </el-main>
         </el-container>
@@ -76,10 +78,12 @@
       <el-aside style="padding-top: 20px;" class="aside">
         <div style="margin-bottom: 20px;padding-bottom: 10px;border-bottom: 1px solid #f0f0f0;">
           <p class="title">文集作者</p>
-            <a href="#/u/6d71c8ef87ab" target="_blank" class="avatar">
-              <img src="https://upload.jianshu.io/users/upload_avatars/5197898/418540bf-dbe8-4c86-82e7-638774a9d9c5?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a> <a href="#/u/6d71c8ef87ab" target="_blank" class="name">
-            你在烦恼些什么
-            </a>
+            <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="avatar">
+              <img :src="info.headUrl">
+            </router-link>
+            <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="name">
+              {{info.nickname}}
+            </router-link>
         </div>
       </el-aside>
     </el-container>
@@ -100,22 +104,78 @@ export default {
       isFollowed: false,
       count: 5,
       loading: false,
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      info: {},
+      userId: '',
+      curentPage: 1,
+      totalPages: 1,
+      articles: []
     }
   },
-  computed: {
-    noMore () {
-      return this.count >= 10
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
+  created () {
+    this.getInfo(this.$route.params.id)
+    this.userId = localStorage.getItem('userId')
+    this.getArticles(1)
   },
   methods: {
-    load () {
-      this.loading = true
-      this.count += 2
-      this.loading = false
+    getInfo (id) {
+      let _this = this
+      this.axios.get('/api/notebooks/' + id).then(function (res) {
+        if (res.data.code) {
+          _this.info = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getArticles (page) {
+      let _this = this
+      _this.curentPage = page
+      if (_this.curentPage > _this.totalPages) {
+        this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/notebooks/' + _this.$route.params.id + '/articles/', {
+        params: {
+          'page': _this.curentPage
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = _this.articles.concat(res.data.data.list)
+          _this.totalPages = res.data.data.totalPages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    followNoteBook () {
+      let _this = this
+      _this.info.isFollowed = !_this.info.isFollowed
+      this.axios.put('/api/follow/notebook', {
+        'typeId': _this.$route.params.id,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.info.isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     overFollow () {
       this.iconName = 'el-icon-close'
@@ -218,7 +278,7 @@ export default {
     line-height: 60px;
   }
   .articles .abstract {
-    width: 530px;
+    width: 700px;
     font-size: 14px;
     color: #999999;
     display: -webkit-box;
@@ -266,5 +326,28 @@ export default {
     height: 100%;
     border: 1px solid #ddd;
     border-radius: 50%;
+  }
+  .more_button {
+    display:block;
+    margin:0 auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
+    outline: none;
+  }
+  .isTop:before {
+    content: "\7F6E\9876";
+    display: inline-block;
+    vertical-align: middle;
+    width: 40px;
+    line-height: 22px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-size: 12px;
+    text-align: center;
+    background-color: #e9634c;
+    color: #fff;
+    font-weight: 400;
   }
 </style>
