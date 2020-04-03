@@ -368,13 +368,14 @@
             <h3 class="QxT4hD"><span>被以下专题收入，发现更多相似内容</span></h3>
             <div class="topic-content">
               <a class="_3s5t0Q _1OhGeD" >
-                <span class="_2-Djqu" @click="dialogCollectionVisible = true"><i class="el-icon-plus" style="margin-right: 2px;font-weight: bold"/>收入我的专题</span>
+                <span class="_2-Djqu" @click="getTopics"><i class="el-icon-plus" style="margin-right: 2px;font-weight: bold"/>收入我的专题</span>
               </a>
-              <a class="_3s5t0Q _1OhGeD" href="#/c/8a7716311371" target="_blank">
-                <el-avatar class="topicImg" shape="square" size="small"></el-avatar>
-                <span class="_2-Djqu">老玩家经验心得验心得家经验心得验心得验心得</span>
-              </a>
-              <el-button type="text" style="font-size: 14px;color: #999;outline: none">
+              <router-link :to="/c/ + articleTopic.id" v-for="articleTopic in articleTopics" :key="articleTopic.id"
+                           class="_3s5t0Q _1OhGeD"  target="_blank">
+                <el-avatar class="topicImg" shape="square" size="small" :src="articleTopic.headUrl"></el-avatar>
+                <span class="_2-Djqu">{{articleTopic.name}}</span>
+              </router-link>
+              <el-button @click="getArticleTopics" type="text" style="font-size: 14px;color: #999;outline: none">
                 展开更多<i class="el-icon-arrow-down"/>
               </el-button>
             </div>
@@ -483,7 +484,10 @@ export default {
       replyContent: '',
       showCommentBody: false,
       topics: [],
-      searchContent: ''
+      searchContent: '',
+      articleTopics: [],
+      currentTopicPage: 0,
+      totalTopicPage: 1
     }
   },
   created () {
@@ -491,6 +495,7 @@ export default {
     this.getComments(1)
   },
   mounted () {
+    this.getArticleTopics()
     Bus.$on('headUrl', (data) => {
       this.headUrl = data
     })
@@ -887,6 +892,31 @@ export default {
       } else {
         this.$refs.followBtn3.$el.firstElementChild.innerHTML = '已关注'
       }
+    },
+    getArticleTopics () {
+      let _this = this
+      _this.currentTopicPage = _this.currentTopicPage + 1
+      if (_this.currentTopicPage > _this.totalTopicPage) {
+        _this.$message({
+          message: '到底了',
+          type: 'success',
+          center: true
+        })
+        return
+      }
+      this.axios.get('/api/articles/topic', {
+        params: {
+          'articleId': _this.$route.params.id,
+          'page': _this.currentTopicPage
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articleTopics = _this.articleTopics.concat(res.data.data.list)
+          _this.totalTopicPage = res.data.data.totalPages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }
