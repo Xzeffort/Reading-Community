@@ -1,26 +1,30 @@
 <template>
   <ul class="user-list">
-    <li v-for="n in 5" :key="n">
-      <a href="#/u/b90070931f39" target="_blank" class="avatar-collection">
+    <li v-for="(work,n) in works" :key="n">
+      <router-link v-if="work.isNotebook" tag="a" :to="/nb/ + work.typeId" target="_blank" class="avatar-collection">
         <img src="../../assets/avatar-notebook-default.png">
-      </a>
+      </router-link>
+      <router-link v-else tag="a" :to="/c/ + work.typeId" target="_blank" class="avatar-collection">
+        <img :src="work.headUrl">
+      </router-link>
       <div class="info">
-        <a href="#/c/5AUzod" target="_blank" class="name">
-          旅行·在路上
-        </a>
+        <router-link v-if="work.isNotebook" tag="a" :to="/nb/ + work.typeId" target="_blank" class="name">
+          {{work.name}}
+        </router-link>
+        <router-link v-else tag="a" :to="/c/ + work.typeId" target="_blank" class="name">
+          {{work.name}}
+        </router-link>
         <div class="meta">
-                  <span>
-                    0 篇文章，0 人关注
-                  </span>
+          <span>
+            {{work.articles}} 篇文章，{{work.followers}} 人关注
+          </span>
         </div>
       </div>
-      <el-button type="success" round class="follow" :ref="`followNotebookBtn${n}`"
-                 @click="followNotebook(n)" hidden>
+      <el-button v-if="!work.isFollowed" type="success" round class="follow"
+                 @click="followBtn(n)">
         <i class="el-icon-plus"/><span>关注</span></el-button>
-      <el-button type="info" round class="follow"  :ref="`unfollowNotebookBtn${n}`"
-                 @click="unfollowNotebook(n)"
-                 @mouseover.native="overFollowNotebook(n)"
-                 @mouseleave.native="leaveFollowNotebook(n)">
+      <el-button v-else type="info" round class="follow"  :ref="`unfollowNotebookBtn${n}`"
+                 @click="followBtn(n)">
         <i class="el-icon-check"/><span>已关注</span></el-button>
     </li>
   </ul>
@@ -29,38 +33,97 @@
 <script>
 export default {
   name: 'FollowCollection',
+  data () {
+    return {
+      works: [],
+      currentPage: 1,
+      totalPages: 1
+    }
+  },
+  created () {
+    this.getWorks(1)
+  },
   methods: {
-    followCollection (index) {
-      this.$refs[`followCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`unfollowCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    getWorks (page) {
+      let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/user/' + _this.$route.params.id + '/follows',
+        {
+          params: {
+            'page': page
+          }
+        }).then(function (res) {
+        if (res.data.code) {
+          _this.works = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
     },
-    unfollowCollection (index) {
-      this.$refs[`unfollowCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`followCollectionBtn${index}`][0].$el.removeAttribute('hidden')
+    followBtn (index) {
+      this.works[index].isFollowed = !this.works[index].isFollowed
+      let _this = this
+      if (_this.works[index].isNotebook) {
+        _this.followNoteBook(index)
+      } else {
+        _this.followTopic(index)
+      }
     },
-    overFollowCollection (e) {
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
+    followNoteBook (index) {
+      let _this = this
+      this.axios.put('/api/follow/notebook', {
+        'typeId': _this.works[index].typeId,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.works[index].isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
-    leaveFollowCollection (e) {
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
-    },
-    followNotebook (index) {
-      this.$refs[`followNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`unfollowNotebookBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    unfollowNotebook (index) {
-      this.$refs[`unfollowNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`followNotebookBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    overFollowNotebook (e) {
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
-    },
-    leaveFollowNotebook (e) {
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+    followTopic (index) {
+      let _this = this
+      this.axios.put('/api/follow/topic', {
+        'typeId': _this.works[index].typeId,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.works[index].isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

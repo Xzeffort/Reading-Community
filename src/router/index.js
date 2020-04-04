@@ -50,6 +50,11 @@ if (localStorage.getItem('token')) {
   store.commit('set_token', localStorage.getItem('token'))
 }
 
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 export default new Router({
   linkActiveClass: 'active',
   routes: [

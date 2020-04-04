@@ -70,7 +70,7 @@
 <!--                  </el-aside>-->
                 </el-container>
               </li>
-              <el-button class="more_button" @click="getArticles(curentPage + 1)" type="info" round>查看更多</el-button>
+              <el-button v-show="totalPages > 1"  class="more_button" @click="getArticles(curentPage + 1)" type="info" round>查看更多</el-button>
             </ul>
           </el-main>
         </el-container>

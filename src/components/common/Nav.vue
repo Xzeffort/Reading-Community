@@ -56,7 +56,7 @@
           <el-dropdown-menu slot="dropdown" class="user-dropdown" style="padding: 12px 0">
             <el-dropdown-item><i class="el-icon-user-solid"/>我的主页</el-dropdown-item>
             <el-dropdown-item @click.native="$router.push({name: 'Bookmarks'})"><i class="el-icon-star-on"/>我收藏的文章</el-dropdown-item>
-            <el-dropdown-item><i class="iconfont el-icon-third-aixin"/>我喜欢的文章</el-dropdown-item>
+            <el-dropdown-item @click.native="gotoLike"><i class="iconfont el-icon-third-aixin"/>我喜欢的文章</el-dropdown-item>
             <el-dropdown-item @click.native="$router.push({name: 'BasicSetting'})"><i class="el-icon-s-tools"/>设置</el-dropdown-item>
             <el-dropdown-item command="logout"><i class="iconfont el-icon-third-tuichu" style="margin-left: 2px"/>退出</el-dropdown-item>
           </el-dropdown-menu>
@@ -76,7 +76,8 @@ export default {
       isLogin: false,
       isDot: true,
       search: '',
-      headUrl: ''
+      headUrl: '',
+      userId: ''
     }
   },
   props: {
@@ -86,6 +87,7 @@ export default {
   created () {
     this.getSearchUrlContent()
     this.info()
+    this.userId = localStorage.getItem('userId')
   },
   watch: {
     $route () {
@@ -107,6 +109,10 @@ export default {
       }).catch((res) => {
         console.log(res)
       })
+    },
+    gotoLike () {
+      let _this = this
+      this.$router.push({name: 'LikeNoteBook', params: {id: _this.userId}})
     },
     handleCommand (command) {
       if (command === 'logout') {
