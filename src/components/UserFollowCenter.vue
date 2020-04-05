@@ -7,23 +7,26 @@
       <el-main style="margin-right: 10px">
         <el-container class="main-top">
           <el-header style="height: 82px;">
-            <el-avatar class="header" :size="80"/>
-            <el-button v-if="!isFollowed" round type="success" class="off follow user-follow-button">
-              <i class="el-icon-check"/>关注
-            </el-button>
-            <el-button v-if="isFollowed" round type="primary" class="on followed user-follow-button"
-                       @mouseover.native="overFollow"
-                       @mouseleave.native="leaveFollow">
-              <i :class="iconName"/>{{buttonName}}
-            </el-button>
-            <el-button round class="sendMsgBtn">
-              发简信
-            </el-button>
+            <el-avatar class="header" :src="userInfo.headUrl" :size="80"/>
+            <div v-show="!isMyself">
+              <el-button v-if="!userInfo.isFollowed" @click="follow" round type="success" class="off follow user-follow-button">
+                <i class="el-icon-plus"/>关注
+              </el-button>
+              <el-button v-else round type="primary" class="on followed user-follow-button"
+                         @click="follow"
+                         @mouseover.native="overFollow"
+                         @mouseleave.native="leaveFollow">
+                <i :class="iconName"/>{{buttonName}}
+              </el-button>
+            </div>
+            <!--            <el-button round class="sendMsgBtn">-->
+            <!--              发简信-->
+            <!--            </el-button>-->
             <el-container>
               <el-header style="height: 30px; padding-left:0px">
                 <div class="title">
-                  <a class="name" href="#/u/6d71c8ef87ab">你在烦恼些什么</a>
-                  <i class="el-icon-female" style="color: deeppink"/>
+                  <router-link tag="a" class="name" :to="/u/ + userInfo.userId">{{userInfo.nickname}}</router-link>
+                  <!--                  <i class="el-icon-female" style="color: deeppink"/>-->
                   <i class="el-icon-male" style="color: deepskyblue"/>
                 </div>
               </el-header>
@@ -32,37 +35,37 @@
                   <ul>
                     <li>
                       <div class="meta-block">
-                        <a href="#/users/123/following">
-                          <p>1</p>
+                        <router-link tag="a" :to="{name:'Followers', params:{'id': userInfo.userId}}">
+                          <p>{{userInfo.followers}}</p>
                           关注 <i class="el-icon-arrow-right"></i>
-                        </a>
+                        </router-link>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <a href="#/users/123/following/fans">
-                          <p>1</p>
+                        <router-link tag="a" :to="{name:'Fans', params:{'id': userInfo.userId}}">
+                          <p>{{userInfo.fans}}</p>
                           粉丝 <i class="el-icon-arrow-right"></i>
-                        </a>
+                        </router-link>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
                         <a href="#/u/6d71c8ef87ab">
-                          <p>1</p>
+                          <p>{{userInfo.articles}}</p>
                           文章 <i class="el-icon-arrow-right"></i>
                         </a>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <p>4100</p>
+                        <p>{{userInfo.words}}</p>
                         <div>字数</div>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <p>2</p>
+                        <p>{{userInfo.likes}}</p>
                         <div>收获喜欢</div>
                       </div>
                     </li>
@@ -72,68 +75,71 @@
             </el-container>
           </el-header>
           <el-main>
-            <el-menu :default-active="$route.path" router mode="horizontal" class="menu">
-              <el-menu-item :index= url1>关注用户 93</el-menu-item>
-              <el-menu-item :index= url2>粉丝 6473</el-menu-item>
+            <el-menu :default-active="activeIndex" router  mode="horizontal" class="menu">
+              <el-menu-item :index=url1>关注用户</el-menu-item>
+              <el-menu-item :index=url2>粉丝</el-menu-item>
             </el-menu>
-            <router-view/>
           </el-main>
+          <router-view :key="$route.fullPath" />
         </el-container>
       </el-main>
       <el-aside style="padding-top: 20px">
         <div>
           <div class="title">个人介绍</div>
-          <el-button type="text" class="function-btn" @click="updatedDescription"><i class="el-icon-edit"></i>编辑</el-button>
         </div>
         <div class="description">
           <el-input
+            disabled
             style="height:120px;"
-            v-if="!showDescription"
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 5}"
             placeholder="请输入内容"
-            v-model="description">
+            v-model="userInfo.introduce">
           </el-input>
-          <el-button v-if="!showDescription" type="success" plain round style="outline: none">保存</el-button>
-          <el-button v-if="!showDescription" type="text" round style="outline: none" @click="cancleUpdatedDescription">取消</el-button>
-          <div v-if="showDescription">你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么</div>
         </div>
         <ul class="list user-dynamic">
           <li>
-            <a href="#/users/123/subscriptions">
-              <i class="el-icon-notebook-1"></i> <span>我关注的专题/文集/连载</span>
-            </a>
+            <router-link tag="a" :to="{path:`/users/${userInfo.userId}/subscriptions`}">
+              <i class="el-icon-notebook-1"></i>
+              <span v-if="isMyself">我关注的专题/文集/连载</span>
+              <span v-else>Ta关注的专题/文集/连载</span>
+            </router-link>
           <li>
-            <a href="#/users/123/subscriptions">
-              <i class="el-icon-present"></i> <span>我喜欢的文章</span>
-            </a>
+            <router-link tag="a" :to="{path:`/users/${userInfo.userId}/subscriptions/liked_notes`}">
+              <i class="el-icon-present"></i>
+              <span v-if="isMyself">我喜欢的文章</span>
+              <span v-else>Ta喜欢的文章</span>
+            </router-link>
           </li>
         </ul>
         <div>
-          <div class="title">我创建的专题</div>
+          <div v-if="isMyself" class="title">我创建的专题</div>
+          <div v-else class="title">Ta创建的专题</div>
           <!--     如果有专题 下面隐藏     -->
           <div class="new-collection-block" hidden>
             <el-button class="create" icon="el-icon-plus" type="text" style="color: #42c02e">创建一个新专题</el-button>
           </div>
-          <el-button class="create" icon="el-icon-plus" type="text" style="color: #42c02e">新建专题</el-button>
+          <el-button v-show="isMyself"
+                     @click="$router.push({name:'NewCollection'})"
+                     class="create" icon="el-icon-plus" type="text" style="color: #42c02e">新建专题</el-button>
           <ul class="list">
-            <li>
-              <a href="/c/565a0de16ee1" target="_blank" class="avatar-collection">
-                <img src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR%29VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-              <a href="/c/565a0de16ee1" target="_blank" class="name">LPL</a>
+            <li v-for="(topic, n) in topics" :key="n">
+              <router-link :to="/c/ + topic.id" target="_blank" class="avatar-collection">
+                <img :src="topic.headUrl">
+              </router-link>
+              <router-link :to="/c/ + topic.id" target="_blank" class="name">{{topic.name}}</router-link>
             </li>
           </ul>
         </div>
-        <div><div class="title">
-          我的文集
-        </div>
+        <div>
+          <div v-if="isMyself" class="title">我的文集</div>
+          <div v-else class="title">Ta的文集</div>
           <ul class="list">
-            <li>
-              <a href="/nb/10792727" target="_blank"><i class="el-icon-notebook-2"></i>
-              </a>
-              <a href="/nb/10792727" target="_blank" class="name">
-                日记本
-              </a>
+            <li v-for="(nb, n) in notebooks" :key="n">
+              <router-link :to="/nb/ + nb.id" target="_blank"><i class="el-icon-notebook-2"></i></router-link>
+              <router-link :to="/nb/ + nb.id" target="_blank" class="name">
+                {{nb.name}}
+              </router-link>
             </li>
           </ul>
         </div>
@@ -153,16 +159,101 @@ export default {
     return {
       iconName: 'el-icon-check',
       buttonName: '已关注',
-      isFollowed: true,
-      fit: 'contain',
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      description: '',
-      showDescription: true,
-      url1: '/users/123/following',
-      url2: '/users/123/following/fans'
+      url1: '/users/1/following',
+      url2: '/users/1/following/fans',
+      activeIndex: '/users/1/following',
+      isMyself: false,
+      userInfo: {},
+      topics: [],
+      notebooks: []
+    }
+  },
+  created () {
+    this.setCurrentRoute()
+    this.getUserInfo()
+    this.getTopics()
+    this.getNotebooks()
+    // eslint-disable-next-line eqeqeq
+    if (this.$route.params.id == localStorage.getItem('userId').toString()) {
+      this.isMyself = true
+    } else {
+      this.isMyself = false
+    }
+  },
+  watch: {
+    '$route': function (to, from) {
+      // 拿到目标参数 to.query.id 去再次请求数据接口
+      this.getUserInfo()
+      this.getTopics()
+      this.getNotebooks()
+      this.setCurrentRoute()
+      // eslint-disable-next-line eqeqeq
+      if (this.$route.params.id == localStorage.getItem('userId').toString()) {
+        this.isMyself = true
+      } else {
+        this.isMyself = false
+      }
     }
   },
   methods: {
+    getUserInfo () {
+      let _this = this
+      this.axios.get('/api/user/info/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.userInfo = res.data.data
+          _this.url1 = '/users/' + _this.$route.params.id + '/following'
+          _this.url2 = '/users/' + _this.$route.params.id + '/following/fans'
+        }
+      })
+    },
+    getTopics () {
+      let _this = this
+      this.axios.get('/api/user/info/topic/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.topics = res.data.data
+        }
+      })
+    },
+    getNotebooks () {
+      let _this = this
+      this.axios.get('api/user/info/nb/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.notebooks = res.data.data
+        }
+      })
+    },
+    follow () {
+      this.userInfo.isFollowed = !this.userInfo.isFollowed
+      let _this = this
+      this.axios.put('/api/follow', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': _this.$route.params.id
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (_this.userInfo.isFollowed) {
+          _this.$message({
+            message: '关注成功',
+            type: 'success',
+            center: true
+          })
+        } else {
+          _this.$message({
+            message: '取消关注成功',
+            type: 'success',
+            center: true
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     overFollow () {
       this.iconName = 'el-icon-close'
       this.buttonName = '取消关注'
@@ -172,12 +263,8 @@ export default {
       this.iconName = 'el-icon-check'
       this.buttonName = '已关注'
     },
-    updatedDescription () {
-      this.description = '原文本'
-      this.showDescription = false
-    },
-    cancleUpdatedDescription () {
-      this.showDescription = true
+    setCurrentRoute () {
+      this.activeIndex = this.$route.path // 通过他就可以监听到当前路由状态并激活当前菜单
     }
   }
 }

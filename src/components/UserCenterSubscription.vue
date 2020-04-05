@@ -161,6 +161,7 @@ export default {
       buttonName: '已关注',
       url1: '/users/123/subscriptions',
       url2: '/users/123/subscriptions/liked_notes',
+      activeIndex: '/users/1/following',
       isMyself: false,
       userInfo: {},
       topics: [],
@@ -174,6 +175,8 @@ export default {
     // eslint-disable-next-line eqeqeq
     if (this.$route.params.id == localStorage.getItem('userId').toString()) {
       this.isMyself = true
+    } else {
+      this.isMyself = false
     }
   },
   watch: {
@@ -185,6 +188,8 @@ export default {
       // eslint-disable-next-line eqeqeq
       if (this.$route.params.id == localStorage.getItem('userId').toString()) {
         this.isMyself = true
+      } else {
+        this.isMyself = false
       }
     }
   },
@@ -254,6 +259,9 @@ export default {
     leaveFollow () {
       this.iconName = 'el-icon-check'
       this.buttonName = '已关注'
+    },
+    setCurrentRoute () {
+      this.activeIndex = this.$route.path // 通过他就可以监听到当前路由状态并激活当前菜单
     }
   }
 }

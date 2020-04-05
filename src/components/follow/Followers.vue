@@ -1,26 +1,33 @@
 <template>
   <div id="list-container">
     <ul class="user-list">
-      <li v-for="n in 5" :key="n">
-        <a href="" class="avatar">
-          <img src="https://upload.jianshu.io/users/upload_avatars/7622636/d4c6cc80-edfd-44fb-986a-8ef869df8161?imageMogr2/auto-orient/strip|imageView2/1/w/180/h/180" alt="180">
-        </a>
+      <li v-for="(follower, n) in followers" :key="n">
+        <router-link tag="a" :to="/u/ + follower.userId" class="avatar">
+          <img :src="follower.headUrl" alt="180">
+        </router-link>
         <div class="info">
-          <a class="name" href="#/u/c794c9aee939">你在烦恼什么</a>
+          <router-link class="name" tag="a" :to="/u/ + follower.userId">{{follower.nickname}}</router-link>
           <div class="meta">
-            <span>关注 1</span><span>粉丝 1</span><span>文章 2</span>
+            <span>关注 {{follower.followers}}</span><span>粉丝 {{follower.fans}}</span><span>文章 {{follower.articles}}</span>
           </div>
           <div class="meta">
-            写了 49 字，获得了 0 个喜欢
+            写了 {{follower.words}} 字，获得了 {{follower.likes}} 个喜欢
           </div>
         </div>
-        <el-button type="success" round class="followBtn" hidden
+        <el-button type="success"
+                   v-if="!follower.isFollowed"
+                   @click="follow(n)"
+                   round class="followBtn"
                    :ref="`followBtn${n}`"><i class="el-icon-plus"></i><span>关注</span></el-button>
-        <el-button type="info" round class="followBtn followed"
+        <el-button type="info"
+                   v-else
+                   @click="follow(n)"
+                   round class="followBtn followed"
                    :ref="`unfollowBtn${n}`"
                    @mouseover.native="overFollow(n)"
                    @mouseleave.native="leaveFollow(n)"><i class="el-icon-check"></i><span>已关注</span></el-button>
       </li>
+      <el-button v-if="totalPages > 1" class="more_button" @click="getFollowers(currentPage + 1)" type="info" round>查看更多</el-button>
     </ul>
   </div>
 </template>
@@ -28,7 +35,64 @@
 <script>
 export default {
   name: 'Followers',
+  data () {
+    return {
+      followers: [],
+      currentPage: 1,
+      totalPages: 1
+    }
+  },
+  created () {
+    this.getFollowers(1)
+  },
   methods: {
+    getFollowers (page) {
+      let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/user/' + _this.$route.params.id + '/followers',
+        {
+          params: {
+            'page': page
+          }
+        }).then(function (res) {
+        if (res.data.code) {
+          _this.followers = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
+    },
+    follow (index) {
+      let _this = this
+      _this.followers[index].isFollowed = !_this.followers[index].isFollowed
+      this.axios.put('/api/follow',
+        {
+          'fromUserId': localStorage.getItem('userId'),
+          'toUserId': _this.$route.params.id
+        }).then(function (res) {
+        if (res.data.code) {
+          if (_this.followers[index].isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success'
+            })
+            _this.$refs[`unfollowBtn${index}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success'
+            })
+            _this.$refs[`followBtn${index}`][0].$el.firstElementChild.lastElementChild.innerHTML = '关注'
+          }
+        }
+      })
+    },
     overFollow (e) {
       this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
       this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
@@ -99,6 +163,15 @@ export default {
   .user-list .followBtn {
     float: right;
     margin-top: 10px;
+    outline: none;
+  }
+  .more_button {
+    display:block;
+    margin:20px auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
     outline: none;
   }
 </style>

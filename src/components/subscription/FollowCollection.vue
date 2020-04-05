@@ -27,6 +27,7 @@
                  @click="followBtn(n)">
         <i class="el-icon-check"/><span>已关注</span></el-button>
     </li>
+    <el-button v-if="totalPages > 1" class="more_button" @click="getWorks(currentPage + 1)" type="info" round>查看更多</el-button>
   </ul>
 </template>
 
@@ -197,6 +198,15 @@ export default {
   .user-list .follow {
     float: right;
     margin-top: 7px;
+    outline: none;
+  }
+  .more_button {
+    display:block;
+    margin:20px auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
     outline: none;
   }
 </style>
