@@ -7,23 +7,22 @@
       <el-main style="margin-right: 10px">
         <el-container class="main-top">
           <el-header style="height: 82px;">
-            <el-avatar class="header" :size="80"/>
-            <el-button v-if="!isFollowed" round type="success" class="off follow user-follow-button">
-              <i class="el-icon-check"/>关注
-            </el-button>
-            <el-button v-if="isFollowed" round type="primary" class="on followed user-follow-button"
-                       @mouseover.native="overFollow"
-                       @mouseleave.native="leaveFollow">
-              <i :class="iconName"/>{{buttonName}}
-            </el-button>
-            <el-button round class="sendMsgBtn">
-              发简信
-            </el-button>
+            <el-avatar class="header" :src="userInfo.headUrl" :size="80"/>
+            <div v-show="!isMyself">
+              <el-button v-if="!userInfo.isFollowed" @click="follow" round type="success" class="off follow user-follow-button">
+                <i class="el-icon-plus"/>关注
+              </el-button>
+              <el-button v-else round type="primary" class="on followed user-follow-button"
+                         @click="follow"
+                         @mouseover.native="overFollow"
+                         @mouseleave.native="leaveFollow">
+                <i :class="iconName"/>{{buttonName}}
+              </el-button>
+            </div>
             <el-container>
               <el-header style="height: 30px; padding-left:0px">
                 <div class="title">
                   <a class="name" href="#/u/6d71c8ef87ab">你在烦恼些什么</a>
-                  <i class="el-icon-female" style="color: deeppink"/>
                   <i class="el-icon-male" style="color: deepskyblue"/>
                 </div>
               </el-header>
@@ -32,36 +31,37 @@
                   <ul>
                     <li>
                       <div class="meta-block">
-                        <a href="#/users/6d71c8ef87ab/following">
-                          <p>1</p>
+                        <router-link tag="a" :to="{name:'Followers', params:$route.params}">
+                          <p>{{userInfo.followers}}</p>
                           关注 <i class="el-icon-arrow-right"></i>
-                        </a>        </div>
+                        </router-link>
+                      </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <a href="#/users/6d71c8ef87ab/followers">
-                          <p>1</p>
+                        <router-link tag="a" :to="{name:'Fans', params:$route.params}">
+                          <p>{{userInfo.fans}}</p>
                           粉丝 <i class="el-icon-arrow-right"></i>
-                        </a>
+                        </router-link>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <a href="#/u/6d71c8ef87ab">
-                          <p>1</p>
+                        <router-link tag="a" :to="/u/ + userInfo.userId">
+                          <p>{{userInfo.articles}}</p>
                           文章 <i class="el-icon-arrow-right"></i>
-                        </a>
+                        </router-link>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <p>4100</p>
+                        <p>{{userInfo.words}}</p>
                         <div>字数</div>
                       </div>
                     </li>
                     <li>
                       <div class="meta-block">
-                        <p>2</p>
+                        <p>{{userInfo.likes}}</p>
                         <div>收获喜欢</div>
                       </div>
                     </li>
@@ -78,90 +78,100 @@
               <el-menu-item index="4"><i class="el-icon-star-off"></i>热门</el-menu-item>
             </el-menu>
           </el-main>
-          <ul class="articles infinite-list"
-              v-infinite-scroll="load"
-              infinite-scroll-disabled="disabled">
-            <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+          <ul class="articles">
+            <li class="list" v-for="(article, n) in articles" v-bind:key="n">
               <el-container>
                 <el-container>
                   <el-header>
-                    <a class="title" target="_blank" href="#">
-                      《诛仙》口碑遭遇滑铁卢，虽不是经典，但绝不是烂片{{n}}
-                    </a>
+                    <router-link tag="a"
+                                 :class="article.isTop ? 'isTop' : ''"
+                                 :to="/p/ + article.articleId" class="title" target="_blank">
+                      {{article.title}}
+                    </router-link>
                   </el-header>
                   <el-main class="content">
                     <p class="abstract">
-                      《诛仙》是我高中时代就很喜欢的小说，记得那时候废寝忘食地追书。书中陆雪琪和碧瑶留给我留下了深刻的印象，男主在两个女子之间辗转反侧，情难独钟。 武...
+                      {{article.content}}
                     </p>
                   </el-main>
                   <el-footer  style="height: 30px">
-                    <a class="comment" href="#" target="_blank">
-                      <span class="view"><i class="el-icon-view"/>999</span>
-                    </a>
-                    <a class="comment" href="#" target="_blank">
-                      <i class="iconfont el-icon-third-pinglun2"/>999
-                    </a>
-                    <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
-                    <span class="date">2019.10.17 12:04</span>
+                    <router-link tag="a" :to="/p/ + article.articleId" class="comment" target="_blank">
+                      <span class="view"><i style="margin-right: 3px" class="el-icon-view"/>{{article.clicks}}</span>
+                    </router-link>
+                    <router-link tag="a" :to="/p/ + article.articleId" class="comment" target="_blank">
+                      <i style="margin-right: 5px" class="iconfont el-icon-third-pinglun2"/>{{article.comments}}
+                    </router-link>
+                    <span class="like"><i style="margin-right: 5px" class="iconfont el-icon-third-aixin"/>{{article.likes}}</span>
+                    <span class="date">{{article.createdDate}}</span>
                   </el-footer>
                 </el-container>
                 <!--    无图片隐藏 aside      -->
-                <el-aside width="200px;">
-                  <a href="#" target="_blank">
-                    <img class="img" :src="url"/>
-                  </a>
-                </el-aside>
+<!--                <el-aside width="200px;">-->
+<!--                  <a href="#" target="_blank">-->
+<!--                    <img class="img" :src="url"/>-->
+<!--                  </a>-->
+<!--                </el-aside>-->
               </el-container>
             </li>
-            <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
           </ul>
         </el-container>
       </el-main>
       <el-aside style="padding-top: 20px">
         <div>
           <div class="title">个人介绍</div>
-          <el-button type="text" class="function-btn" @click="updatedDescription"><i class="el-icon-edit"></i>编辑</el-button>
         </div>
         <div class="description">
           <el-input
+            disabled
             style="height:120px;"
-            v-if="!showDescription"
             type="textarea"
             :autosize="{ minRows: 5, maxRows: 5}"
             placeholder="请输入内容"
-            v-model="description">
+            v-model="userInfo.introduce">
           </el-input>
-          <el-button v-if="!showDescription" type="success" plain round style="outline: none">保存</el-button>
-          <el-button v-if="!showDescription" type="text" round style="outline: none" @click="cancleUpdatedDescription">取消</el-button>
-            <div v-if="showDescription">你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么你在烦恼些什么</div>
         </div>
         <ul class="list user-dynamic">
           <li>
-            <a href="#/u/2">
-              <i class="el-icon-notebook-1"></i> <span>我关注的专题/文集/连载</span>
-            </a>
+            <router-link tag="a" :to="{path:`/users/${userInfo.userId}/subscriptions`}">
+              <i class="el-icon-notebook-1"></i>
+              <span v-if="isMyself">我关注的专题/文集/连载</span>
+              <span v-else>Ta关注的专题/文集/连载</span>
+            </router-link>
+          </li>
           <li>
-          <a href="#/u/1">
-            <i class="el-icon-present"></i> <span>我喜欢的文章</span>
-          </a>
+            <router-link tag="a" :to="{path:`/users/${userInfo.userId}/subscriptions/liked_notes`}">
+              <i class="el-icon-present"></i>
+              <span v-if="isMyself">我喜欢的文章</span>
+              <span v-else>Ta喜欢的文章</span>
+            </router-link>
           </li>
         </ul>
         <div>
-          <div class="title">我创建的专题</div>
+          <div v-if="isMyself" class="title">我创建的专题</div>
+          <div v-else class="title">Ta创建的专题</div>
           <div class="new-collection-block">
-            <el-button class="create" icon="el-icon-plus" type="text" style="color: #42c02e">创建一个新专题</el-button>
+            <el-button v-if="isMyself"
+                       @click="$router.push({name:'NewCollection'})"
+                       class="create" icon="el-icon-plus" type="text" style="color: #42c02e">创建一个新专题</el-button>
           </div>
-        </div>
-        <div><div class="title">
-          我的文集
-        </div>
           <ul class="list">
-            <li>
-            <a href="/nb/10792727" target="_blank"><i class="el-icon-notebook-2"></i>
-            </a>
-            <a href="/nb/10792727" target="_blank" class="name">
-              日记本
-            </a>
+            <li v-for="(topic, n) in topics" :key="n">
+              <router-link :to="/c/ + topic.id" target="_blank" class="avatar-collection">
+                <img :src="topic.headUrl">
+              </router-link>
+              <router-link :to="/c/ + topic.id" target="_blank" class="name">{{topic.name}}</router-link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <div v-if="isMyself" class="title">我的文集</div>
+          <div v-else class="title">Ta的文集</div>
+          <ul class="list">
+            <li v-for="(nb, n) in notebooks" :key="n">
+              <router-link :to="/nb/ + nb.id" target="_blank"><i class="el-icon-notebook-2"></i></router-link>
+              <router-link :to="/nb/ + nb.id" target="_blank" class="name">
+                {{nb.name}}
+              </router-link>
             </li>
           </ul>
         </div>
@@ -182,32 +192,140 @@ export default {
       iconName: 'el-icon-check',
       buttonName: '已关注',
       isFollowed: true,
-      fit: 'contain',
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       count: 5,
-      loading: false,
-      description: '',
-      showDescription: true
+      isMyself: false,
+      userInfo: {},
+      topics: [],
+      notebooks: [],
+      articles: [],
+      currentPage: 1,
+      totalPages: 1
     }
   },
-  computed: {
-    noMore () {
-      return this.count >= 20
-    },
-    disabled () {
-      return this.loading || this.noMore
+  created () {
+    this.getUserInfo()
+    this.getTopics()
+    this.getNotebooks()
+    this.getArticles(1, '')
+    // eslint-disable-next-line eqeqeq
+    if (this.$route.params.id == localStorage.getItem('userId').toString()) {
+      this.isMyself = true
+    } else {
+      this.isMyself = false
+    }
+  },
+  watch: {
+    '$route': function (to, from) {
+      // 拿到目标参数 to.query.id 去再次请求数据接口
+      this.getUserInfo()
+      this.getTopics()
+      this.getNotebooks()
+      this.getArticles(1, '')
+      // eslint-disable-next-line eqeqeq
+      if (this.$route.params.id == localStorage.getItem('userId').toString()) {
+        this.isMyself = true
+      } else {
+        this.isMyself = false
+      }
     }
   },
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
+      let order = ''
+      if (key === '1') {
+        order = ''
+        this.currentPage = 1
+        this.getArticles(this.currentPage, order)
+      } else if (key === '2') {
+        this.articles = []
+      } else if (key === '3') {
+        order = 'recentCommentDate'
+        this.currentPage = 1
+        this.getArticles(this.currentPage, order)
+      } else {
+        order = 'clicks'
+        this.currentPage = 1
+        this.getArticles(this.currentPage, order)
+      }
     },
-    load () {
-      this.loading = true
-      setTimeout(() => {
-        this.count += 2
-        this.loading = false
-      }, 2000)
+    getUserInfo () {
+      let _this = this
+      this.axios.get('/api/user/info/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.userInfo = res.data.data
+        }
+      })
+    },
+    getTopics () {
+      let _this = this
+      this.axios.get('/api/user/info/topic/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.topics = res.data.data
+        }
+      })
+    },
+    getNotebooks () {
+      let _this = this
+      this.axios.get('api/user/info/nb/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.notebooks = res.data.data
+        }
+      })
+    },
+    getArticles (page, order) {
+      let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('api/user/' + _this.$route.params.id + '/articles', {
+        params: {
+          'page': page,
+          'order': order
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
+    },
+    follow () {
+      this.userInfo.isFollowed = !this.userInfo.isFollowed
+      let _this = this
+      this.axios.put('/api/follow', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': _this.$route.params.id
+      }).then(function (res) {
+        if (res.data.code === '403') {
+          this.$message({
+            message: '您还未登录',
+            type: 'error',
+            center: true
+          })
+          return
+        }
+        if (_this.userInfo.isFollowed) {
+          _this.$message({
+            message: '关注成功',
+            type: 'success',
+            center: true
+          })
+        } else {
+          _this.$message({
+            message: '取消关注成功',
+            type: 'success',
+            center: true
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     overFollow () {
       this.iconName = 'el-icon-close'
@@ -216,13 +334,6 @@ export default {
     leaveFollow () {
       this.iconName = 'el-icon-check'
       this.buttonName = '已关注'
-    },
-    updatedDescription () {
-      this.description = '原文本'
-      this.showDescription = false
-    },
-    cancleUpdatedDescription () {
-      this.showDescription = true
     }
   }
 }
@@ -360,8 +471,13 @@ export default {
     line-height: 60px;
   }
   .articles .abstract {
+    width: 700px;
     font-size: 14px;
     color: #999999;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .articles .img {
     margin-top: 30px;
@@ -405,5 +521,33 @@ export default {
     margin: 23px 0 23px 16px;
     font-size: 15px;
     outline: none;
+  }
+  .list li a {
+    display: inline-block;
+  }
+  .avatar-collection {
+    margin-right: 5px;
+    width: 32px;
+    height: 32px;
+  }
+  .avatar-collection img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10%;
+  }
+  .isTop:before {
+    content: "\7F6E\9876";
+    display: inline-block;
+    vertical-align: middle;
+    width: 40px;
+    line-height: 22px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-size: 12px;
+    text-align: center;
+    background-color: #e9634c;
+    color: #fff;
+    font-weight: 400;
   }
 </style>

@@ -35,7 +35,7 @@
                   <ul>
                     <li>
                       <div class="meta-block">
-                        <router-link tag="a" :to="{name:'Followers', params:{'id': userInfo.userId}}">
+                        <router-link tag="a" :to="{name:'Followers', params:$route.params}">
                           <p>{{userInfo.followers}}</p>
                           关注 <i class="el-icon-arrow-right"></i>
                         </router-link>
@@ -43,7 +43,7 @@
                     </li>
                     <li>
                       <div class="meta-block">
-                        <router-link tag="a" :to="{name:'Fans', params:{'id': userInfo.userId}}">
+                        <router-link tag="a" :to="{name:'Fans', params:$route.params}">
                           <p>{{userInfo.fans}}</p>
                           粉丝 <i class="el-icon-arrow-right"></i>
                         </router-link>
@@ -51,10 +51,10 @@
                     </li>
                     <li>
                       <div class="meta-block">
-                        <a href="#/u/6d71c8ef87ab">
+                        <router-link tag="a" :to="/u/ + userInfo.userId">
                           <p>{{userInfo.articles}}</p>
                           文章 <i class="el-icon-arrow-right"></i>
-                        </a>
+                        </router-link>
                       </div>
                     </li>
                     <li>
