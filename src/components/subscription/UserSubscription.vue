@@ -1,21 +1,18 @@
 <template>
   <el-container class="main-top">
     <el-header style="height: 82px;">
-      <el-avatar class="header" :size="80"/>
-      <el-button round class="sendMsgBtn" type="success">
+      <el-avatar class="header" :src="userInfo.headUrl" :size="80"/>
+      <el-button round class="sendMsgBtn"  @click="$router.push('/u/'+ userInfo.userId)" type="success">
         个人中心
-      </el-button>
-      <el-button round class="sendMsgBtn">
-        发简信
       </el-button>
       <el-container>
         <el-header style="height: 30px; padding-left:0px">
           <div class="title">
-            <a class="name" href="#/u/6d71c8ef87ab">你在烦恼些什么</a>
+            <router-link tag="a" class="name" :to="/u/ + userInfo.userId">{{userInfo.nickname}}</router-link>
           </div>
         </el-header>
         <el-main style="padding-top: 0">
-          <div class="info">写了10843796字，获得了204310个喜欢</div>
+          <div class="info">写了{{userInfo.words}}字，获得了{{userInfo.likes}}个喜欢</div>
         </el-main>
       </el-container>
     </el-header>
@@ -25,42 +22,42 @@
         <el-menu-item index="2"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
         <el-menu-item index="3"><i class="el-icon-star-off"></i>热门</el-menu-item>
       </el-menu>
-      <ul class="articles infinite-list"
-          v-infinite-scroll="load"
-          infinite-scroll-disabled="disabled">
-        <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+      <ul class="articles">
+        <li class="list" v-for="(article, n) in articles" v-bind:key="n">
           <el-container>
             <el-container>
               <el-header>
-                <a class="title" target="_blank" href="#">
-                  《诛仙》口碑遭遇滑铁卢，虽不是经典，但绝不是烂片{{n}}
-                </a>
+                <router-link tag="a"
+                             :class="article.isTop ? 'isTop' : ''"
+                             :to="/p/ + article.articleId" class="title" target="_blank">
+                  {{article.title}}
+                </router-link>
               </el-header>
               <el-main class="content">
                 <p class="abstract">
-                  《诛仙》是我高中时代就很喜欢的小说，记得那时候废寝忘食地追书。书中陆雪琪和碧瑶留给我留下了深刻的印象，男主在两个女子之间辗转反侧，情难独钟。 武...
+                  {{article.content}}
                 </p>
               </el-main>
               <el-footer  style="height: 30px">
-                <a class="comment" href="#" target="_blank">
-                  <span class="view"><i class="el-icon-view"/>999</span>
-                </a>
-                <a class="comment" href="#" target="_blank">
-                  <i class="iconfont el-icon-third-pinglun2"/>999
-                </a>
-                <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
-                <span class="date">2019.10.17 12:04</span>
+                <router-link tag="a" :to="/p/ + article.articleId" class="comment" target="_blank">
+                  <span class="view"><i style="margin-right: 3px" class="el-icon-view"/>{{article.clicks}}</span>
+                </router-link>
+                <router-link tag="a" :to="/p/ + article.articleId" class="comment" target="_blank">
+                  <i style="margin-right: 5px" class="iconfont el-icon-third-pinglun2"/>{{article.comments}}
+                </router-link>
+                <span class="like"><i style="margin-right: 5px" class="iconfont el-icon-third-aixin"/>{{article.likes}}</span>
+                <span class="date">{{article.createdDate}}</span>
               </el-footer>
             </el-container>
-            <!--    无图片隐藏 aside      -->
-            <el-aside width="200px;">
-              <a href="#" target="_blank">
-                <img class="img" :src="url"/>
-              </a>
-            </el-aside>
+<!--            &lt;!&ndash;    无图片隐藏 aside      &ndash;&gt;-->
+<!--            <el-aside width="200px;">-->
+<!--              <a href="#" target="_blank">-->
+<!--                <img class="img" :src="url"/>-->
+<!--              </a>-->
+<!--            </el-aside>-->
           </el-container>
+          <el-button class="more_button" v-if="totalPages > 1" @click="getArticles(currentPage+1, order)" type="info" round>查看更多</el-button>
         </li>
-        <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
       </ul>
     </el-main>
   </el-container>
@@ -74,29 +71,63 @@ export default {
       fit: 'contain',
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       count: 5,
-      loading: false,
-      description: '',
-      showDescription: true
+      userInfo: {},
+      articles: [],
+      currentPage: 1,
+      totalPages: 1,
+      order: ''
     }
   },
-  computed: {
-    noMore () {
-      return this.count >= 20
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
+  created () {
+    this.getUserInfo()
+    this.getArticles(1, '')
   },
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
+      if (key === '1') {
+        this.order = ''
+        this.currentPage = 1
+        this.getArticles(this.currentPage, this.order)
+      } else if (key === '2') {
+        this.order = 'recentCommentDate'
+        this.currentPage = 1
+        this.getArticles(this.currentPage, this.order)
+      } else {
+        this.order = 'clicks'
+        this.currentPage = 1
+        this.getArticles(this.currentPage, this.order)
+      }
     },
-    load () {
-      this.loading = true
-      setTimeout(() => {
-        this.count += 2
-        this.loading = false
-      }, 2000)
+    getUserInfo () {
+      let _this = this
+      this.axios.get('/api/user/info/' + _this.$route.params.id).then(function (res) {
+        if (res.data.code) {
+          _this.userInfo = res.data.data
+        }
+      })
+    },
+    getArticles (page, order) {
+      let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('api/user/' + _this.$route.params.id + '/articles', {
+        params: {
+          'page': page,
+          'order': order
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
     }
   }
 }
@@ -200,6 +231,10 @@ export default {
   .articles .abstract {
     font-size: 14px;
     color: #999999;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .articles .img {
     margin-top: 30px;

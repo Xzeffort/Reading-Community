@@ -22,21 +22,37 @@
               <div class="avatar">
                 <img src="../assets/jianyouquan.png" style="border: none;">
               </div>
-              <div class="name">简友圈</div>
+              <div class="name">知友圈</div>
             </a>
           </li>
-          <li v-for="n in 3" :key="n" @click="change(n)" :class="activeClass === n ? 'active':''" >
-            <a class="wrap">
+          <li v-for="(user, n) in users" :key="user.id" @click="changeUser(n)" :class="activeClass === n ? 'active':''" >
+            <router-link tag="a" class="wrap" :to="{name: 'UserSubscription', params: {'id': user.userId}}">
               <div class="avatar">
-                <img src="../assets/jianyouquan.png" style="border: none;">
+                <img :src="user.headUrl" style="border: none;">
               </div>
-              <div class="name">{{types[n % 3]}}</div>
-            </a>
+              <div class="name">{{user.nickname}}</div>
+            </router-link>
+          </li>
+        </ul>
+        <ul class="subscription-list">
+          <li v-for="(other, n) in others" :key="other.id" @click="changeOther(n)" :class="activeClass === users.length + n ? 'active':''" >
+            <router-link v-if="!other.isNb" tag="a" :to="{name: 'CollectionSubscription', params: {'id': other.typeId}}" class="wrap">
+              <div class="avatar">
+                <img :src="other.headUrl" style="border: none;">
+              </div>
+              <div class="name">{{other.name}}</div>
+            </router-link>
+            <router-link v-else tag="a" :to="{name: 'NoteBookSubscription', params: {'id': other.typeId}}" class="wrap">
+              <div class="avatar">
+                <img src="../assets/avatar-notebook-default.png"  style="border-radius: 10%;border: none;">
+              </div>
+              <div class="name">{{other.name}}</div>
+            </router-link>
           </li>
         </ul>
       </el-aside>
       <el-container>
-        <router-view/>
+        <router-view :key="$route.fullPath" />
       </el-container>
     </el-container>
   </el-container>
@@ -55,23 +71,57 @@ export default {
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       show: false,
       types: ['user', 'collection', 'notebook'],
-      activeClass: -1
+      activeClass: -2,
+      users: [],
+      others: []
     }
+  },
+  created () {
+    this.getUserInfo()
+    this.getOthersInfo('all')
   },
   methods: {
     handleCommand (command) {
       this.$message('click on item ' + command)
+      if (command === '只看作者') {
+        this.others = []
+      } else if (command === '只看文集') {
+        this.getOthersInfo('notebook')
+        this.users = []
+      } else if (command === '只看专题') {
+        this.getOthersInfo('topic')
+        this.users = []
+      } else {
+        this.getOthersInfo('')
+      }
       this.dropName = command
     },
-    change (index) {
+    changeUser (index) {
       this.activeClass = index
-      if (index === 1) {
-        this.$router.push('/subscription/123/collection')
-      } else if (index === 2) {
-        this.$router.push('/subscription/123/notebook')
-      } else {
-        this.$router.push('/subscription/123/user')
-      }
+    },
+    changeOther (index) {
+      this.activeClass = this.users.length + index
+    },
+    getUserInfo () {
+      let _this = this
+      this.axios.get('/api/follow/users?userId=' + localStorage.getItem('userId')).then(function (res) {
+        if (res.data.code) {
+          _this.users = res.data.data
+        }
+      })
+    },
+    getOthersInfo (type) {
+      let _this = this
+      this.axios.get('/api/follow/all', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'type': type
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.others = res.data.data
+        }
+      })
     }
   }
 }
@@ -95,7 +145,6 @@ export default {
   .subscription-list {
     margin-top: 7px;
     list-style: none;
-    border-top: 1px solid #f0f0f0;
   }
   .wrap {
     padding: 10px 13px;

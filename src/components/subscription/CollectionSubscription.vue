@@ -1,11 +1,11 @@
 <template>
   <el-container class="main-top">
     <el-header style="height: 82px;">
-      <el-avatar class="header" :size="80"/>
-      <el-button round class="sendMsgBtn" type="success">
+      <el-avatar class="header" :src="info.topicHeadUrl" :size="80"/>
+      <el-button round class="sendMsgBtn" @click="$router.push('/c/' + info.id)" type="success">
         专题主页
       </el-button>
-      <el-button round class="sendMsgBtn" @click="dialogCollectionVisible = true">
+      <el-button round class="sendMsgBtn" @click="searchArticle('')">
         投稿
       </el-button>
       <el-dialog :visible.sync="dialogCollectionVisible" width="40%" top="8vh">
@@ -14,19 +14,19 @@
           <el-button type="text" class="newArticleBtn">写篇新文章</el-button>
           <p class="notice">请珍惜每次投稿机会</p>
           <div style="margin-top: 30px;position: relative;">
-            <input type="text" placeholder="搜索我的文章" class="search-input">
-            <a class="el-icon-search search-btn"/>
+            <input type="text" placeholder="搜索我的文章" v-model="searchName" class="search-input">
+            <a class="el-icon-search search-btn" @click="searchArticle(searchName)"/>
           </div>
         </div>
         <div class="modal-body">
-          <!--todo 加载-->
           <ul>
-            <li v-for="n in 10" :key="n">
+            <li v-for="(article,n) in searchArticles" :key="n">
               <div>
-                <div class="note-name">java上传照片于七牛云，解决使用非静态图片{{n}}</div>
-                <a class="action-btn push" @click="sendArticle(n)" :ref="`push${n}`">投稿</a>
-                <a class="action-btn back hidden" @click="backArticle(n)" :ref="`back${n}`">撤回</a>
-                <a class="action-btn collect" v-if="false">已收录</a>
+                <div class="note-name">{{article.title}}</div>
+                <a class="action-btn collect" v-if="article.isCollected">已收录</a>
+                <div v-else>
+                  <a class="action-btn push"  @click="sendArticle(article.articleId)">投稿</a>
+                </div>
               </div>
             </li>
           </ul>
@@ -35,56 +35,45 @@
       <el-container>
         <el-header style="height: 30px; padding-left:0px">
           <div class="title">
-            <a class="name" href="#/c/6d71c8ef87ab">代码改变世界</a>
+            <router-link tag="a" class="name" :to="/c/ + info.id">{{info.name}}</router-link>
           </div>
         </el-header>
         <el-main style="padding-top: 0">
-          <div class="info"><a href="#" style="color: #3194d0;">Andrew_liu</a>编 · 收录了2780篇文章 · 14755人关注</div>
+          <div class="info">收录了{{info.articles}}篇文章 · {{info.followers}}人关注</div>
         </el-main>
       </el-container>
     </el-header>
     <el-main>
-      <el-menu default-active="1"  mode="horizontal" class="menu" @select="handleSelect">
-        <el-menu-item index="1"><i class="el-icon-tickets"></i>最新发布</el-menu-item>
-        <el-menu-item index="2"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
-        <el-menu-item index="3"><i class="el-icon-star-off"></i>热门</el-menu-item>
+      <el-menu default-active="1"  mode="horizontal" class="menu">
+        <el-menu-item index="1"><i class="el-icon-tickets"></i>目录</el-menu-item>
       </el-menu>
-      <ul class="articles infinite-list"
-          v-infinite-scroll="load"
-          infinite-scroll-disabled="disabled">
-        <li class="list infinite-list-item" v-for="n in count" v-bind:key="n">
+      <ul class="articles">
+        <li class="list"  v-for="(article,n) in articles" v-bind:key="n">
           <el-container>
             <el-container>
               <el-header>
-                <a class="title" target="_blank" href="#">
-                  《诛仙》口碑遭遇滑铁卢，虽不是经典，但绝不是烂片{{n}}
-                </a>
+                <router-link tag="a" class="title" target="_blank" :to="/p/+article.articleId">
+                  {{article.title}}
+                </router-link>
               </el-header>
               <el-main class="content">
                 <p class="abstract">
-                  《诛仙》是我高中时代就很喜欢的小说，记得那时候废寝忘食地追书。书中陆雪琪和碧瑶留给我留下了深刻的印象，男主在两个女子之间辗转反侧，情难独钟。 武...
+                  {{article.content}}
                 </p>
               </el-main>
               <el-footer  style="height: 30px">
-                <a class="comment" href="#" target="_blank">
-                  <span class="view"><i class="el-icon-view"/>999</span>
-                </a>
-                <a class="comment" href="#" target="_blank">
-                  <i class="iconfont el-icon-third-pinglun2"/>999
-                </a>
-                <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
-                <span class="date">2019.10.17 12:04</span>
+                <router-link tag="a" class="nickname" :to="/p/+article.userId" target="_blank">
+                  <span class="nickname">{{article.nickname}}</span>
+                </router-link>
+                <router-link tag="a" class="comment" :to="/p/+article.articleId" target="_blank">
+                  <i class="iconfont el-icon-third-pinglun2"/>{{article.comments}}
+                </router-link>
+                <span class="like"><i class="iconfont el-icon-third-aixin"/>{{article.likes}}</span>
               </el-footer>
             </el-container>
-            <!--    无图片隐藏 aside      -->
-            <el-aside width="200px;">
-              <a href="#" target="_blank">
-                <img class="img" :src="url"/>
-              </a>
-            </el-aside>
           </el-container>
         </li>
-        <p v-if="loading" v-loading="loading" style="width: 100%; height: 50px"></p>
+        <el-button class="more_button" v-if="totalPages > 1" @click="getArticles(curentPage+1)" type="info" round>查看更多</el-button>
       </ul>
     </el-main>
   </el-container>
@@ -98,45 +87,102 @@ export default {
       fit: 'contain',
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
       count: 5,
-      loading: false,
-      description: '',
-      showDescription: true,
-      dialogCollectionVisible: false
+      dialogCollectionVisible: false,
+      articles: [],
+      info: {},
+      currentPage: 1,
+      totalPages: 1,
+      searchArticles: [],
+      searchName: ''
     }
   },
-  computed: {
-    noMore () {
-      return this.count >= 20
-    },
-    disabled () {
-      return this.loading || this.noMore
-    }
+  created () {
+    this.getInfo(this.$route.params.id)
+    this.getArticles(1)
   },
   methods: {
-    handleSelect (key, keyPath) {
-      console.log(key, keyPath)
-    },
-    load () {
-      this.loading = true
-      setTimeout(() => {
-        this.count += 2
-        this.loading = false
-      }, 2000)
-    },
-    sendArticle (id) {
-      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push hidden')
-      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back')
-      this.$message({
-        message: '投稿成功,id' + id,
-        type: 'success'
+    getInfo (id) {
+      let _this = this
+      this.axios.get('/api/topic/' + id).then(function (res) {
+        if (res.data.code) {
+          _this.info = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+      this.axios.get('/api/follow/topic/followers', {
+        params: {
+          'page': 1,
+          'size': 8,
+          'typeId': id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.followers = res.data.data.list
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     },
-    backArticle (id) {
-      this.$refs[`back${id}`][0].setAttribute('class', 'action-btn back hidden')
-      this.$refs[`push${id}`][0].setAttribute('class', 'action-btn push')
-      this.$message({
-        message: '撤回成功,id' + id,
-        type: 'success'
+    getArticles (page) {
+      let _this = this
+      _this.curentPage = page
+      if (page > _this.totalPages) {
+        this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/topic/collect', {
+        params: {
+          'page': _this.curentPage,
+          'topicId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = _this.articles.concat(res.data.data.list)
+          _this.totalPages = res.data.data.totalPages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    searchArticle (name) {
+      let _this = this
+      _this.dialogCollectionVisible = true
+      this.axios.get('/api/topic/submit/search', {
+        params: {
+          'name': name,
+          'topicId': _this.$route.params.id
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.searchArticles = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    sendArticle (id) {
+      let _this = this
+      this.axios.post('/api/topic/submit', {
+        'articleId': id,
+        'topicId': _this.$route.params.id
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '投稿成功',
+            type: 'success'
+          })
+        } else {
+          _this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
       })
     }
   }
@@ -242,6 +288,10 @@ export default {
   .articles .abstract {
     font-size: 14px;
     color: #999999;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .articles .img {
     margin-top: 30px;
@@ -349,5 +399,14 @@ export default {
     font-size: 13px;
     border-radius: 20px;
     line-height: normal;
+  }
+  .more_button {
+    display:block;
+    margin:20px auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
+    outline: none;
   }
 </style>

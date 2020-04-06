@@ -1,29 +1,35 @@
 <template>
   <div>
-    <ul class="note-list">
-      <li>
+    <ul class="note-list" style="width: 750px;">
+      <li v-for="(info, n) in all" :key="n">
         <el-container>
           <el-container>
             <el-header height="24px">
-              <div class="author"><a href="/u/4b9ff86a7af4" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/1211570/a02b7997-3ccb-4857-9e95-9fbd9deca9ee.png?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a> <div class="info"><a href="/u/4b9ff86a7af4" target="_blank" class="nickname">Sir电影</a> <span>发表了文章 · 13分钟前</span></div></div>
+              <div class="author">
+                <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="avatar">
+                  <img :src="info.headUrl">
+                </router-link>
+                <div class="info">
+                  <router-link tag="a" :to="/u/ + info.userId" target="_blank" class="nickname">{{info.nickname}}</router-link>
+                  <span>{{info.createdDate}}</span>
+                </div>
+              </div>
             </el-header>
             <el-main class="content">
-              <a href="/p/7309728cb463" target="_blank" class="title">现在开始，她又要做回全民偶像</a>
-              <p class="abstract">一代人即将沸腾。 Sir已经感受到前奏的炽热。 来自一段怼上脸的质问： 咱们这场打得这么难堪 您考虑过换个战术吗？ 来自一段撕破脸的逼...</p>
+              <router-link tag="a" :to="/p/ + info.articleId" target="_blank" class="title">
+                {{info.title}}
+              </router-link>
+              <p class="abstract">
+                {{info.content}}
+              </p>
             </el-main>
             <el-footer  style="height: 30px">
               <a class="comment" href="#" target="_blank">
-                <i class="iconfont el-icon-third-pinglun2"/>999
+                <i class="iconfont el-icon-third-pinglun2" style="margin-right: 5px"/>{{info.comments}}
               </a>
-              <span class="like"><i class="iconfont el-icon-third-aixin"/>999</span>
+              <span class="like"><i class="iconfont el-icon-third-aixin" style="margin-right: 5px"/>{{info.likes}}</span>
             </el-footer>
           </el-container>
-          <!--    无图片隐藏 aside      -->
-          <el-aside width="200px;" style="min-width: 200px">
-            <a href="#" target="_blank">
-              <img class="img" :src="url"/>
-            </a>
-          </el-aside>
         </el-container>
       </li>
     </ul>
@@ -35,7 +41,28 @@ export default {
   name: 'Index',
   data () {
     return {
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      all: [],
+      currentPage: 1,
+      totalPages: 1
+    }
+  },
+  created () {
+    this.getUserInfo(1)
+  },
+  methods: {
+    getUserInfo (page) {
+      let _this = this
+      this.axios.get('/api/follow/timeline', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.all = res.data.data.list
+        }
+      })
     }
   }
 }
@@ -139,11 +166,11 @@ export default {
     text-decoration: underline;
   }
   .note-list .abstract {
-    width: 500px;
     margin: 0 0 8px;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 24px;
     color: #999;
+    width: 700px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
