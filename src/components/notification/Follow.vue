@@ -4,26 +4,43 @@
       <div>
         <div class="menu">全部关注</div>
         <ul class="follow-list">
-          <li>
+          <li v-for="(message, n) in messages" :key="n">
            <div style="float: left;margin-top: 10px;margin-right: 10px">
-             <a href="#/u/c794c9aee939" class="avatar">
-               <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/120/h/120/format/webp">
-             </a>
+             <router-link tag="a" :to="/u/ + message.userId" class="avatar">
+               <img :src="message.headUrl">
+             </router-link>
            </div>
-            <div class="info">
-              <a href="/u/c794c9aee939" class="user">奇怪的团子</a>
+            <div class="info" v-if="message.type == 1">
+              <router-link tag="a" :to="/u/ + message.userId" class="user">{{message.nickname}}</router-link>
               <span>关注了你</span>
-              <div class="time">2020.01.17 12:23</div>
+              <div class="time">{{message.date}}</div>
             </div>
-            <el-button type="success" round size="medium" class="followBtn" hidden>关注</el-button>
-            <el-button type="info" round size="medium" class="followBtn">已关注</el-button>
+            <div class="info" v-else-if="message.type == 2">
+              <router-link tag="a" :to="/u/ + message.userId" class="user">{{message.nickname}}</router-link>
+              <span>关注了你的专题</span>
+              <router-link tag="a" :to="/c/ + message.typeId">
+                <span style="color:#409EFF;">{{message.name}}</span>
+              </router-link>
+              <div class="time">{{message.date}}</div>
+            </div>
+            <div class="info" v-else>
+              <router-link tag="a" :to="/u/ + message.userId" class="user">{{message.nickname}}</router-link>
+              <span>关注了你的文集</span>
+              <router-link tag="a" :to="/nb/ + message.typeId">
+                <span style="color:#409EFF;">{{message.name}}</span>
+              </router-link>
+              <div class="time">{{message.date}}</div>
+            </div>
           </li>
         </ul>
         <el-pagination
+          v-show="totals > 0"
           style=" text-align: center"
+          :page-size="5"
+          @current-change="getMessage"
           background
           layout="prev, pager, next"
-          :total="500">
+          :total="totals">
         </el-pagination>
       </div>
     </el-col>
@@ -32,7 +49,34 @@
 
 <script>
 export default {
-  name: 'Follow'
+  name: 'Follow',
+  data () {
+    return {
+      messages: [],
+      totals: 0,
+      totalPages: 1
+    }
+  },
+  created () {
+    this.getMessage(1)
+  },
+  methods: {
+    getMessage (page) {
+      let _this = this
+      this.axios.get('/api/message/follow', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.messages = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+          _this.totals = res.data.data.totalElements
+        }
+      })
+    }
+  }
 }
 </script>
 

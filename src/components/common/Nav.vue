@@ -15,11 +15,11 @@
             </span>
               <el-dropdown-menu slot="dropdown" class="dropdown">
                 <el-dropdown-item @click.native="$router.push('/notifications/comments')"><i class="el-icon-chat-line-square"/>评论</el-dropdown-item>
-                <el-dropdown-item @click.native="$router.push('/notifications/chats')"><i class="el-icon-message"/>简信</el-dropdown-item>
+<!--                <el-dropdown-item @click.native="$router.push('/notifications/chats')"><i class="el-icon-message"/>简信</el-dropdown-item>-->
                 <el-dropdown-item @click.native="$router.push('/notifications/likes')"><i class="el-icon-upload2"/>投稿请求</el-dropdown-item>
                 <el-dropdown-item @click.native="$router.push('/notifications/likes')"><i class="iconfont el-icon-third-xihuan"/>喜欢和赞</el-dropdown-item>
                 <el-dropdown-item @click.native="$router.push('/notifications/follows')"><i class="el-icon-finished"/>关注</el-dropdown-item>
-                <el-dropdown-item @click.native="$router.push('/notifications/others')"><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>
+<!--                <el-dropdown-item @click.native="$router.push('/notifications/others')"><i class="el-icon-more-outline"/>其他提醒</el-dropdown-item>-->
               </el-dropdown-menu>
             </el-dropdown>
           </b-nav-item>
@@ -74,7 +74,7 @@ export default {
   data () {
     return {
       isLogin: false,
-      isDot: true,
+      isDot: false,
       search: '',
       headUrl: '',
       userId: ''
@@ -87,6 +87,7 @@ export default {
   created () {
     this.getSearchUrlContent()
     this.info()
+    this.getMessage()
     this.userId = localStorage.getItem('userId')
   },
   watch: {
@@ -108,6 +109,24 @@ export default {
         }
       }).catch((res) => {
         console.log(res)
+      })
+    },
+    getMessage () {
+      let _this = this
+      this.axios.get('/api/message/count', {
+        params: {
+          'userId': localStorage.getItem('userId')
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          let data = res.data.data
+          let count = data.comments + data.likes + data.submits + data.follows
+          if (count > 0) {
+            _this.isDot = true
+          } else {
+            _this.isDot = false
+          }
+        }
       })
     },
     gotoUser () {

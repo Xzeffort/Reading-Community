@@ -4,25 +4,27 @@
       <div>
         <div class="menu">收到的评论</div>
         <ul class="comment-list">
-          <li v-for="n in 5 " :key="n">
+          <li v-for="(message, n) in messages " :key="n">
             <div style="float: left;margin-top: 10px;margin-right: 10px">
-              <a href="#/u/c794c9aee939" class="avatar">
-                <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/120/h/120/format/webp">
-              </a>
+              <router-link tag="a" :to="/u/ + message.userId" class="avatar">
+                <img :src="message.headUrl">
+              </router-link>
             </div>
             <div class="info">
-              <a href="/u/c794c9aee939" class="user">奇怪的团子{{n}}</a>
+              <router-link tag="a" :to="/u/ + message.userId" class="user">{{message.nickname}}</router-link>
               <span class="comment-slogan">在文章</span>
-              <a href="/p/342a7eba6e42">《java上传照片于七牛云，解决使用非静态图片》</a>
+              <router-link tag="a" :to="/p/ + message.articleId">
+                《{{message.title}}》
+              </router-link>
               <span class="comment-slogan">中写了一条新评论</span>
-              <div class="time">2020.01.17 12:23</div>
+              <div class="time">{{message.date}}</div>
             </div>
-            <p>哈哈哈哈</p>
+            <p>{{message.comment}}</p>
             <div class="meta">
               <el-button type="text" class="replyBtn" @click="replyClassicBody(n)">
                 <i class="iconfont el-icon-third-pinglun2"></i>回复
               </el-button>
-              <el-button type="text" class="replyBtn">
+              <el-button type="text" class="replyBtn" @click="$router.push('/p/' + message.articleId)">
                 <i class="el-icon-right"></i>查看对话
               </el-button>
             </div>
@@ -45,7 +47,9 @@
               <el-row :gutter="20" style="margin-top: 20px">
                 <el-col :span="6" :offset="18">
                   <div>
-                    <el-button type="danger" round size="small" style="outline: none">发布</el-button>
+                    <el-button type="danger"
+                               @click="postReply(n,message.userId,message.commentId,message.articleId)"
+                               round size="small" style="outline: none">发布</el-button>
                     <el-button type="info" round size="small" @click="cancelReplyClassicBody(n)">取消</el-button>
                   </div>
                 </el-col>
@@ -56,8 +60,10 @@
         <el-pagination
           style=" text-align: center"
           background
+          :page-size="5"
+          @current-change="getMessage"
           layout="prev, pager, next"
-          :total="500">
+          :total="totals">
         </el-pagination>
       </div>
     </el-col>
@@ -69,10 +75,52 @@ export default {
   name: 'comment',
   data () {
     return {
-      reply: ''
+      reply: '',
+      messages: [],
+      totals: 0,
+      totalPages: 1
     }
   },
+  created () {
+    this.getMessage(1)
+  },
   methods: {
+    getMessage (page) {
+      let _this = this
+      this.axios.get('/api/message/comment', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.messages = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+          _this.totals = res.data.data.totalElements
+        }
+      })
+    },
+    postReply (index, toUserId, commentId, articleId) {
+      let _this = this
+      this.axios.post('/api/reply', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': toUserId,
+        'articleId': articleId,
+        'content': _this.reply,
+        'commentId': commentId
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.$message({
+            message: '回复成功',
+            type: 'success',
+            center: true
+          })
+          _this.$refs[`replyClassicBody${index}`][0].setAttribute('hidden', 'hidden')
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     replyClassicBody (e) {
       this.$refs[`replyClassicBody${e}`][0].removeAttribute('hidden')
       // console.log(this.$refs[`replyBody${e}`][0])
