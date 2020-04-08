@@ -12,35 +12,20 @@
               <div class="name">全部未处理请求</div>
             </a>
           </li>
-          <li>
-            <a href="#/notifications/collections/565a0de16ee1/submissions" class="wrap">
+          <li v-for="(topic, n) in topics" :key="n">
+            <router-link tag="a" :to="'/notifications/collections/' + topic.topicId +'/submissions?name='+ topic.name + ''" class="wrap">
               <div class="avatar-collection">
-                <el-badge :value="12" class="item">
-                  <img src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR%29VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/144/h/144/format/webp">
+                <el-badge :value="topic.unSolve" class="item">
+                  <img :src="topic.headUrl">
                 </el-badge>
               </div>
               <div class="name">
-                LPL
-                <div>
-                  有新投稿《2020-01-18 dasd》
+                {{topic.name}}
+                <div v-show="topic.unSolve">
+                  有新投稿!!!
                 </div>
               </div>
-            </a>
-          </li>
-          <li>
-            <a href="#/notifications/collections/565a0de16ee1/submissions" class="wrap">
-              <div class="avatar-collection">
-                <el-badge :value="12" class="item">
-                  <img src="https://upload.jianshu.io/collections/images/1849232/STF%60KG3D__BR%29VKEG__L__I.png?imageMogr2/auto-orient/strip|imageView2/1/w/144/h/144/format/webp">
-                </el-badge>
-              </div>
-              <div class="name">
-                LPL
-                <div>
-                  有新投稿《2020-01-18 dasd》
-                </div>
-              </div>
-            </a>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -50,7 +35,29 @@
 
 <script>
 export default {
-  name: 'Request'
+  name: 'Request',
+  data () {
+    return {
+      topics: []
+    }
+  },
+  created () {
+    this.getMessage()
+  },
+  methods: {
+    getMessage () {
+      let _this = this
+      this.axios.get('/api/message/topic', {
+        params: {
+          'userId': localStorage.getItem('userId')
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.topics = res.data.data
+        }
+      })
+    }
+  }
 }
 </script>
 

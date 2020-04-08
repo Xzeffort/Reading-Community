@@ -4,20 +4,24 @@
       <div>
         <div class="menu">其他提醒</div>
         <ul class="other-list">
-          <li v-for="n in 5 " :key="n">
+          <li v-for="(message, n) in messages" :key="n">
             <div class="info">
-              <span>今天是你加入简书的第2年，感谢你的陪伴，快来回顾你与简书的故事吧，
-                <a target="_blank" href="http://www.jianshu.com/mobile/u/6d71c8ef87ab/anniversary?notify_id=43353370">点击查看</a>
-              </span>
-              <div class="time">2020.01.17 12:23</div>
+              <span>你投稿的文章</span>
+              <router-link tag="a" :to="/p/ + message.articleId">《{{message.title}}》</router-link>
+              <span v-if="!message.isRejected">已被加入专题</span>
+              <span v-else>被拒绝 理由：{{message.reason}}</span>
+              <div class="time">{{message.data}}</div>
             </div>
           </li>
         </ul>
         <el-pagination
+          v-show="totals > 0"
           style=" text-align: center"
+          :page-size="5"
+          @current-change="getMessage"
           background
           layout="prev, pager, next"
-          :total="500">
+          :total="totals">
         </el-pagination>
       </div>
     </el-col>
@@ -26,7 +30,34 @@
 
 <script>
 export default {
-  name: 'Others'
+  name: 'Others',
+  data () {
+    return {
+      messages: [],
+      totals: 0,
+      totalPages: 1
+    }
+  },
+  created () {
+    this.getMessage(1)
+  },
+  methods: {
+    getMessage (page) {
+      let _this = this
+      this.axios.get('/api/message/others', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.messages = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+          _this.totals = res.data.data.totalElements
+        }
+      })
+    }
+  }
 }
 </script>
 

@@ -27,6 +27,7 @@
         <el-pagination
           style=" text-align: center"
           background
+          v-show="totals > 0"
           :page-size="5"
           @current-change="getMessage"
           layout="prev, pager, next"

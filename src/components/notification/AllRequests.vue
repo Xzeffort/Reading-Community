@@ -8,54 +8,33 @@
           </a>
         </div>
         <ul class="note-list">
-          <li>
+          <li v-for="(article,n) in articles" :key="n">
             <div class="content">
               <div class="author">
-                <a href="#/u/c794c9aee939" class="avatar">
-                  <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp">
-                </a>
+                <router-link tag="a" :to="/u/+ article.userId" class="avatar">
+                  <img :src="article.headUrl">
+                </router-link>
                 <div class="info">
-                  <a href="#/u/c794c9aee939" class="nickname">奇怪的团子</a>
-                  <span class="time">13 分钟前</span>
+                  <router-link tag="a" :to="/u/+ article.userId" class="nickname">{{article.nickname}}</router-link>
+                  <span class="time">{{article.createdDate}}</span>
                 </div>
               </div>
-              <a href="#/p/cc962d260650" target="_blank" class="title">2020-01-18 dasd</a>
-              <p class="abstract">的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间</p>
+              <router-link tag="a" :to="/p/+ article.articleId" target="_blank" class="title">{{article.title}}</router-link>
+              <p class="abstract">
+                {{article.content}}
+              </p>
               <div class="meta">
-                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+                <router-link tag="a" :to="/p/+ article.articleId">
+                  <i style="margin-right: 5px" class="iconfont el-icon-third-liulan"></i>{{article.clicks}}</router-link>
+                <router-link tag="a" :to="/p/+ article.articleId">
+                  <i style="margin-right: 5px" class="iconfont el-icon-third-pinglun2"></i>{{article.comments}}</router-link>
+                <span><i style="margin-right: 5px" class="iconfont el-icon-third-aixin"></i>{{article.likes}}</span>
               </div>
             </div>
             <div class="push-action">
-              <el-button round type="success" size="mini" style="outline: none">接受</el-button>
-              <el-button round type="info" size="mini" style="outline: none" @click="dialogDenyVisible = true">拒绝</el-button>
-              <span class="push-time">2020.01.18 12:05 投稿</span>
-            </div>
-          </li>
-          <li>
-            <div class="content">
-              <div class="author">
-                <a href="#/u/c794c9aee939" class="avatar">
-                  <img src="https://upload.jianshu.io/users/upload_avatars/20911150/66b9433f-d699-4a37-aeb5-3f560fca98c7?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp">
-                </a>
-                <div class="info">
-                  <a href="#/u/c794c9aee939" class="nickname">奇怪的团子</a>
-                  <span class="time">13 分钟前</span>
-                </div>
-              </div>
-              <a href="#/p/cc962d260650" target="_blank" class="title">2020-01-18 dasd</a>
-              <p class="abstract">的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间的哈萨克觉得哈萨克觉得哈萨克计划的空间</p>
-              <div class="meta">
-                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-              </div>
-            </div>
-            <div class="push-action">
-              <el-button round type="success" size="mini" style="outline: none">接受</el-button>
-              <el-button round type="info" size="mini" style="outline: none" @click="dialogDenyVisible = true">拒绝</el-button>
-              <span class="push-time">2020.01.18 12:05 投稿</span>
+              <el-button round type="success" size="mini" style="outline: none"
+                         @click="verifyArticle(n,article.articleId, true, article.topicId)">接受</el-button>
+              <el-button round type="info" size="mini" style="outline: none" @click="dialogDenyVisible = true,index = n">拒绝</el-button>
             </div>
           </li>
         </ul>
@@ -67,7 +46,7 @@
             v-model="reason">
           </el-input>
           <div slot="footer" class="dialog-footer">
-            <el-button type="success" @click="dialogDenyVisible = false">确 定</el-button>
+            <el-button type="success" @click="dialogDenyVisible = false,verifyArticle(index,articles[index].articleId, false, articles[index].topicId)">确 定</el-button>
           </div>
         </el-dialog>
       </div>
@@ -81,7 +60,37 @@ export default {
   data () {
     return {
       dialogDenyVisible: false,
-      reason: ''
+      reason: '',
+      articles: [],
+      index: ''
+    }
+  },
+  created () {
+    this.getMessage()
+  },
+  methods: {
+    getMessage () {
+      let _this = this
+      this.axios.get('/api/message/topic/allRequests', {
+        params: {
+          'userId': localStorage.getItem('userId')
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = res.data.data
+        }
+      })
+    },
+    verifyArticle (index, articleId, isPassed, topicId) {
+      let _this = this
+      this.axios.put('/api/message/topic/article', {
+        'articleId': articleId,
+        'topicId': topicId,
+        'isPassed': isPassed,
+        'reason': _this.reason
+      }).then(function (res) {
+        _this.articles.splice(index, 1)
+      })
     }
   }
 }
@@ -106,7 +115,6 @@ export default {
     vertical-align: middle;
   }
   .push-top {
-    position: fixed;
     width: 625px;
     z-index: 1;
     min-height: 35px;
@@ -122,9 +130,6 @@ export default {
     left: 0;
     font-size: 14px;
     color: #969696;
-  }
-  .note-list {
-    padding-top: 50px;
   }
   .note-list li {
     position: relative;

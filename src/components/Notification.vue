@@ -31,6 +31,11 @@
               <span>关注<el-badge style="margin-top: 7px;margin-left: 12px;" v-if="messages.follows" :value="messages.follows" /></span>
             </a>
           </router-link>
+          <router-link tag="li" to="/notifications/others" >
+            <a href="#"><i class="el-icon-more-outline"></i>
+              <span>其他提醒<el-badge style="margin-top: 7px;margin-left: 12px;" v-if="messages.others" :value="messages.others" /></span>
+            </a>
+          </router-link>
         </ul>
       </el-aside>
       <el-container style="margin-left: 40px;">
