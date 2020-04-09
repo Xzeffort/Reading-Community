@@ -164,112 +164,82 @@
             <a class="active">
               综合排序
             </a>
-            <span>
-              &nbsp;&nbsp;|&nbsp;
-            </span>
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                时间不限<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一周</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一天</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近三月</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
           </div>
-          <div class="result">503259 个结果</div>
+          <div class="result">{{totals}} 个结果</div>
           <ul class="user-list">
-            <li v-for="n in 5" :key="n">
-              <a href="/u/cfed66009c76" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/3665164/83624e4505e2?imageMogr2/auto-orient/strip|imageView2/1/w/144/h/144/format/webp"></a>
+            <li v-for="(user, n) in users" :key="n">
+              <router-link tag="a" :to="/u/ + user.userId" target="_blank" class="avatar">
+                <img :src="user.headUrl">
+              </router-link>
               <div class="info">
-                <a href="/u/cfed66009c76" target="_blank" class="name">
-                  你___
-                </a>
-                <div class="meta"><span>关注 7</span> <span>粉丝 1</span> <span>文章 0</span></div>
+                <router-link tag="a" :to="/u/ + user.userId" target="_blank" class="name">
+                  {{user.nickname}}
+                </router-link>
+                <div class="meta"><span>关注 {{user.followers}}</span> <span>粉丝 {{user.fans}}</span> <span>文章 {{user.articles}}</span></div>
                 <div class="meta">
                   <span>
-                    写了 0 字，获得了 0 个喜欢
+                    写了 {{user.words}} 字，获得了 {{user.likes}} 个喜欢
                   </span>
                 </div>
               </div>
-              <el-button type="success" round class="follow" :ref="`followBtn${n}`"
+              <el-button v-show="user.userId != userId" v-if="!user.isFollowed" type="success" round class="follow"
                          @click="followUser(n)">
                 <i class="el-icon-plus"/><span>关注</span></el-button>
-              <el-button type="info" round class="follow" hidden :ref="`unfollowBtn${n}`"
-                         @click="unfollowUser(n)"
-                         @mouseover.native="overFollow(n)"
-                         @mouseleave.native="leaveFollow(n)">
+              <el-button v-show="user.userId != userId" v-else type="info" round class="follow"
+                         @click="followUser(n)">
                 <i class="el-icon-check"/><span>已关注</span></el-button>
             </li>
           </ul>
           <el-pagination
             style="text-align: center"
             background
+            v-if="totals > 0"
+            :page-size="10"
+            :current-page.sync="currentPage"
+            @current-change="pageChange"
             layout="prev, pager, next"
-            :total="1000">
+            :total="totals">
           </el-pagination>
         </div>
         <div class="search-content" v-if="isCollection">
           <div class="sort-type">
             <a class="active">
               综合排序
-              ·
             </a>
-            <a class="">
-              最近更新
-              ·
-            </a>
-            <a class="">
-              最新发布
-              ·
-            </a>
-            <a class="">
-              热门专题
-            </a>
-            <span>
-              &nbsp;&nbsp;|&nbsp;
-            </span>
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                时间不限<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一周</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一天</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近三月</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
           </div>
-          <div class="result">503259 个结果</div>
+          <div class="result">{{totals}} 个结果</div>
           <ul class="user-list">
-            <li v-for="n in 5" :key="n">
-              <a href="/u/b90070931f39" target="_blank" class="avatar-collection"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
+            <li v-for="(topic, n) in topics" :key="n">
+              <router-link tag="a" :to="/c/ + topic.id" target="_blank" class="avatar">
+                <img :src="topic.topicHeadUrl">
+              </router-link>
               <div class="info">
-                <a href="/c/5AUzod" target="_blank" class="name">
-                  旅行·在路上
-                </a>
+                <router-link tag="a" :to="/c/ + topic.id" target="_blank" class="name">
+                  {{topic.name}}
+                </router-link>
                 <div class="meta">
                   <span>
-                    收录了 210959 篇文章，3323258 人关注
+                    收录了 {{topic.articles}} 篇文章，{{topic.followers}} 人关注
                   </span>
                 </div>
               </div>
-              <el-button type="success" round class="follow" :ref="`followCollectionBtn${n}`"
+              <el-button v-if="!topic.isFollowed" type="success" round class="follow"
                          @click="followCollection(n)">
                 <i class="el-icon-plus"/><span>关注</span></el-button>
-              <el-button type="info" round class="follow" hidden :ref="`unfollowCollectionBtn${n}`"
-                         @click="unfollowCollection(n)"
-                         @mouseover.native="overFollowCollection(n)"
-                         @mouseleave.native="leaveFollowCollection(n)">
+              <el-button v-else type="info" round class="follow"
+                         @click="followCollection(n)">
                 <i class="el-icon-check"/><span>已关注</span></el-button>
             </li>
           </ul>
           <el-pagination
             style="text-align: center"
             background
+            v-if="totals > 0"
+            :page-size="10"
+            :current-page.sync="currentPage"
+            @current-change="pageChange"
             layout="prev, pager, next"
-            :total="1000">
+            :total="totals">
           </el-pagination>
         </div>
         <div class="search-content" v-if="isNotebook">
@@ -277,49 +247,40 @@
             <a class="active">
               综合排序
             </a>
-            <span>
-              &nbsp;&nbsp;|&nbsp;
-            </span>
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                时间不限<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一周</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一天</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近三月</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
           </div>
-          <div class="result">503259 个结果</div>
+          <div class="result">{{totals}} 个结果</div>
           <ul class="user-list">
-            <li v-for="n in 5" :key="n">
-              <a href="/u/b90070931f39" target="_blank" class="avatar-collection"><img src="../assets/avatar-notebook-default.png"></a>
+            <li v-for="(notebook, n) in notebooks" :key="n">
+              <router-link tag="a" :to="/c/ + notebook.id" target="_blank" class="avatar">
+                <img src="../assets/avatar-notebook-default.png">
+              </router-link>
               <div class="info">
-                <a href="/c/5AUzod" target="_blank" class="name">
-                  旅行·在路上
-                </a>
+                <router-link tag="a" :to="/nb/ + notebook.id" target="_blank" class="name">
+                  {{notebook.name}}
+                </router-link>
                 <div class="meta">
                   <span>
-                    0 篇文章，0 人关注
+                    {{notebook.articles}} 篇文章，{{notebook.followers}} 人关注
                   </span>
                 </div>
               </div>
-              <el-button type="success" round class="follow" :ref="`followNotebookBtn${n}`"
+              <el-button v-if="!notebook.isFollowed" type="success" round class="follow"
                          @click="followNotebook(n)">
                 <i class="el-icon-plus"/><span>关注</span></el-button>
-              <el-button type="info" round class="follow" hidden :ref="`unfollowNotebookBtn${n}`"
-                         @click="unfollowNotebook(n)"
-                         @mouseover.native="overFollowNotebook(n)"
-                         @mouseleave.native="leaveFollowNotebook(n)">
+              <el-button v-else type="info" round class="follow"
+                         @click="followNotebook(n)">
                 <i class="el-icon-check"/><span>已关注</span></el-button>
             </li>
           </ul>
           <el-pagination
             style="text-align: center"
             background
+            v-if="totals > 0"
+            :page-size="10"
+            :current-page.sync="currentPage"
+            @current-change="pageChange"
             layout="prev, pager, next"
-            :total="1000">
+            :total="totals">
           </el-pagination>
         </div>
       </el-container>
@@ -336,14 +297,53 @@ export default {
   },
   data () {
     return {
-      isNote: true,
-      isUser: false,
+      isNote: false,
+      isUser: true,
       isCollection: false,
       isNotebook: false,
-      activeClass: 1
+      activeClass: 2,
+      content: '',
+      users: [],
+      articles: [],
+      topics: [],
+      notebooks: [],
+      currentPage: 1,
+      totalPages: 1,
+      totals: 0,
+      type: 'user',
+      userId: ''
+    }
+  },
+  created () {
+    if (this.$route.query.q !== '') {
+      this.searchContent(this.$route.query.q)
+    }
+    this.userId = localStorage.getItem('userId')
+  },
+  watch: {
+    $route () {
+      this.searchContent(this.$route.query.q)
+      this.content = this.$route.query.q
     }
   },
   methods: {
+    searchContent (searchContent) {
+      let _this = this
+      _this.content = searchContent
+      this.axios.get('/api/search', {
+        params: {
+          'page': 1,
+          'content': searchContent,
+          'type': 'user'
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.users = res.data.data.list
+          _this.totalPages = res.data.data.totalPages
+          _this.totals = res.data.data.totalElements
+        }
+      })
+    },
     index (type) {
       if (type === 'note') {
         this.isNote = true
@@ -357,19 +357,92 @@ export default {
         this.isCollection = false
         this.isNotebook = false
         this.activeClass = 2
+        let _this = this
+        _this.type = 'user'
+        _this.currentPage = 1
+        this.axios.get('/api/search', {
+          params: {
+            'page': 1,
+            'content': _this.content,
+            'type': type
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.users = res.data.data.list
+            _this.totalPages = res.data.data.totalPages
+            _this.totals = res.data.data.totalElements
+          }
+        })
       } else if (type === 'collection') {
         this.isNote = false
         this.isUser = false
         this.isCollection = true
         this.isNotebook = false
         this.activeClass = 3
+        let _this = this
+        _this.type = 'topic'
+        _this.currentPage = 1
+        this.axios.get('/api/search', {
+          params: {
+            'page': 1,
+            'content': _this.content,
+            'type': 'topic'
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.topics = res.data.data.list
+            _this.totalPages = res.data.data.totalPages
+            _this.totals = res.data.data.totalElements
+          }
+        })
       } else {
         this.isNote = false
         this.isUser = false
         this.isCollection = false
         this.isNotebook = true
         this.activeClass = 4
+        let _this = this
+        _this.type = 'notebook'
+        _this.currentPage = 1
+        this.axios.get('/api/search', {
+          params: {
+            'page': 1,
+            'content': _this.content,
+            'type': type
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.notebooks = res.data.data.list
+            _this.totalPages = res.data.data.totalPages
+            _this.totals = res.data.data.totalElements
+          }
+        })
       }
+    },
+    pageChange (page) {
+      this.search(this.content, this.type, page)
+    },
+    search (searchContent, type, page) {
+      let _this = this
+      this.axios.get('/api/search', {
+        params: {
+          'page': page,
+          'content': searchContent,
+          'type': type
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          if (type === 'user') {
+            _this.users = res.data.data.list
+          } else if (type === 'notebook') {
+            _this.notebooks = res.data.data.list
+          } else if (type === 'topic') {
+            _this.topics = res.data.data.list
+          }
+          _this.totalPages = res.data.data.totalPages
+          _this.totals = res.data.data.totalElements
+        }
+      })
     },
     removeAll () {
       this.$refs.recentItemList.innerHTML = ''
@@ -378,52 +451,80 @@ export default {
       this.$refs[`recentItem${index}`][0].remove()
     },
     followUser (index) {
-      this.$refs[`followBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`unfollowBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    unfollowUser (index) {
-      this.$refs[`unfollowBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`followBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    overFollow (e) {
-      this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
-      this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
-    },
-    leaveFollow (e) {
-      this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
-      this.$refs[`unfollowBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+      this.users[index].isFollowed = !this.users[index].isFollowed
+      let _this = this
+      this.axios.put('/api/follow', {
+        'fromUserId': localStorage.getItem('userId'),
+        'toUserId': this.users[index].userId
+      }).then(function (res) {
+        if (_this.users[index].isFollowed) {
+          _this.$message({
+            message: '关注成功',
+            type: 'success',
+            center: true
+          })
+        } else {
+          _this.$message({
+            message: '取消关注成功',
+            type: 'success',
+            center: true
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     followCollection (index) {
-      this.$refs[`followCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`unfollowCollectionBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    unfollowCollection (index) {
-      this.$refs[`unfollowCollectionBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`followCollectionBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    overFollowCollection (e) {
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
-    },
-    leaveFollowCollection (e) {
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
-      this.$refs[`unfollowCollectionBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+      this.topics[index].isFollowed = !this.topics[index].isFollowed
+      let _this = this
+      this.axios.put('/api/follow/topic', {
+        'typeId': _this.topics[index].id,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.topics[index].isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     followNotebook (index) {
-      this.$refs[`followNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`unfollowNotebookBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    unfollowNotebook (index) {
-      this.$refs[`unfollowNotebookBtn${index}`][0].$el.setAttribute('hidden', 'hidden')
-      this.$refs[`followNotebookBtn${index}`][0].$el.removeAttribute('hidden')
-    },
-    overFollowNotebook (e) {
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '取消关注'
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-close')
-    },
-    leaveFollowNotebook (e) {
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.firstElementChild.setAttribute('class', 'el-icon-check')
-      this.$refs[`unfollowNotebookBtn${e}`][0].$el.firstElementChild.lastElementChild.innerHTML = '已关注'
+      this.notebooks[index].isFollowed = !this.notebooks[index].isFollowed
+      let _this = this
+      this.axios.put('/api/follow/notebook', {
+        'typeId': _this.notebooks[index].id,
+        'userId': localStorage.getItem('userId')
+      }).then(function (res) {
+        if (res.data.code) {
+          if (_this.notebooks[index].isFollowed) {
+            _this.$message({
+              message: '关注成功',
+              type: 'success',
+              center: true
+            })
+          } else {
+            _this.$message({
+              message: '取关成功',
+              type: 'success',
+              center: true
+            })
+          }
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     }
   }
 }

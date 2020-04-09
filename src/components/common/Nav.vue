@@ -30,8 +30,8 @@
 <!--            <b-button variant="info" class="my-2 my-sm-0" type="submit">搜索</b-button>-->
 <!--          </b-nav-form>-->
           <el-input class="search"
-            placeholder="搜索" v-model="search">
-            <el-button slot="suffix" type="text" class="el-icon-search" circle size="mini"></el-button>
+            placeholder="搜索" v-model="searchContent">
+            <el-button @click="search(searchContent)" slot="suffix" type="text" class="el-icon-search" circle size="mini"></el-button>
           </el-input>
         </b-navbar>
       </b-collapse>
@@ -75,9 +75,10 @@ export default {
     return {
       isLogin: false,
       isDot: false,
-      search: '',
+      searchContent: '',
       headUrl: '',
-      userId: ''
+      userId: '',
+      users: []
     }
   },
   props: {
@@ -92,12 +93,12 @@ export default {
   },
   watch: {
     $route () {
-      this.search = this.$route.query.q
+      this.searchContent = this.$route.query.q
     }
   },
   methods: {
     getSearchUrlContent () {
-      this.search = this.$route.query.q
+      this.searchContent = this.$route.query.q
     },
     info () {
       let _this = this
@@ -128,6 +129,10 @@ export default {
           }
         }
       })
+    },
+    search (content) {
+      // this.$emit('searchContent', content)
+      this.$router.push({name: 'Search', query: {q: content}})
     },
     gotoUser () {
       let _this = this
