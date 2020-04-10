@@ -36,10 +36,9 @@
         <div class="search-recent">
           <div class="search-recent-header clearfix"><span>最近搜索</span> <a @click="removeAll">清空</a></div>
           <ul class="search-recent-item-wrap" ref="recentItemList">
-            <li v-for="n in 5" :key="n" :ref="`recentItem${n}`">
-              <a @click="$router.push('/search?q='+n)">
-                <i class="ic-search-history el-icon-time"></i> <span>你在烦恼些什么{{n}}</span>
-                <i class="ic-unfollow el-icon-close" @click.stop="removeItem(n)"></i>
+            <li v-for="(history, n) in historys" :key="n">
+              <a @click="$router.push('/search?q='+history)" v-if="history!=''">
+                <i class="ic-search-history el-icon-time"></i> <span>{{history}}</span>
               </a>
             </li>
           </ul>
@@ -47,107 +46,45 @@
       </el-aside>
       <el-container style="margin-left: 40px;">
         <div class="search-content" v-if="isNote">
-          <div class="sort-type">
+          <div class="sort-type" style="padding-bottom: 0">
             <a class="active">
               综合排序
-              ·
             </a>
-            <a class="">
-              热门文章
-              ·
-            </a>
-            <a class="">
-              最新发布
-              ·
-            </a>
-            <a class="">
-              最新评论
-            </a>
-            <span>
-              &nbsp;&nbsp;|&nbsp;
-            </span>
-            <el-dropdown trigger="click">
-              <span class="el-dropdown-link">
-                时间不限<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一周</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近一天</el-dropdown-item>
-                <el-dropdown-item style="padding: 10px;line-height: normal">最近三月</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+<!--            <a class="">-->
+<!--              热门文章-->
+<!--              ·-->
+<!--            </a>-->
+<!--            <a class="">-->
+<!--              最新发布-->
+<!--              ·-->
+<!--            </a>-->
+<!--            <a class="">-->
+<!--              最新评论-->
+<!--            </a>-->
           </div>
-          <div class="result">503259 个结果</div>
+          <div class="result">{{totals}} 个结果</div>
           <ul class="note-list">
-            <li>
+            <li v-for="(article, n)  in articles" :key="n">
               <div class="content">
                 <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
+                  <router-link tag="a" :to="/u/ + article.userId" target="_blank" class="avatar">
+                    <img :src="article.headUrl">
+                  </router-link>
                   <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
+                    <router-link tag="a" :to="/u/ + article.userId" class="nickname">{{article.nickname}}</router-link>
+                    <span class="time">{{article.createdDate}}</span>
                   </div>
                 </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
+                <router-link tag="a" :to="/p/ + article.articleId" target="_blank" class="title" v-html="article.title"></router-link>
+                <p class="abstract" v-html="article.content"></p>
                 <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
-                </div>
-              </div>
-            </li>
-            <li>
-              <div class="content">
-                <div class="author">
-                  <a href="/u/b90070931f39" target="_blank" class="avatar"><img src="https://upload.jianshu.io/users/upload_avatars/12909613/d34ba887-6160-43c8-bc2a-05fad12851c9.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/96/h/96/format/webp"></a>
-                  <div class="info">
-                    <a href="/u/b90070931f39" class="nickname">山里雨里</a>
-                    <span class="time">2 年前</span>
-                  </div>
-                </div>
-                <a href="/p/5522fbc14725" target="_blank" class="title">你在烦恼什么</a>
-                <p class="abstract">……晚饭时间。他说， “你老妈这人<em class="search-result-highlight">什么</em>事都做不好，真的很丢人对吧？” 虽然是开玩笑的语气，但几次下来，能感觉他对我的母亲抱有些许不满。 他们之间的感情一直都像拉链的两边链齿，而拉头已经处在链齿的下端。我……的小道理，但她说再多道理都比不上我爸随便说的一句：你有<em class="search-result-highlight">什么</em>用？又或者是：不指望你能干出<em class="search-result-highlight">什么</em>大事来，此类打击。如果有一天工作能小有成就，一定得归功于我爸对我的刺激。而我妈教会我的，是会伴随我一辈子的做人……！...” 没能听懂，带着疑问走到一楼转弯处，没看到妈妈，倒看到她口中楼梯口的人，五六十岁的样子，手有点畸形的横放在胸口稍下的位置，带点傻，坐在一张小板凳上，大概是在这里躲雨。我没敢再走向前，因为不知道该做些<em class="search-result-highlight">什么</em>……</p>
-                <div class="meta">
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-liulan"></i> 0</a>
-                  <a href="#/p/cc962d260650"><i class="iconfont el-icon-third-pinglun2"></i> 0</a>
-                  <span><i class="iconfont el-icon-third-aixin"></i> 0</span>
+                  <router-link tag="a" :to="/p/ + article.articleId">
+                    <i class="iconfont el-icon-third-liulan"></i> {{article.clicks}}
+                  </router-link>
+                  <router-link tag="a" :to="/p/ + article.articleId">
+                    <i class="iconfont el-icon-third-pinglun2"></i> {{article.comments}}
+                  </router-link>
+                  <span><i class="iconfont el-icon-third-aixin"></i> {{article.likes}}</span>
                 </div>
               </div>
             </li>
@@ -155,8 +92,12 @@
           <el-pagination
             style="text-align: center"
             background
+            v-if="totals > 0"
+            :page-size="3"
+            :current-page.sync="currentPage"
+            @current-change="pageChange"
             layout="prev, pager, next"
-            :total="1000">
+            :total="totals">
           </el-pagination>
         </div>
         <div class="search-content" v-if="isUser">
@@ -297,11 +238,11 @@ export default {
   },
   data () {
     return {
-      isNote: false,
-      isUser: true,
+      isNote: true,
+      isUser: false,
       isCollection: false,
       isNotebook: false,
-      activeClass: 2,
+      activeClass: 1,
       content: '',
       users: [],
       articles: [],
@@ -310,14 +251,17 @@ export default {
       currentPage: 1,
       totalPages: 1,
       totals: 0,
-      type: 'user',
-      userId: ''
+      type: 'article',
+      userId: '',
+      order: 'likes',
+      historys: []
     }
   },
   created () {
     if (this.$route.query.q !== '') {
       this.searchContent(this.$route.query.q)
     }
+    this.setHistoryItems(this.content)
     this.userId = localStorage.getItem('userId')
   },
   watch: {
@@ -334,11 +278,12 @@ export default {
         params: {
           'page': 1,
           'content': searchContent,
-          'type': 'user'
+          'type': 'article',
+          'order': 'likes'
         }
       }).then(function (res) {
         if (res.data.code) {
-          _this.users = res.data.data.list
+          _this.articles = res.data.data.list
           _this.totalPages = res.data.data.totalPages
           _this.totals = res.data.data.totalElements
         }
@@ -351,6 +296,23 @@ export default {
         this.isCollection = false
         this.isNotebook = false
         this.activeClass = 1
+        let _this = this
+        _this.type = 'article'
+        _this.currentPage = 1
+        this.axios.get('/api/search', {
+          params: {
+            'page': 1,
+            'content': _this.content,
+            'type': 'article',
+            'order': 'likes'
+          }
+        }).then(function (res) {
+          if (res.data.code) {
+            _this.articles = res.data.data.list
+            _this.totalPages = res.data.data.totalPages
+            _this.totals = res.data.data.totalElements
+          }
+        })
       } else if (type === 'user') {
         this.isNote = false
         this.isUser = true
@@ -428,7 +390,8 @@ export default {
         params: {
           'page': page,
           'content': searchContent,
-          'type': type
+          'type': type,
+          'order': _this.order
         }
       }).then(function (res) {
         if (res.data.code) {
@@ -438,6 +401,8 @@ export default {
             _this.notebooks = res.data.data.list
           } else if (type === 'topic') {
             _this.topics = res.data.data.list
+          } else {
+            _this.articles = res.data.data.list
           }
           _this.totalPages = res.data.data.totalPages
           _this.totals = res.data.data.totalElements
@@ -445,10 +410,8 @@ export default {
       })
     },
     removeAll () {
-      this.$refs.recentItemList.innerHTML = ''
-    },
-    removeItem (index) {
-      this.$refs[`recentItem${index}`][0].remove()
+      localStorage.historyItems = ''
+      this.historys = []
     },
     followUser (index) {
       this.users[index].isFollowed = !this.users[index].isFollowed
@@ -525,6 +488,24 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
+    },
+    setHistoryItems (keyword) {
+      let { historyItems } = localStorage
+      if (historyItems === undefined) {
+        localStorage.historyItems = keyword
+      } else {
+        let lista = []
+        lista = historyItems.split('|')
+        lista = Array.from(new Set(lista))
+        if (lista.length > 6) {
+          lista.splice(5)
+        }
+        // eslint-disable-next-line eqeqeq
+        historyItems = keyword + '|' + lista.filter(e => e != keyword).join('|')
+        localStorage.historyItems = historyItems
+      }
+      this.historys = localStorage.historyItems.split('|')
+      this.historys = Array.from(new Set(this.historys))
     }
   }
 }
@@ -723,6 +704,10 @@ export default {
     line-height: 24px;
     color: #999;
     width: 600px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
   }
   .note-list .meta a {
     margin-right: 10px;
@@ -789,5 +774,13 @@ export default {
     height: 100%;
     border: 1px solid #ddd;
     border-radius: 10%;
+  }
+  .title >>> .search-result-highlight {
+    font-style: normal;
+    color: #ea6f5a;
+  }
+  .abstract >>> .search-result-highlight{
+    font-style: normal;
+    color: #ea6f5a;
   }
 </style>

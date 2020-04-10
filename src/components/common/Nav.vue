@@ -132,7 +132,11 @@ export default {
     },
     search (content) {
       // this.$emit('searchContent', content)
-      this.$router.push({name: 'Search', query: {q: content}})
+      let routeData = this.$router.resolve({
+        name: 'Search',
+        query: {q: content}
+      })
+      window.open(routeData.href, '_blank')
     },
     gotoUser () {
       let _this = this
