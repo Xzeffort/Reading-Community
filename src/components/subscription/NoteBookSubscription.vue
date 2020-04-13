@@ -53,8 +53,8 @@
               </el-footer>
             </el-container>
           </el-container>
-          <el-button v-show="totalPages > 1"  class="more_button" @click="getArticles(curentPage + 1)" type="info" round>查看更多</el-button>
         </li>
+        <el-button v-show="totalPages > 1"  class="more_button" @click="getArticles(curentPage + 1)" type="info" round>查看更多</el-button>
       </ul>
     </el-main>
   </el-container>

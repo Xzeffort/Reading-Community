@@ -389,22 +389,22 @@
               </router-link>
             </h3>
             <ul>
-              <li v-for="n in 5" :key="n" style="display: flex;padding: 20px 0;border-bottom: 1px solid #eee;">
+              <li v-for="(article, n) in recommendArticles" :key="n" style="display: flex;padding: 20px 0;border-bottom: 1px solid #eee;">
                 <div class="recommend">
                   <div class="recommend-title">
-                    <a class="_2voXH8 _1OhGeD" href="/p/4fe1350953c1" target="_blank" >常用技索技巧</a>
+                    <router-link tag="a" class="_2voXH8 _1OhGeD" :to="/p/ + article.articleId" target="_blank" >{{article.title}}</router-link>
                   </div>
                   <div class="recommend-content">
-                    这是在网易云日推里偶然间听到的一首。初见不惊，回首念念不忘。刚听的时候给我带来的触动并不怎么大，但今天脑海里一直单曲循环这首歌，我想我是喜欢上了。就像耐看的女孩，初见不惊，回首念念不忘……
+                    {{article.content}}
                   </div>
                   <div class="recommend-footer">
-                    <a class="_3IWz1q _1OhGeD" href="/u/d2fc38a07204" target="_blank" rel="noopener noreferrer">
-                      <img class="head" src="https://upload.jianshu.io/users/upload_avatars/2835271/361fa5cda59b.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/48/h/48/format/webp" alt="">
-                      <span style="font-size: 13px;color: #969696;">水果茶丁</span>
-                    </a>
-                    <span class="info">阅读 140</span>
-                    <span class="info">评论 0</span>
-                    <span class="info">赞 0</span>
+                    <router-link tag="a" class="_3IWz1q _1OhGeD" :to="/u/ + article.userId" target="_blank">
+                      <img class="head" :src="article.headUrl" alt="">
+                      <span style="font-size: 13px;color: #969696;">{{article.nickname}}</span>
+                    </router-link>
+                    <span class="info">阅读 {{article.clicks}}</span>
+                    <span class="info">评论 {{article.comments}}</span>
+                    <span class="info">赞 {{article.likes}}</span>
                   </div>
                 </div>
 <!--                <img class="recommend-img">-->
@@ -487,7 +487,8 @@ export default {
       searchContent: '',
       articleTopics: [],
       currentTopicPage: 0,
-      totalTopicPage: 1
+      totalTopicPage: 1,
+      recommendArticles: []
     }
   },
   created () {
@@ -496,6 +497,7 @@ export default {
   },
   mounted () {
     this.getArticleTopics()
+    this.getRecommendArticles()
     Bus.$on('headUrl', (data) => {
       this.headUrl = data
     })
@@ -913,6 +915,16 @@ export default {
         if (res.data.code) {
           _this.articleTopics = _this.articleTopics.concat(res.data.data.list)
           _this.totalTopicPage = res.data.data.totalPages
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getRecommendArticles () {
+      let _this = this
+      this.axios.get('/api/p/' + _this.$route.params.id + '/recommend').then(function (res) {
+        if (res.data.code) {
+          _this.recommendArticles = res.data.data
         }
       }).catch(function (error) {
         console.log(error)

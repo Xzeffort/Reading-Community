@@ -73,7 +73,7 @@
           <el-main>
             <el-menu default-active="1"  mode="horizontal" class="menu" @select="handleSelect">
               <el-menu-item index="1"><i class="el-icon-tickets"></i>文章</el-menu-item>
-              <el-menu-item index="2"><i class="el-icon-bell"></i>动态</el-menu-item>
+<!--              <el-menu-item index="2"><i class="el-icon-bell"></i>动态</el-menu-item>-->
               <el-menu-item index="3"><i class="el-icon-chat-square"></i>最新评论</el-menu-item>
               <el-menu-item index="4"><i class="el-icon-star-off"></i>热门</el-menu-item>
             </el-menu>
@@ -113,7 +113,7 @@
 <!--                </el-aside>-->
               </el-container>
             </li>
-          <!--    todo 下一页        -->
+            <el-button @click="getArticles(currentPage+1,order)" class="more_button" type="info" round>查看更多</el-button>
           </ul>
         </el-container>
       </el-main>
@@ -200,7 +200,8 @@ export default {
       notebooks: [],
       articles: [],
       currentPage: 1,
-      totalPages: 1
+      totalPages: 1,
+      order: ''
     }
   },
   created () {
@@ -233,21 +234,23 @@ export default {
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
-      let order = ''
       if (key === '1') {
-        order = ''
+        this.order = ''
         this.currentPage = 1
-        this.getArticles(this.currentPage, order)
+        this.articles = []
+        this.getArticles(this.currentPage, this.order)
       } else if (key === '2') {
         this.articles = []
       } else if (key === '3') {
-        order = 'recentCommentDate'
+        this.order = 'recentCommentDate'
         this.currentPage = 1
-        this.getArticles(this.currentPage, order)
+        this.articles = []
+        this.getArticles(this.currentPage, this.order)
       } else {
-        order = 'clicks'
+        this.order = 'clicks'
         this.currentPage = 1
-        this.getArticles(this.currentPage, order)
+        this.articles = []
+        this.getArticles(this.currentPage, this.order)
       }
     },
     getUserInfo () {
@@ -291,7 +294,7 @@ export default {
         }
       }).then(function (res) {
         if (res.data.code) {
-          _this.articles = res.data.data.list
+          _this.articles = _this.articles.concat(res.data.data.list)
           _this.totalPages = res.data.data.totalPages
         }
       })
@@ -550,5 +553,14 @@ export default {
     background-color: #e9634c;
     color: #fff;
     font-weight: 400;
+  }
+  .more_button {
+    display:block;
+    margin:0 auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
+    font-size: 15px;
+    outline: none;
   }
 </style>

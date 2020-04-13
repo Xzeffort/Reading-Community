@@ -56,8 +56,8 @@
 <!--              </a>-->
 <!--            </el-aside>-->
           </el-container>
-          <el-button class="more_button" v-if="totalPages > 1" @click="getArticles(currentPage+1, order)" type="info" round>查看更多</el-button>
         </li>
+        <el-button class="more_button" v-if="totalPages > 1" @click="getArticles(currentPage+1, order)" type="info" round>查看更多</el-button>
       </ul>
     </el-main>
   </el-container>
@@ -269,6 +269,15 @@ export default {
     float: right;
     width: 120px;
     margin: 23px 0 23px 16px;
+    font-size: 15px;
+    outline: none;
+  }
+  .more_button {
+    display:block;
+    margin:30px auto;
+    width: 80%;
+    height: 40px;
+    background-color: #a5a5a5;
     font-size: 15px;
     outline: none;
   }
