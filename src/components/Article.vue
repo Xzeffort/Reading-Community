@@ -5,7 +5,7 @@
     </el-header>
     <el-container class="container">
       <el-container>
-        <el-main style="padding: 0">
+        <el-main style="padding: 0; overflow-x: hidden">
           <div class="content" v-if="articleInfo.article != undefined">
             <h1 class="title">{{articleInfo.article.title}}</h1>
             <div class="userInfo">
@@ -41,7 +41,7 @@
                   <el-button class="likeCount" type="text"
                              @click="getLikeUsers(1)">{{articleInfo.article.likes}}人点赞<i class="el-icon-arrow-right"/></el-button>
                 </el-col>
-                <el-col :span="5" :offset="12">
+                <el-col :span="6" :offset="11">
                   <router-link tag="a" :to="/nb/+articleInfo.nbId" target="_blank" class="notebook"><i class="el-icon-s-management"/>{{articleInfo.notebook}}</router-link>
                   <el-dropdown>
                   <span class="el-dropdown-link">

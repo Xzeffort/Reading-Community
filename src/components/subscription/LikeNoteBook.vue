@@ -4,7 +4,7 @@
     <li class="list" v-for="(article, n) in articles" v-bind:key="n">
       <el-container>
         <el-container>
-          <el-header>
+          <el-header style="margin-top: 15px">
             <div class="author">
               <el-avatar :size="30" class="avatar"
                          :src="article.headUrl" alt="64"></el-avatar>
@@ -69,7 +69,7 @@ export default {
           }
         }).then(function (res) {
         if (res.data.code) {
-          _this.articles = res.data.data.list
+          _this.articles = _this.articles.concat(res.data.data.list)
           _this.totalPages = res.data.data.totalPages
         }
       })

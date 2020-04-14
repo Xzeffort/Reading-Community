@@ -22,14 +22,14 @@
         </el-footer>
       </el-container>
       <!--    无图片隐藏 aside      -->
-      <el-aside width="200px;">
-        <a href="#" target="_blank">
-          <img class="img" :src="url"/>
-        </a>
-      </el-aside>
+<!--      <el-aside width="200px;">-->
+<!--        <a href="#" target="_blank">-->
+<!--          <img class="img" :src="url"/>-->
+<!--        </a>-->
+<!--      </el-aside>-->
     </el-container>
   </li>
-      <el-button class="more_button" type="info" round>查看更多</el-button>
+      <el-button class="more_button" type="info" round @click="selectMethod(type,currentPage+1)">查看更多</el-button>
 </ul>
 </template>
 
@@ -41,7 +41,9 @@ export default {
     return {
       fit: 'contain',
       url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      articles: []
+      articles: [],
+      currentPage: 1,
+      totalPages: 1
     }
   },
   created () {
@@ -50,18 +52,66 @@ export default {
   watch: {
     type (val) {
       console.log(val)
+      this.articles = []
+      this.currentPage = 1
+      this.totalPages = 1
+      // eslint-disable-next-line eqeqeq
+      if (val == '2') {
+        this.getHotArticles(1)
+      } else {
+        this.getRecommendArticles(1)
+      }
     }
   },
   methods: {
+    selectMethod (type, page) {
+      // eslint-disable-next-line eqeqeq
+      if (type == '1') {
+        this.getRecommendArticles(page)
+      } else {
+        this.getHotArticles(page)
+      }
+    },
     getHotArticles (page) {
       let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
       this.axios.get('/api/p/hot', {
         params: {
           'page': page
         }
       }).then(function (res) {
         if (res.data.code) {
-          _this.articles = res.data.data.list
+          _this.articles = _this.articles.concat(res.data.data.list)
+          _this.totalPages = res.data.data.totalPages
+        }
+      })
+    },
+    getRecommendArticles (page) {
+      let _this = this
+      _this.currentPage = page
+      if (page > _this.totalPages) {
+        _this.$message({
+          message: '到底啦',
+          type: 'success'
+        })
+        return
+      }
+      this.axios.get('/api/articles/recommend', {
+        params: {
+          'userId': localStorage.getItem('userId'),
+          'page': page
+        }
+      }).then(function (res) {
+        if (res.data.code) {
+          _this.articles = _this.articles.concat(res.data.data.list)
+          _this.totalPages = res.data.data.totalPages
         }
       })
     }

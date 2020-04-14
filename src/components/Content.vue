@@ -6,8 +6,8 @@
       </el-carousel-item>
     </el-carousel>
     <el-header style="margin: 0 320px">
-      <el-menu default-active="1" class="el-menu-demo" mode="horizontal">
-        <el-menu-item @click="type=1" index="1" style="font-size: 16px;">推荐</el-menu-item>
+      <el-menu default-active="2" class="el-menu-demo" mode="horizontal">
+        <el-menu-item v-if="show" @click="type=1" index="1" style="font-size: 16px;">推荐</el-menu-item>
         <el-menu-item @click="type=2" index="2" style="font-size: 16px;">热榜</el-menu-item>
       </el-menu>
     </el-header>
@@ -37,7 +37,15 @@ export default {
   },
   data () {
     return {
-      type: 1
+      type: 2,
+      show: false
+    }
+  },
+  created () {
+    if (localStorage.getItem('userId')) {
+      this.show = true
+    } else {
+      this.show = false
     }
   }
 }

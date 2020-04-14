@@ -62,7 +62,7 @@ export default {
           }
         }).then(function (res) {
         if (res.data.code) {
-          _this.works = res.data.data.list
+          _this.works = _this.works.concat(res.data.data.list)
           _this.totalPages = res.data.data.totalPages
         }
       })
