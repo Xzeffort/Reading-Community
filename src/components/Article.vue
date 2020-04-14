@@ -441,13 +441,13 @@
         </div>
         <div class="bottom">
           <h3 class="QHRnq8 QxT4hD"><span>推荐阅读</span></h3>
-          <div class="item" v-for="n in 3" :key="n">
+          <div class="item" v-for="(article, n) in asideArticles" :key="n">
             <div class="smallTitle">
-              <router-link tag="a" class="_2ER8Tt _1OhGeD" to="/p/1" target="_blank">
-                你喜欢他吗{{n}}
+              <router-link tag="a" class="_2ER8Tt _1OhGeD" :to="/p/ + article.articleId " target="_blank">
+                {{article.title}}
               </router-link>
             </div>
-            <div class="readCount">阅读 230</div>
+            <div class="readCount">阅读  {{article.clicks}}</div>
           </div>
         </div>
       </el-aside>
@@ -488,7 +488,8 @@ export default {
       articleTopics: [],
       currentTopicPage: 0,
       totalTopicPage: 1,
-      recommendArticles: []
+      recommendArticles: [],
+      asideArticles: []
     }
   },
   created () {
@@ -501,6 +502,7 @@ export default {
     Bus.$on('headUrl', (data) => {
       this.headUrl = data
     })
+    this.getAsideArticle()
   },
   computed: {
     disabled () {
@@ -925,6 +927,17 @@ export default {
       this.axios.get('/api/p/' + _this.$route.params.id + '/recommend').then(function (res) {
         if (res.data.code) {
           _this.recommendArticles = res.data.data
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getAsideArticle () {
+      let _this = this
+      this.axios.get('/api/articles/aside/recommend').then(function (res) {
+        if (res.data.code) {
+          _this.asideArticles = res.data.data
+          // eslint-disable-next-line eqeqeq
         }
       }).catch(function (error) {
         console.log(error)
