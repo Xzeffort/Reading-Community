@@ -37,7 +37,7 @@
             </div>
             <div class="push-action" v-if="article.isPassed">
               <span class="push-status">已收入</span>
-              <el-button type="text" style="outline: none;font-weight: 400;color: #ea6f5a;margin-right: 10px">移除</el-button>
+              <el-button type="text" @click="removeArticle(n, article.topicId, article.articleId)" style="outline: none;font-weight: 400;color: #ea6f5a;margin-right: 10px">移除</el-button>
             </div>
             <div class="push-action" v-else>
               <el-button round type="success" size="mini" style="outline: none" @click="verifyArticle(n,article.articleId, true, article.topicId)">接受</el-button>
@@ -98,6 +98,32 @@ export default {
         'reason': _this.reason
       }).then(function (res) {
         _this.articles.splice(index, 1)
+      })
+    },
+    removeArticle (index, topicId, articleId) {
+      this.$confirm('此操作将永久移除该文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+        let _this = this
+        this.axios.delete('/api/topic/collect', {
+          data: {
+            'articleId': articleId,
+            'topicId': topicId
+          }
+        }).then(function (res) {
+          _this.articles.splice(index, 1)
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
