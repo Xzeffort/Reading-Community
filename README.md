@@ -32,7 +32,3 @@
     <img src="https://github.com/Xzeffort/Images/blob/main/%E6%96%87%E7%AB%A0.png" width="260">
     <img src="https://github.com/Xzeffort/Images/blob/main/%E5%85%B6%E4%BB%961.png" width="260">
 </p>
-
-## Licence
-
-[MIT](https://github.com/TothingWay/Cloud-Music/blob/react/LICENSE)
